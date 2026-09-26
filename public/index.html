@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#ffffff" />
   <title>트임 | 사람을 먼저 보는 정리</title>
   <link rel="stylesheet" href="styles.css?v=teum-action-1" />
+  <style>
+    .home-screen{gap:18px;padding-top:18px}.home-hero{display:grid;gap:14px}.big-banner{position:relative;min-height:292px;border-radius:34px;overflow:hidden;background:#2563EB;box-shadow:0 22px 54px rgba(37,99,235,.22)}.banner-slide{display:none;min-height:292px;padding:26px 24px;color:#fff;position:relative}.banner-slide.active{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:14px}.banner-slide:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 82% 12%,rgba(255,201,40,.9) 0 54px,transparent 56px),radial-gradient(circle at 100% 88%,rgba(255,255,255,.18) 0 120px,transparent 122px)}.banner-copy,.banner-art{position:relative;z-index:2}.banner-copy .kicker{color:#FFC928}.banner-copy h1{margin:0;font-size:39px;line-height:1.08;letter-spacing:-.075em;color:#fff}.banner-copy p{margin:12px 0 20px;color:rgba(255,255,255,.85);font-size:15px}.banner-copy a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#fff;color:#2563EB;font-weight:950;padding:13px 16px}.banner-art{display:flex;align-items:center;justify-content:center}.banner-art svg{width:100%;max-width:260px;height:auto}.banner-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.banner-tabs button{border:0;border-radius:16px;background:#eef4ff;color:#2563EB;font-weight:950;font-size:12px;padding:12px 4px;cursor:pointer}.banner-tabs button.active{background:#2563EB;color:#fff}.service-section{margin-top:10px;background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:30px;padding:22px 18px;box-shadow:0 16px 38px rgba(37,99,235,.08)}.service-section h2{margin:0 0 4px;color:#183B6B;font-size:24px;letter-spacing:-.055em}.service-section>p{margin:0 0 18px;color:#70655c;font-size:14px}.service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px}.service-item{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;color:#183B6B;font-weight:850;font-size:12px;letter-spacing:-.03em}.service-icon{width:48px;height:48px;border-radius:17px;border:1px solid rgba(37,99,235,.22);background:#fff;display:flex;align-items:center;justify-content:center}.service-icon svg{width:27px;height:27px;stroke:#183B6B;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round}.service-item:hover .service-icon{background:#eef4ff;border-color:#2563EB}.service-item:hover .service-icon svg{stroke:#2563EB}@media(max-width:640px){.home-screen{padding-top:16px}.big-banner{border-radius:28px;min-height:330px}.banner-slide{min-height:330px;padding:22px 20px}.banner-slide.active{grid-template-columns:1fr;align-content:space-between}.banner-copy h1{font-size:31px}.banner-copy p{font-size:14px;margin-bottom:14px}.banner-art svg{max-width:214px}.banner-tabs{gap:5px}.banner-tabs button{font-size:10.5px;border-radius:13px;padding:10px 2px}.service-section{border-radius:26px;padding:20px 14px}.service-section h2{font-size:22px}.service-grid{grid-template-columns:repeat(4,1fr);gap:14px 4px}.service-icon{width:42px;height:42px;border-radius:15px}.service-icon svg{width:24px;height:24px}.service-item{font-size:11px}}
+  </style>
 </head>
 <body data-page="home">
   <header class="topbar">
@@ -16,16 +19,86 @@
   </header>
 
   <main class="screen home-screen">
-    <section class="hero-simple">
-      <p class="kicker">MIND FIRST</p>
-      <h1>정리가 안 되는 이유,<br>공간보다 먼저<br><span>사람에게 있습니다.</span></h1>
-      <p class="lead">나와 함께 쓰는 공간, 생활패턴, 마음의 부담을 기준으로 나에게 맞는 정리법을 찾아보세요.</p>
-      <a class="primary-cta" href="test.html">성향테스트 시작</a>
+    <section class="home-hero" aria-label="트임 주요 메뉴">
+      <div class="big-banner">
+        <article class="banner-slide active" data-banner="0">
+          <div class="banner-copy">
+            <p class="kicker">PERSONALITY TEST</p>
+            <h1>나는 왜<br>정리가 어려울까?</h1>
+            <p>물건보다 먼저 마음과 행동 패턴을 확인해보세요.</p>
+            <a href="test.html">성향테스트 시작</a>
+          </div>
+          <div class="banner-art" aria-hidden="true">
+            <svg viewBox="0 0 240 190"><rect x="38" y="58" width="164" height="96" rx="26" fill="#fff" opacity=".96"/><path d="M76 88h88M76 116h58" stroke="#2563EB" stroke-width="12" stroke-linecap="round"/><circle cx="166" cy="116" r="18" fill="#FFC928"/><path d="M71 54c20-28 76-27 98 0" stroke="#FFC928" stroke-width="12" fill="none" stroke-linecap="round"/></svg>
+          </div>
+        </article>
+        <article class="banner-slide" data-banner="1">
+          <div class="banner-copy">
+            <p class="kicker">SPACE TEST</p>
+            <h1>어디부터<br>정리해야 할까요?</h1>
+            <p>옷장, 주방, 거실처럼 공간별 정리 우선순위를 찾아요.</p>
+            <a href="space.html">공간테스트 보기</a>
+          </div>
+          <div class="banner-art" aria-hidden="true">
+            <svg viewBox="0 0 240 190"><rect x="42" y="38" width="156" height="124" rx="28" fill="#fff" opacity=".96"/><path d="M82 58v84M120 58v84M158 58v84" stroke="#2563EB" stroke-width="9" stroke-linecap="round"/><rect x="68" y="76" width="32" height="44" rx="10" fill="#FFC928"/><rect x="134" y="94" width="38" height="34" rx="10" fill="#DDE9FF"/></svg>
+          </div>
+        </article>
+        <article class="banner-slide" data-banner="2">
+          <div class="banner-copy">
+            <p class="kicker">CLEAR NOW</p>
+            <h1>버릴까?<br>수거할까?</h1>
+            <p>소형가전, 의류, 책, 재활용까지 바로 확인하세요.</p>
+            <a href="test.html#clear">바로비우기</a>
+          </div>
+          <div class="banner-art" aria-hidden="true">
+            <svg viewBox="0 0 240 190"><path d="M78 72h84l-8 88H86z" fill="#fff" opacity=".96"/><path d="M92 72l8-28h40l8 28" stroke="#fff" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M100 98v38M120 98v38M140 98v38" stroke="#2563EB" stroke-width="8" stroke-linecap="round"/><circle cx="170" cy="62" r="22" fill="#FFC928"/></svg>
+          </div>
+        </article>
+        <article class="banner-slide" data-banner="3">
+          <div class="banner-copy">
+            <p class="kicker">DO IT NOW</p>
+            <h1>딱 정한 시간만<br>해내기</h1>
+            <p>1분부터 60분까지 자유롭게 맞추고 바로 시작해요.</p>
+            <a href="action.html">바로해냄 열기</a>
+          </div>
+          <div class="banner-art" aria-hidden="true">
+            <svg viewBox="0 0 240 190"><circle cx="120" cy="100" r="70" fill="#fff" opacity=".96"/><circle cx="120" cy="100" r="48" fill="#EEF4FF"/><path d="M120 74v30l26 16" stroke="#2563EB" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="166" cy="56" r="18" fill="#FFC928"/></svg>
+          </div>
+        </article>
+        <article class="banner-slide" data-banner="4">
+          <div class="banner-copy">
+            <p class="kicker">CONTACT</p>
+            <h1>우리 공간도<br>트임이 필요하다면</h1>
+            <p>서비스 문의와 협업 요청을 남겨주세요.</p>
+            <a href="program.html">문의하기</a>
+          </div>
+          <div class="banner-art" aria-hidden="true">
+            <svg viewBox="0 0 240 190"><rect x="46" y="54" width="148" height="100" rx="26" fill="#fff" opacity=".96"/><path d="M70 82l50 38 50-38" stroke="#2563EB" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="174" cy="54" r="20" fill="#FFC928"/></svg>
+          </div>
+        </article>
+      </div>
+      <div class="banner-tabs" role="tablist" aria-label="빅배너 메뉴">
+        <button class="active" type="button" data-target="0">성향</button>
+        <button type="button" data-target="1">공간</button>
+        <button type="button" data-target="2">비우기</button>
+        <button type="button" data-target="3">해냄</button>
+        <button type="button" data-target="4">문의</button>
+      </div>
     </section>
 
-    <section class="image-slot">
-      <span>TEUM GUIDE</span>
-      <strong>사람 → 마음 → 행동 → 공간</strong>
+    <section class="service-section">
+      <h2>지금 필요한 정리 서비스</h2>
+      <p>이모지 없이 깔끔한 라인 아이콘으로 구성했습니다.</p>
+      <div class="service-grid">
+        <a class="service-item" href="test.html#clear"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M8 8h8M9 4h6l1 4H8zM7 8h10l-1 12H8z"/></svg></span><span>소형가전</span></a>
+        <a class="service-item" href="test.html#clear"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M4 8l8-4 8 4-8 4zM4 8v8l8 4 8-4V8M12 12v8"/></svg></span><span>대형폐기물</span></a>
+        <a class="service-item" href="test.html#clear"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M8 4l4 3 4-3 4 4-3 3v9H7v-9L4 8z"/></svg></span><span>의류·신발</span></a>
+        <a class="service-item" href="test.html#clear"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2zM8 4v14M10 8h5M10 12h5"/></svg></span><span>책·종이</span></a>
+        <a class="service-item" href="test.html#clear"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M7 7l3-4 3 4M10 3v8M17 17l-3 4-3-4M14 21v-8M4 14l-2-5 5-1M2 9l7 4M20 10l2 5-5 1M22 15l-7-4"/></svg></span><span>재활용</span></a>
+        <a class="service-item" href="test.html#clear"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M6 9h12l-1 11H7zM9 9V6a3 3 0 0 1 6 0v3M9 13h6"/></svg></span><span>헌옷수거함</span></a>
+        <a class="service-item" href="action.html"><span class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 13V9M12 13l3 2M9 3h6"/></svg></span><span>뽀모도로</span></a>
+        <a class="service-item" href="action.html"><span class="service-icon"><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14v4a2 2 0 0 0 2 2h2v-8H6a2 2 0 0 0-2 2zM20 14v4a2 2 0 0 1-2 2h-2v-8h2a2 2 0 0 1 2 2z"/></svg></span><span>집중음악</span></a>
+      </div>
     </section>
 
     <section id="todayTeimMission" class="soft-card today-card">
@@ -44,5 +117,14 @@
   </nav>
 
   <script src="script.js?v=teum-action-1"></script>
+  <script>
+    const bannerTabs=document.querySelectorAll('.banner-tabs button');
+    const bannerSlides=document.querySelectorAll('.banner-slide');
+    bannerTabs.forEach(btn=>btn.addEventListener('click',()=>{
+      const idx=btn.dataset.target;
+      bannerTabs.forEach(b=>b.classList.toggle('active',b===btn));
+      bannerSlides.forEach(slide=>slide.classList.toggle('active',slide.dataset.banner===idx));
+    }));
+  </script>
 </body>
 </html>
