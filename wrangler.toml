@@ -1,7 +1,7 @@
 name = "teim"
 main = "_worker.js"
-compatibility_date = "2025-09-26"
+compatibility_date = "2024-11-01"
 
 [assets]
-directory = "./"
+directory = "./public"
 binding = "ASSETS"
