@@ -6,26 +6,50 @@
   <meta name="theme-color" content="#ffffff" />
   <title>트임 | 성향테스트</title>
   <link rel="stylesheet" href="styles.css?v=teum-action-1" />
+  <style>
+    .test-landing{padding-top:18px}.test-hero{background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:32px;padding:24px 20px;box-shadow:0 16px 38px rgba(37,99,235,.08)}.test-hero .kicker{color:#2563EB}.test-hero h1{margin:6px 0 12px;color:#183B6B;font-size:34px;line-height:1.12;letter-spacing:-.075em}.test-hero p{margin:0;color:#5f6875;font-size:15px;line-height:1.65}.test-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.test-chip{display:inline-flex;align-items:center;border:1px solid rgba(37,99,235,.18);border-radius:999px;background:#fff;color:#183B6B;font-weight:900;font-size:12px;padding:9px 12px}.test-menu-title{margin:22px 0 10px;color:#183B6B;font-size:22px;letter-spacing:-.055em}.test-menu-lead{margin:0 0 14px;color:#64748b;font-size:14px}.self-test-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.self-test-card{appearance:none;border:1px solid rgba(37,99,235,.14);background:#fff;border-radius:26px;padding:17px 15px;text-align:left;box-shadow:0 12px 28px rgba(37,99,235,.07);cursor:pointer}.self-test-card strong{display:block;color:#2563EB;font-size:13px;margin-bottom:8px}.self-test-card h2{margin:0;color:#183B6B;font-size:20px;line-height:1.18;letter-spacing:-.06em}.self-test-card p{margin:10px 0 0;color:#64748b;font-size:13px;line-height:1.45}.self-test-card span{display:inline-flex;margin-top:14px;border-radius:999px;background:#fff4b8;color:#183B6B;font-size:12px;font-weight:950;padding:7px 10px}.self-test-card.featured{grid-column:1/-1;background:#2563EB;color:#fff}.self-test-card.featured strong,.self-test-card.featured h2{color:#fff}.self-test-card.featured p{color:rgba(255,255,255,.82)}.self-test-card.featured span{background:#FFC928;color:#183B6B}.test-guide{margin-top:16px;background:#f8fbff;border:1px solid rgba(37,99,235,.12);border-radius:28px;padding:20px}.test-guide h2{margin:0 0 8px;color:#183B6B;font-size:21px;letter-spacing:-.055em}.test-guide p{margin:0;color:#64748b;font-size:14px;line-height:1.65}.test-guide-list{display:grid;gap:8px;margin-top:14px}.test-guide-item{background:#fff;border:1px solid rgba(37,99,235,.12);border-radius:18px;padding:13px 14px}.test-guide-item b{display:block;color:#183B6B;font-size:14px}.test-guide-item small{display:block;color:#64748b;font-size:12px;margin-top:4px;line-height:1.45}.test-caution{margin-top:14px;color:#64748b;font-size:12px;line-height:1.6}.hidden-start{display:none}@media(max-width:640px){.test-landing{padding-top:14px}.test-hero{border-radius:28px;padding:22px 18px}.test-hero h1{font-size:30px}.self-test-grid{grid-template-columns:1fr;gap:10px}.self-test-card{border-radius:23px}.self-test-card h2{font-size:19px}.test-menu-title{font-size:21px}.test-guide{border-radius:24px;padding:18px}}
+  </style>
 </head>
 <body data-page="test">
   <header class="topbar">
     <a href="index.html" aria-label="트임 홈" style="display:flex;align-items:center">
-      <img src="/teum-logo.png" alt="TEUM" style="display:block;height:34px;width:auto" />
+      <img src="/tuim_logo.png" alt="TEUM" style="display:block;height:34px;width:auto" />
     </a>
     <a class="top-action" href="index.html">홈</a>
   </header>
 
   <main class="screen test-screen">
-    <section id="selectView" class="view active">
-      <p class="kicker">PERSONALITY TEST</p>
-      <h1 class="page-title">나는 왜<br>정리가 어려울까?</h1>
-      <p class="lead small">물건보다 먼저, 내 마음과 행동 패턴을 확인해보세요. 감정·결정·완벽주의·에너지·기준·관계 요인을 바탕으로 나의 정리 성향을 알려드려요.</p>
-      <section class="soft-card today-card">
-        <p class="small-label">6 FACTORS</p>
-        <h2>심리와 정리 습관을 함께 봅니다.</h2>
-        <p>감정보관, 결정지연, 완벽압박, 실행방전, 기준부재, 관계마찰 중 지금 나를 가장 막고 있는 요인을 확인해보세요.</p>
+    <section id="selectView" class="view active test-landing">
+      <section class="test-hero">
+        <p class="kicker">SELF-UNDERSTANDING TEST</p>
+        <h1>무료 자가이해 테스트</h1>
+        <p>연애, 직장, 가족, 학업, 성취처럼 반복해서 나를 지치게 만드는 감정과 행동 패턴을 확인해보세요. 트임은 진단이 아니라, 지금 나에게 필요한 비움 방향을 찾는 콘텐츠입니다.</p>
+        <div class="test-chips"><span class="test-chip">무료 자가이해 테스트</span><span class="test-chip">감정·관계·행동 패턴 확인</span><span class="test-chip">비움 루틴 제안</span></div>
       </section>
-      <button id="startPersonalityTest" class="primary-cta button full" type="button">성향테스트 시작하기</button>
+
+      <h2 class="test-menu-title">지금 내 마음에 가까운 테스트</h2>
+      <p class="test-menu-lead">카드를 선택하면 현재 준비된 종합형 테스트로 연결됩니다.</p>
+      <div class="self-test-grid">
+        <button class="self-test-card start-test-card" type="button" data-test="love"><strong>01 연애</strong><h2>나는 연애에서<br>무엇을 못 놓을까?</h2><p>끝난 관계, 미련, 확인받고 싶은 마음을 돌아봐요.</p><span>관계 비움</span></button>
+        <button class="self-test-card start-test-card" type="button" data-test="work"><strong>02 직장</strong><h2>요즘 일이 나를<br>얼마나 채우고 있을까?</h2><p>일의 만족, 소진감, 인정 욕구를 확인해요.</p><span>일상 비움</span></button>
+        <button class="self-test-card start-test-card" type="button" data-test="family"><strong>03 부모·가족</strong><h2>가족 앞에서 나는<br>어떤 사람이 될까?</h2><p>가족 안에서 반복되는 역할과 감정을 살펴봐요.</p><span>관계 비움</span></button>
+        <button class="self-test-card start-test-card" type="button" data-test="study"><strong>04 학업</strong><h2>나는 왜 해야 할 일을<br>자꾸 미룰까?</h2><p>미루기, 완벽주의, 시작 지연 패턴을 확인해요.</p><span>행동 비움</span></button>
+        <button class="self-test-card start-test-card" type="button" data-test="achievement"><strong>05 성취</strong><h2>나는 왜 쉬어도<br>쉰 것 같지 않을까?</h2><p>비교, 성취 압박, 불안한 휴식 패턴을 돌아봐요.</p><span>마음 비움</span></button>
+        <button class="self-test-card start-test-card featured" type="button" data-test="total"><strong>06 종합</strong><h2>지금 나에게 가장 필요한<br>비움은 무엇일까?</h2><p>관계, 일상, 행동, 마음 중 지금 가장 먼저 비워야 할 방향을 찾아요.</p><span>나를 위한 비움</span></button>
+      </div>
+
+      <section class="test-guide">
+        <h2>트임 자가이해 테스트 주요 유형</h2>
+        <p>결과는 나를 단정하거나 판단하기 위한 것이 아니라, 내가 무엇을 붙잡고 있는지 알아차리기 위한 참고용 콘텐츠입니다.</p>
+        <div class="test-guide-list">
+          <div class="test-guide-item"><b>관계 비움</b><small>연애, 가족, 인간관계에서 반복되는 감정과 역할을 확인합니다.</small></div>
+          <div class="test-guide-item"><b>일상 비움</b><small>직장, 루틴, 생활 속 피로와 소진 패턴을 돌아봅니다.</small></div>
+          <div class="test-guide-item"><b>행동 비움</b><small>미루기, 시작 지연, 완벽주의 같은 행동 패턴을 확인합니다.</small></div>
+          <div class="test-guide-item"><b>마음 비움</b><small>비교, 성취 압박, 쉬어도 불안한 마음을 점검합니다.</small></div>
+        </div>
+        <p class="test-caution">트임의 자가이해 테스트는 의료적 진단이나 치료를 대신하지 않습니다. 일상생활이 어렵거나 감정적으로 큰 고통이 지속된다면 전문가의 도움을 함께 받아보는 것을 권장합니다.</p>
+      </section>
+      <button id="startPersonalityTest" class="primary-cta button full hidden-start" type="button">성향테스트 시작하기</button>
     </section>
 
     <section id="disposeView" class="view">
@@ -81,5 +105,6 @@
 
   <nav class="bottom-nav"><a data-nav="home" href="index.html">홈</a><a class="active" data-nav="test" href="test.html">성향테스트</a><a data-nav="space" href="space.html">공간테스트</a><a data-nav="action" href="action.html">바로해냄</a><a data-nav="program" href="program.html">문의</a></nav>
   <script src="script.js?v=teum-action-1"></script>
+  <script>document.querySelectorAll('.start-test-card').forEach(card=>{card.addEventListener('click',()=>{const btn=document.getElementById('startPersonalityTest');if(btn)btn.click();});});</script>
 </body>
 </html>
