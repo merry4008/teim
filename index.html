@@ -7,6 +7,9 @@
   <meta name="description" content="트임 정리방해요인 테스트 — 사람을 먼저 이해하고, 나에게 맞는 정리정돈 방법을 찾는 심리 기반 정리 서비스." />
   <title>트임 | 정리방해요인 테스트</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .today-mission-section{padding-top:0;background:#f2eadf}.today-card{display:grid;gap:14px;background:#fffaf3;border:1px solid #ddcfbc;border-radius:34px;padding:30px;box-shadow:0 24px 60px rgba(78,54,31,.1)}.weather-pill{display:inline-flex;width:fit-content;padding:8px 12px;border-radius:999px;background:#f1e7d9;color:#6a5f53;font-size:13px;font-weight:900}.mission-action{padding:20px;border-radius:24px;background:#24251f;color:#fff}.mission-action span{display:block;margin-bottom:8px;color:#d9c6aa;font-size:13px;font-weight:900}.mission-action strong{display:block;font-size:20px;line-height:1.5;letter-spacing:-.035em}.today-card h2{margin:0;font-size:clamp(28px,4vw,44px);line-height:1.16;letter-spacing:-.055em}.today-card p{margin:0;color:#625b51;font-size:17px}@media(max-width:640px){.today-card{border-radius:28px;padding:24px}.mission-action strong{font-size:17px}}
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -37,6 +40,15 @@
         <div class="visual-card mid-card">D · 결정지연</div>
         <div class="visual-card low-card">R · 관계마찰</div>
         <p>정리의 끝은<br><strong>비움이 아니라, 트임.</strong></p>
+      </div>
+    </section>
+
+    <section class="section today-mission-section">
+      <div id="todayTeimMission" class="today-card">
+        <p class="label">TODAY MISSION</p>
+        <div class="weather-pill">오늘의 미션</div>
+        <h2>날씨와 마음에 맞는<br>정리 하나를 추천해드려요.</h2>
+        <p>현재 날씨를 확인해 오늘 하기 좋은 작은 정리 미션을 불러옵니다.</p>
       </div>
     </section>
 
@@ -153,5 +165,33 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    async function loadTodayTeimMission(){
+      const card=document.querySelector('#todayTeimMission');
+      if(!card)return;
+      try{
+        const response=await fetch('/api/weather-mission?lat=37.5665&lon=126.9780');
+        const data=await response.json();
+        const mission=data.mission;
+        const weather=data.weather;
+        card.innerHTML=`
+          <p class="label">TODAY MISSION</p>
+          <div class="weather-pill">${weather?`${weather.weatherText} · ${weather.temperature}°C · 습도 ${weather.humidity}%`:'기본 미션'}</div>
+          <h2>${mission.title}</h2>
+          <p>${mission.emotion}</p>
+          <div class="mission-action"><span>${mission.tag}</span><strong>${mission.action}</strong></div>
+        `;
+      }catch(error){
+        card.innerHTML=`
+          <p class="label">TODAY MISSION</p>
+          <div class="weather-pill">기본 미션</div>
+          <h2>오늘도 작게 시작할 수 있어요.</h2>
+          <p>날씨를 불러오지 못했지만, 지금 보이는 작은 행동 하나면 충분합니다.</p>
+          <div class="mission-action"><span>기본 정리</span><strong>눈에 가장 먼저 들어오는 물건 5개만 제자리로 돌려놓아 보세요.</strong></div>
+        `;
+      }
+    }
+    loadTodayTeimMission();
+  </script>
 </body>
 </html>
