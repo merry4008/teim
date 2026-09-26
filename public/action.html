@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#2563EB" />
   <title>트임 | 바로해냄</title>
-  <link rel="stylesheet" href="styles.css?v=teum-action-1" />
+  <link rel="stylesheet" href="styles.css?v=teum-action-2" />
   <style>
     :root{--teum-blue:#2563EB;--teum-yellow:#FFC928}
     body{background:#fff;color:#111827}
@@ -22,6 +22,11 @@
     .timer-mode{margin-top:8px;font-size:12px;font-weight:950;color:var(--teum-blue);letter-spacing:.12em}
     .timer-card h2{margin:0 0 8px;color:var(--teum-blue);font-size:24px;letter-spacing:-.05em}
     .timer-card p{margin:0;color:#4b5563;font-size:14px}
+    .time-control{margin:20px 0 4px;text-align:left;background:#eef4ff;border-radius:24px;padding:16px}
+    .time-control label{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--teum-blue);font-size:14px;font-weight:950;margin-bottom:12px}
+    .time-control output{display:inline-flex;align-items:center;justify-content:center;min-width:64px;border-radius:999px;background:var(--teum-yellow);color:#183B6B;font-size:14px;font-weight:1000;padding:7px 10px}
+    .time-slider{width:100%;accent-color:var(--teum-blue);height:34px;cursor:pointer}
+    .time-hint{display:flex;justify-content:space-between;color:#6b7280;font-size:12px;font-weight:800;margin-top:2px}
     .timer-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:18px}
     .timer-actions button{border:0;border-radius:18px;padding:14px 8px;font-weight:950;font-size:14px;cursor:pointer}
     .timer-actions button:first-child{background:var(--teum-blue);color:#fff}
@@ -35,7 +40,7 @@
     .music-card b{display:block;color:var(--teum-blue);font-size:17px}.music-card span{display:block;color:#4b5563;font-size:13px;margin-top:2px}
     .music-card a,.quick-link{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:var(--teum-blue);color:#fff;font-weight:950;font-size:13px;padding:10px 13px;white-space:nowrap}
     .quick-link{width:100%;padding:15px;margin-top:2px}
-    @media(max-width:640px){.done-hero{border-radius:28px;padding:23px 20px}.done-hero h1{font-size:31px}.timer-ring{width:204px;height:204px}.timer-time{font-size:43px}.timer-logo{font-size:24px}.timer-actions{gap:6px}.timer-actions button{font-size:13px;padding:13px 6px}.action-section h2{font-size:22px}}
+    @media(max-width:640px){.done-hero{border-radius:28px;padding:23px 20px}.done-hero h1{font-size:31px}.timer-ring{width:204px;height:204px}.timer-time{font-size:43px}.timer-logo{font-size:24px}.timer-actions{gap:6px}.timer-actions button{font-size:13px;padding:13px 6px}.action-section h2{font-size:22px}.time-control{padding:15px;border-radius:22px}}
   </style>
 </head>
 <body data-page="action">
@@ -57,8 +62,13 @@
         <div id="timerTime" class="timer-time">25:00</div>
         <div id="timerMode" class="timer-mode">FOCUS</div>
       </div>
-      <h2>딱 25분만 해내기</h2>
-      <p>25분 정리하고 5분 쉬어가요. 작은 구역 하나면 충분합니다.</p>
+      <h2>내가 정한 시간만큼 해내기</h2>
+      <p>손가락으로 시간을 움직여 1분부터 60분까지 자유롭게 설정하세요.</p>
+      <div class="time-control">
+        <label for="timeSlider"><span>집중 시간 설정</span><output id="timeOutput" for="timeSlider">25분</output></label>
+        <input id="timeSlider" class="time-slider" type="range" min="1" max="60" step="1" value="25" aria-label="집중 시간 설정" />
+        <div class="time-hint"><span>1분</span><span>60분</span></div>
+      </div>
       <div class="timer-actions">
         <button id="timerStart" type="button">시작</button>
         <button id="timerPause" type="button">멈춤</button>
@@ -97,15 +107,20 @@
     const startBtn=document.getElementById('timerStart');
     const pauseBtn=document.getElementById('timerPause');
     const resetBtn=document.getElementById('timerReset');
+    const slider=document.getElementById('timeSlider');
+    const timeOutput=document.getElementById('timeOutput');
     let mode='focus';
-    let seconds=25*60;
+    let focusMinutes=25;
+    let seconds=focusMinutes*60;
     let timer=null;
-    function render(){const m=String(Math.floor(seconds/60)).padStart(2,'0');const s=String(seconds%60).padStart(2,'0');timerTime.textContent=`${m}:${s}`;timerMode.textContent=mode==='focus'?'FOCUS':'BREAK'}
+    function render(){const m=String(Math.floor(seconds/60)).padStart(2,'0');const s=String(seconds%60).padStart(2,'0');timerTime.textContent=`${m}:${s}`;timerMode.textContent=mode==='focus'?'FOCUS':'BREAK';timeOutput.textContent=focusMinutes+'분'}
+    function setFocusMinutes(value){focusMinutes=Math.max(1,Math.min(60,Number(value)||25));slider.value=focusMinutes;if(!timer&&mode==='focus'){seconds=focusMinutes*60}render()}
     function beep(){try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=880;gain.gain.value=.07;osc.start();setTimeout(()=>{osc.stop();ctx.close()},220)}catch(e){}}
-    function switchMode(){beep();mode=mode==='focus'?'break':'focus';seconds=mode==='focus'?25*60:5*60;render();alert(mode==='break'?'좋아요. 25분 해냈어요! 5분 쉬어가요.':'휴식 끝! 다시 25분 시작해볼까요?')}
+    function switchMode(){beep();mode=mode==='focus'?'break':'focus';seconds=mode==='focus'?focusMinutes*60:5*60;render();alert(mode==='break'?'좋아요. 설정한 시간을 해냈어요! 5분 쉬어가요.':'휴식 끝! 다시 시작해볼까요?')}
+    slider.addEventListener('input',()=>setFocusMinutes(slider.value));
     startBtn.onclick=()=>{if(timer)return;timer=setInterval(()=>{seconds--;if(seconds<=0){clearInterval(timer);timer=null;switchMode()}else render()},1000)};
     pauseBtn.onclick=()=>{clearInterval(timer);timer=null};
-    resetBtn.onclick=()=>{clearInterval(timer);timer=null;mode='focus';seconds=25*60;render()};
+    resetBtn.onclick=()=>{clearInterval(timer);timer=null;mode='focus';seconds=focusMinutes*60;render()};
     render();
   </script>
 </body>
