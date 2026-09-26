@@ -1,6 +1,6 @@
 name = "teim"
 main = "_worker.js"
-compatibility_date = "2026-09-26"
+compatibility_date = "2025-09-26"
 
 [assets]
 directory = "./"
