@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2563EB" />
+  <title>트임 | 바로해냄</title>
+  <link rel="stylesheet" href="styles.css?v=teum-action-1" />
+  <style>
+    :root{--teum-blue:#2563EB;--teum-yellow:#FFC928}
+    body{background:#fff;color:#111827}
+    .action-screen{padding-top:20px}
+    .done-hero{background:var(--teum-blue);color:#fff;border-radius:34px;padding:26px 22px 24px;box-shadow:0 18px 44px rgba(37,99,235,.24)}
+    .done-hero .small-label{color:var(--teum-yellow)}
+    .done-hero h1{margin:0;font-size:36px;line-height:1.08;letter-spacing:-.075em}
+    .done-hero p{margin:12px 0 0;color:rgba(255,255,255,.86);font-size:15px}
+    .timer-card{margin-top:16px;background:#fff;border:2px solid var(--teum-blue);border-radius:34px;padding:24px 20px;text-align:center;box-shadow:0 18px 44px rgba(37,99,235,.14)}
+    .timer-ring{width:228px;height:228px;margin:0 auto 20px;border:12px solid var(--teum-blue);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:#fff}
+    .timer-ring:after{content:'';position:absolute;right:22px;top:18px;width:22px;height:22px;border-radius:50%;background:var(--teum-yellow)}
+    .timer-logo{font-weight:1000;font-style:italic;letter-spacing:-.08em;color:var(--teum-blue);font-size:26px;line-height:1;margin-bottom:10px}
+    .timer-time{font-size:48px;font-weight:1000;color:var(--teum-blue);letter-spacing:-.05em;line-height:1}
+    .timer-mode{margin-top:8px;font-size:12px;font-weight:950;color:var(--teum-blue);letter-spacing:.12em}
+    .timer-card h2{margin:0 0 8px;color:var(--teum-blue);font-size:24px;letter-spacing:-.05em}
+    .timer-card p{margin:0;color:#4b5563;font-size:14px}
+    .timer-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:18px}
+    .timer-actions button{border:0;border-radius:18px;padding:14px 8px;font-weight:950;font-size:14px;cursor:pointer}
+    .timer-actions button:first-child{background:var(--teum-blue);color:#fff}
+    .timer-actions button:nth-child(2){background:var(--teum-yellow);color:#183B6B}
+    .timer-actions button:last-child{background:#eef4ff;color:var(--teum-blue)}
+    .action-section{margin-top:16px;background:#fff;border:1px solid rgba(37,99,235,.18);border-radius:30px;padding:22px;box-shadow:0 14px 34px rgba(37,99,235,.08)}
+    .action-section h2{margin:0 0 8px;color:var(--teum-blue);font-size:24px;letter-spacing:-.05em}
+    .action-section p{margin:0 0 16px;color:#4b5563;font-size:14px}
+    .music-grid{display:grid;gap:10px}
+    .music-card{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px;border:1px solid rgba(37,99,235,.18);border-radius:22px;background:#fff}
+    .music-card b{display:block;color:var(--teum-blue);font-size:17px}.music-card span{display:block;color:#4b5563;font-size:13px;margin-top:2px}
+    .music-card a,.quick-link{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:var(--teum-blue);color:#fff;font-weight:950;font-size:13px;padding:10px 13px;white-space:nowrap}
+    .quick-link{width:100%;padding:15px;margin-top:2px}
+    @media(max-width:640px){.done-hero{border-radius:28px;padding:23px 20px}.done-hero h1{font-size:31px}.timer-ring{width:204px;height:204px}.timer-time{font-size:43px}.timer-logo{font-size:24px}.timer-actions{gap:6px}.timer-actions button{font-size:13px;padding:13px 6px}.action-section h2{font-size:22px}}
+  </style>
+</head>
+<body data-page="action">
+  <header class="topbar">
+    <a class="logo wordmark" href="index.html" aria-label="트임 홈">TEUM<span class="logo-dot"></span></a>
+    <a class="top-action" href="test.html">성향테스트</a>
+  </header>
+
+  <main class="screen action-screen">
+    <section class="done-hero">
+      <p class="small-label">DO IT NOW</p>
+      <h1>바로 해냄</h1>
+      <p>완벽하게 끝내는 시간이 아니라, 지금 시작하게 만드는 실행 도구예요.</p>
+    </section>
+
+    <section class="timer-card" aria-label="뽀모도로 타이머">
+      <div class="timer-ring">
+        <div class="timer-logo">TEUM</div>
+        <div id="timerTime" class="timer-time">25:00</div>
+        <div id="timerMode" class="timer-mode">FOCUS</div>
+      </div>
+      <h2>딱 25분만 해내기</h2>
+      <p>25분 정리하고 5분 쉬어가요. 작은 구역 하나면 충분합니다.</p>
+      <div class="timer-actions">
+        <button id="timerStart" type="button">시작</button>
+        <button id="timerPause" type="button">멈춤</button>
+        <button id="timerReset" type="button">초기화</button>
+      </div>
+    </section>
+
+    <section class="action-section">
+      <h2>바로 비우기</h2>
+      <p>버릴지, 수거할지, 분리배출할지 먼저 확인하고 바로 실행하세요.</p>
+      <a class="quick-link" href="test.html#clear">비우기 메뉴 열기</a>
+    </section>
+
+    <section class="action-section">
+      <h2>정리할 때 듣는 음악</h2>
+      <p>지금 컨디션에 맞춰 음악 분위기를 골라보세요.</p>
+      <div class="music-grid">
+        <div class="music-card"><div><b>신나는 음악</b><span>몸을 움직이며 빠르게 정리할 때</span></div><a href="https://www.youtube.com/results?search_query=%EC%8B%A0%EB%82%98%EB%8A%94+%EC%A0%95%EB%A6%AC+%EC%9D%8C%EC%95%85" target="_blank" rel="noopener">듣기</a></div>
+        <div class="music-card"><div><b>명상 음악</b><span>마음 부담을 낮추고 시작할 때</span></div><a href="https://www.youtube.com/results?search_query=%EB%AA%85%EC%83%81+%EC%A0%95%EB%A6%AC+%EC%9D%8C%EC%95%85" target="_blank" rel="noopener">듣기</a></div>
+        <div class="music-card"><div><b>조용한 음악</b><span>차분하게 분류하고 정돈할 때</span></div><a href="https://www.youtube.com/results?search_query=%EC%A1%B0%EC%9A%A9%ED%95%9C+%EC%A0%95%EB%A6%AC+%EC%9D%8C%EC%95%85" target="_blank" rel="noopener">듣기</a></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a data-nav="home" href="index.html">홈</a>
+    <a data-nav="test" href="test.html">성향테스트</a>
+    <a data-nav="space" href="space.html">공간테스트</a>
+    <a class="active" data-nav="action" href="action.html">바로해냄</a>
+    <a data-nav="program" href="program.html">문의</a>
+  </nav>
+
+  <script>
+    const timerTime=document.getElementById('timerTime');
+    const timerMode=document.getElementById('timerMode');
+    const startBtn=document.getElementById('timerStart');
+    const pauseBtn=document.getElementById('timerPause');
+    const resetBtn=document.getElementById('timerReset');
+    let mode='focus';
+    let seconds=25*60;
+    let timer=null;
+    function render(){const m=String(Math.floor(seconds/60)).padStart(2,'0');const s=String(seconds%60).padStart(2,'0');timerTime.textContent=`${m}:${s}`;timerMode.textContent=mode==='focus'?'FOCUS':'BREAK'}
+    function beep(){try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=880;gain.gain.value=.07;osc.start();setTimeout(()=>{osc.stop();ctx.close()},220)}catch(e){}}
+    function switchMode(){beep();mode=mode==='focus'?'break':'focus';seconds=mode==='focus'?25*60:5*60;render();alert(mode==='break'?'좋아요. 25분 해냈어요! 5분 쉬어가요.':'휴식 끝! 다시 25분 시작해볼까요?')}
+    startBtn.onclick=()=>{if(timer)return;timer=setInterval(()=>{seconds--;if(seconds<=0){clearInterval(timer);timer=null;switchMode()}else render()},1000)};
+    pauseBtn.onclick=()=>{clearInterval(timer);timer=null};
+    resetBtn.onclick=()=>{clearInterval(timer);timer=null;mode='focus';seconds=25*60;render()};
+    render();
+  </script>
+</body>
+</html>
