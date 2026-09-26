@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f6f1ea" />
+  <title>트임 | 정리방해요인 테스트</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="test">
+  <header class="topbar">
+    <a class="logo" href="index.html">트임</a>
+    <a class="top-action" href="index.html">홈</a>
+  </header>
+
+  <main class="screen test-screen">
+    <section id="selectView" class="view active">
+      <p class="kicker">TEST</p>
+      <h1 class="page-title">지금 정리하고 싶은<br>관계와 공간을 선택하세요.</h1>
+      <p class="lead small">각 테스트는 약 3분 소요됩니다.</p>
+      <div id="categoryGrid" class="simple-card-grid"></div>
+    </section>
+
+    <section id="quizView" class="view">
+      <div class="quiz-status">
+        <button id="backToSelect" class="icon-btn" type="button">←</button>
+        <div>
+          <b id="progressText">1 / 24</b>
+          <span>예상 소요시간 약 3분</span>
+        </div>
+      </div>
+      <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+      <article class="question-card">
+        <p id="questionFactor" class="small-label">E 감정보관</p>
+        <h2 id="questionText">질문이 들어갑니다.</h2>
+        <div id="answerOptions" class="answer-options"></div>
+      </article>
+      <div class="quiz-actions">
+        <button id="prevQuestion" class="secondary-cta" type="button">이전</button>
+        <button id="nextQuestion" class="primary-cta button" type="button" disabled>다음</button>
+      </div>
+    </section>
+
+    <section id="resultView" class="view">
+      <p class="kicker">RESULT</p>
+      <div class="result-main-card">
+        <p id="resultCode" class="small-label">L-R</p>
+        <h1 id="resultTitle">돌봄과부하형</h1>
+        <p id="resultDesc" class="result-desc"></p>
+        <div id="topFactors" class="top-factors"></div>
+      </div>
+      <section class="mission-card">
+        <span>오늘의 미션</span>
+        <strong id="missionText"></strong>
+      </section>
+      <button id="shareResult" class="primary-cta button full" type="button">결과 공유하기</button>
+      <details class="detail-toggle">
+        <summary>결과 상세 보기</summary>
+        <div id="scoreBars" class="score-bars"></div>
+      </details>
+      <details class="detail-toggle">
+        <summary>정리 처방 보기</summary>
+        <ul id="guideList" class="guide-list"></ul>
+      </details>
+      <button id="restartTest" class="secondary-cta full" type="button">다시 테스트하기</button>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html">홈</a>
+    <a class="active" href="test.html">테스트</a>
+    <a href="share.html">자랑</a>
+    <a href="program.html">문의</a>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>
