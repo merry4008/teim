@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ffffff" />
   <title>트임 | 성향테스트</title>
-  <link rel="stylesheet" href="styles.css?v=teum-final-1" />
+  <link rel="stylesheet" href="styles.css?v=teum-final-2" />
 </head>
 <body data-page="test">
   <header class="topbar">
@@ -52,7 +52,18 @@
 
     <section id="resultView" class="view">
       <p class="kicker">RESULT</p>
-      <div class="result-main-card"><p id="resultCode" class="small-label">L-R</p><h1 id="resultTitle">돌봄과부하형</h1><p id="resultDesc" class="result-desc"></p><div id="topFactors" class="top-factors"></div></div>
+      <div class="result-main-card">
+        <p id="resultCode" class="small-label">L-R</p>
+        <h1 id="resultTitle">돌봄과부하형</h1>
+        <div class="execution-card">
+          <span>정리 실행력</span>
+          <strong><b id="executionPercent">72</b>%</strong>
+          <div class="execution-track"><div id="executionFill" class="execution-fill"></div></div>
+          <p id="executionText">작은 구역부터 시작하면 성공 가능성이 높아요.</p>
+        </div>
+        <p id="resultDesc" class="result-desc"></p>
+        <div id="topFactors" class="top-factors"></div>
+      </div>
       <section class="mission-card"><span>오늘의 미션</span><strong id="missionText"></strong></section>
       <button id="shareResult" class="primary-cta button full" type="button">결과 공유하기</button>
       <details class="detail-toggle"><summary>결과 상세 보기</summary><div id="scoreBars" class="score-bars"></div></details>
@@ -61,7 +72,7 @@
     </section>
   </main>
 
-  <nav class="bottom-nav"><a data-nav="home" href="index.html">홈</a><a class="active" data-nav="test" href="test.html">성향테스트</a><a data-nav="clear" href="test.html#clear">바로비우기</a><a data-nav="share" href="share.html">자랑</a><a data-nav="program" href="program.html">문의</a></nav>
-  <script src="script.js?v=teum-final-1"></script>
+  <nav class="bottom-nav"><a data-nav="home" href="index.html">홈</a><a class="active" data-nav="test" href="test.html">성향테스트</a><a data-nav="space" href="space.html">공간테스트</a><a data-nav="clear" href="test.html#clear">바로비우기</a><a data-nav="program" href="program.html">문의</a></nav>
+  <script src="script.js?v=teum-final-2"></script>
 </body>
 </html>
