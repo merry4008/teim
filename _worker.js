@@ -6,6 +6,15 @@ export default {
       return handleWeatherMission(request);
     }
 
+    if (
+      url.pathname === "/teum-logo.png" ||
+      url.pathname === "/tuim%20logo.png" ||
+      decodeURIComponent(url.pathname) === "/tuim logo.png"
+    ) {
+      url.pathname = "/tuim_logo.png";
+      return env.ASSETS.fetch(new Request(url.toString(), request));
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
