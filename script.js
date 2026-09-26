@@ -1,74 +1,14 @@
-const questions = [
-  {domain:'연애', en:'LOVE', text:'관계에서 마음이 복잡해지면, 주변 물건이나 공간도 함께 흐트러지는 편인가요?', key:'emotion'},
-  {domain:'연애', en:'LOVE', text:'추억이 담긴 물건은 쓰지 않아도 쉽게 버리지 못하는 편인가요?', key:'attachment'},
-  {domain:'직장', en:'WORK', text:'할 일이 많아지면 책상 정리보다 눈앞의 업무를 먼저 쌓아두는 편인가요?', key:'overload'},
-  {domain:'직장', en:'WORK', text:'정리할 시간을 따로 잡아야 한다고 생각해 시작을 미루는 편인가요?', key:'perfection'},
-  {domain:'부모', en:'FAMILY', text:'물건을 버릴 때 “나중에 필요할 수도 있어”라는 생각이 자주 드나요?', key:'security'},
-  {domain:'부모', en:'FAMILY', text:'내 물건을 정리하거나 버리는 일에 다른 사람의 의견이 크게 신경 쓰이나요?', key:'emotion'},
-  {domain:'학업', en:'STUDY', text:'정리를 시작하면 분류 기준을 세우느라 시간이 오래 걸리는 편인가요?', key:'perfection'},
-  {domain:'학업', en:'STUDY', text:'눈앞에 물건이 많이 보이면 집중하기 어렵지만 치우는 것도 벅차게 느껴지나요?', key:'overload'},
-  {domain:'성취', en:'ACHIEVEMENT', text:'깔끔하게 끝낼 자신이 없으면 아예 시작하지 않는 편인가요?', key:'perfection'},
-  {domain:'성취', en:'ACHIEVEMENT', text:'정리보다 더 중요한 목표가 많다고 느껴 계속 뒤로 미루게 되나요?', key:'overload'}
-];
-
-const choices = [
-  {label:'전혀 그렇지 않아요', value:0},
-  {label:'별로 그렇지 않아요', value:1},
-  {label:'조금 그런 편이에요', value:2},
-  {label:'매우 그래요', value:3}
-];
-
-const results = {
-  perfection:{type:'완벽 기준형', title:'잘하려는 마음이 시작을 어렵게 만들 수 있어요.', desc:'정리를 크게 생각할수록 시작 기준이 높아집니다. 완벽한 결과보다 작은 완료를 먼저 만드는 방식이 잘 맞을 수 있어요.', guide:'오늘은 공간 전체가 아니라 “서랍 한 칸”만 정해 10분 안에 끝내보세요. 기준은 예쁘게가 아니라, 다시 찾기 쉽게입니다.'},
-  overload:{type:'과부하형', title:'정리할 힘이 없는 게 아니라, 이미 너무 많은 일을 들고 있을 수 있어요.', desc:'할 일과 자극이 겹칠수록 정리는 우선순위에서 밀리기 쉽습니다. 판단해야 할 것을 줄이는 방식이 도움이 될 수 있어요.', guide:'버릴지 말지 오래 고민하지 말고 ①버림 ②제자리 ③보류 세 구역만 만드세요. 오늘은 10개까지만 분류합니다.'},
-  attachment:{type:'기억 애착형', title:'물건보다 그 안의 기억을 놓기 어려운 편일 수 있어요.', desc:'의미 있는 물건을 무조건 버리는 것이 답은 아닙니다. 기억과 사용 기능을 분리하면 선택이 조금 쉬워질 수 있어요.', guide:'추억 물건은 별도의 “기억 상자” 하나에만 모아보세요. 상자 크기가 기준이 되어 무엇을 남길지 선택을 도와줍니다.'},
-  security:{type:'안전 확보형', title:'혹시 모를 미래를 위해 물건을 남겨두는 편일 수 있어요.', desc:'물건이 많아서라기보다 “없으면 불안할 것 같다”는 생각이 정리 결정을 어렵게 할 수 있습니다.', guide:'“6개월 안에 실제로 쓸 상황이 떠오르는가?”만 묻고, 애매한 것은 보류함에 날짜를 적어 한 달 뒤 다시 판단하세요.'},
-  emotion:{type:'감정 연동형', title:'마음이 복잡한 날, 공간도 함께 멈추는 편일 수 있어요.', desc:'컨디션이 낮을 때 정리를 의지로 밀어붙이면 더 지칠 수 있습니다. 정리를 감정 회복의 작은 행동으로 바꿔보세요.', guide:'가장 눈에 띄는 한 면만 비워보세요. 책상 모서리, 침대 옆처럼 시야가 바로 편해지는 곳이 좋습니다.'}
+const tests={
+  love:{no:'01',title:'연애',subtitle:'관계에서 쌓인 마음이 공간에 남는 유형',desc:'사람과의 거리감, 애착, 미련이 물건을 붙잡는 방식과 연결됩니다.',questions:['이별이나 관계의 기억이 담긴 물건을 쉽게 버리지 못한다.','상대와의 감정이 불안할수록 방 정리가 밀린다.','추억이 사라질까 봐 물건을 남겨두는 편이다.','관계가 불편해지면 공간도 어수선해진다.'],results:{high:{title:'연애 · 감정 보관형',text:'물건이 단순한 물건이 아니라 관계의 증거처럼 느껴지는 성향입니다.',guide:['추억 물건은 바로 버리지 말고 작은 보관함 하나로 제한하세요.','사진으로 남긴 뒤 실물은 3개 이하만 보관하세요.','관계별 물건을 섞지 말고 “현재의 나에게 필요한가” 기준으로 나누세요.']},low:{title:'연애 · 거리 조절형',text:'감정과 물건을 비교적 잘 분리하지만, 불편한 감정을 피하려고 정리를 미룰 수 있습니다.',guide:['눈에 보이는 곳부터 10분만 정리하세요.','감정 판단 없이 버림/보류/보관 3칸으로 나누세요.','보류함은 2주 뒤 다시 확인하는 규칙을 만드세요.']}}},
+  work:{no:'02',title:'직장',subtitle:'일의 압박이 공간에 쌓이는 유형',desc:'업무 스트레스, 완벽주의, 과부하가 책상과 생활공간에 반영됩니다.',questions:['일이 많을수록 책상이나 방이 급격히 어수선해진다.','완벽하게 정리하려다 시작을 미루는 편이다.','업무 자료를 혹시 몰라 계속 쌓아둔다.','쉬는 공간에도 일 관련 물건이 자주 남아 있다.'],results:{high:{title:'직장 · 과부하 축적형',text:'일의 압박이 물건과 자료로 쌓이면서 공간을 무겁게 만드는 성향입니다.',guide:['업무 자료는 오늘/이번 주/보관으로만 나누세요.','책상 위에는 현재 진행 중인 일 1개만 남기세요.','퇴근 전 5분 정리 알람으로 업무와 생활을 끊어주세요.']},low:{title:'직장 · 루틴 회복형',text:'정리 능력은 있지만 루틴이 끊기면 공간이 흔들릴 수 있습니다.',guide:['매일 같은 시간에 5분 정리 루틴을 만드세요.','자주 쓰는 물건의 고정 위치를 3개만 정하세요.','정리보다 “다시 원위치”를 목표로 잡으세요.']}}},
+  parent:{no:'03',title:'부모',subtitle:'가족의 기준이 내 공간에 남는 유형',desc:'어릴 때의 통제감, 돌봄 경험, 가족의 기준이 정리 방식에 영향을 줄 수 있습니다.',questions:['내 공간인데도 가족의 평가가 신경 쓰인다.','버리면 혼날 것 같은 물건이 아직 남아 있다.','정리를 잘해야 인정받는다는 압박을 느낀다.','스스로 고른 물건보다 남이 준 물건을 더 버리기 어렵다.'],results:{high:{title:'부모 · 기준 내면화형',text:'내 기준보다 가족의 기준이 먼저 떠올라 정리 결정을 어렵게 만드는 성향입니다.',guide:['남이 준 물건은 감사함과 보관 여부를 분리해서 판단하세요.','“내가 쓰는가”를 첫 기준으로 삼으세요.','내가 직접 고른 작은 구역 하나를 만들어보세요.']},low:{title:'부모 · 독립 기준형',text:'자기 기준을 세우기 쉬운 편이지만, 가족 물건과 내 물건의 경계가 흐려질 수 있습니다.',guide:['가족 물건과 내 물건을 먼저 분리하세요.','공용공간은 합의 기준, 개인공간은 내 기준으로 정하세요.','타인의 물건은 대신 버리지 말고 요청 목록만 만드세요.']}}},
+  study:{no:'04',title:'학업',subtitle:'배움의 불안이 물건으로 쌓이는 유형',desc:'공부, 정보, 자료, 시험 불안이 정리 방식에 영향을 줍니다.',questions:['언젠가 볼 것 같아서 자료를 계속 저장한다.','공부를 시작하기 전 정리부터 하다 시간이 지난다.','책상 위가 복잡하면 집중이 잘 안 된다.','자료를 버리면 뒤처질 것 같은 불안이 있다.'],results:{high:{title:'학업 · 정보 과잉형',text:'배우고 싶은 마음이 크지만 자료가 많아져 시작이 어려워지는 성향입니다.',guide:['자료는 지금 공부/나중에 참고/삭제 후보로만 나누세요.','책상 위에는 오늘 볼 자료 1개만 두세요.','디지털 파일은 날짜보다 과목명+목적으로 저장하세요.']},low:{title:'학업 · 집중 환경형',text:'공부 성향은 안정적이지만 환경이 흐트러지면 집중력이 영향을 받을 수 있습니다.',guide:['공부 전 정리는 3분으로 제한하세요.','필기구와 노트 위치를 고정하세요.','완벽한 책상보다 바로 시작 가능한 책상을 목표로 하세요.']}}},
+  achieve:{no:'05',title:'성취',subtitle:'목표와 완벽주의가 정리를 막는 유형',desc:'성공, 목표, 자기효능감, 완벽주의가 공간 관리에 영향을 줍니다.',questions:['큰 목표를 세우지만 정리는 자주 뒤로 밀린다.','완벽하게 바꾸고 싶어 시작이 늦어진다.','성과와 관련 없는 정리는 가치가 낮게 느껴진다.','작은 변화보다 한 번에 크게 바꾸고 싶다.'],results:{high:{title:'성취 · 완벽 지연형',text:'더 잘하고 싶은 마음이 커서 오히려 시작이 늦어지는 성향입니다.',guide:['전체 정리가 아니라 한 칸 완료를 목표로 하세요.','결과보다 시작 횟수를 기록하세요.','15분 안에 끝나는 작은 미션만 정하세요.']},low:{title:'성취 · 실행 유지형',text:'목표를 행동으로 옮기기 쉬운 편이지만 유지 시스템이 필요합니다.',guide:['완료한 공간을 사진으로 기록하세요.','주 1회 10분 점검 루틴을 만드세요.','새 물건이 들어오면 하나를 내보내는 규칙을 적용하세요.']}}}
 };
-
-let index = 0;
-let answers = [];
-
-const $ = (s) => document.querySelector(s);
-const startState = $('#test-start');
-const questionState = $('#test-question');
-const resultState = $('#test-result');
-
-function showState(el){document.querySelectorAll('.test-state').forEach(x=>x.classList.remove('active')); el.classList.add('active');}
-function renderQuestion(){
-  const q = questions[index];
-  $('#question-count').textContent = `${index+1} / ${questions.length}`;
-  $('#question-domain').textContent = q.domain;
-  $('#question-kicker').textContent = q.en;
-  $('#question-text').textContent = q.text;
-  $('#progress-fill').style.width = `${((index+1)/questions.length)*100}%`;
-  const wrap = $('#answer-grid'); wrap.innerHTML='';
-  choices.forEach(c=>{
-    const b=document.createElement('button'); b.className='answer-btn'; b.type='button'; b.textContent=c.label;
-    b.addEventListener('click',()=>selectAnswer(q.key,c.value)); wrap.appendChild(b);
-  });
-  $('#prev-question').style.visibility = index === 0 ? 'hidden':'visible';
-}
-function selectAnswer(key,value){answers[index]={key,value}; if(index<questions.length-1){index++;renderQuestion();}else{showResult();}}
-function showResult(){
-  const scores={perfection:0,overload:0,attachment:0,security:0,emotion:0};
-  answers.forEach(a=>{if(a) scores[a.key]+=a.value});
-  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
-  const r=results[top];
-  $('#result-type').textContent=r.type; $('#result-title').textContent=r.title; $('#result-desc').textContent=r.desc; $('#result-guide').textContent=r.guide;
-  showState(resultState);
-}
-$('#start-test').addEventListener('click',()=>{index=0;answers=[];renderQuestion();showState(questionState)});
-$('#restart-test').addEventListener('click',()=>{index=0;answers=[];showState(startState)});
-$('#prev-question').addEventListener('click',()=>{if(index>0){index--;renderQuestion();}});
-
-const menuBtn=$('.menu-btn'), nav=$('#site-nav');
-menuBtn.addEventListener('click',()=>{const open=nav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(open));});
-nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');menuBtn.setAttribute('aria-expanded','false')}));
-
-const io=new IntersectionObserver((entries)=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-window.addEventListener('scroll',()=>document.querySelector('.site-header').classList.toggle('scrolled',window.scrollY>12));
-$('#year').textContent=new Date().getFullYear();
-
-$('#share-demo').addEventListener('click',()=>{const t=$('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)});
+const grid=document.getElementById('categoryGrid'),quiz=document.getElementById('quiz'),result=document.getElementById('result'),form=document.getElementById('quizForm');
+let currentKey='love';
+function makeCards(){grid.innerHTML=Object.entries(tests).map(([key,t])=>`<button class="cat" data-key="${key}"><span class="no">${t.no}</span><h3>${t.title}</h3><p>${t.subtitle}</p></button>`).join('');grid.querySelectorAll('.cat').forEach(btn=>btn.addEventListener('click',()=>startTest(btn.dataset.key)))}
+function startTest(key){currentKey=key;const t=tests[key];document.getElementById('quizNo').textContent=`${t.no} ${t.title}`;document.getElementById('quizTitle').textContent=`${t.title} 심리테스트`;document.getElementById('quizDesc').textContent=t.desc;form.innerHTML=t.questions.map((q,i)=>`<div class="question"><strong>${i+1}. ${q}</strong><div class="scale">${[1,2,3,4].map(v=>`<label><input type="radio" name="q${i}" value="${v}" ${v===2?'checked':''}>${['아니다','조금','그렇다','매우'][v-1]}</label>`).join('')}</div></div>`).join('');grid.hidden=true;result.hidden=true;quiz.hidden=false;quiz.scrollIntoView({behavior:'smooth',block:'start'})}
+function showResult(){const t=tests[currentKey];let score=0;t.questions.forEach((_,i)=>{score+=Number(new FormData(form).get(`q${i}`)||0)});const data=score>=10?t.results.high:t.results.low;document.getElementById('resultNo').textContent=`${t.no} ${t.title} 결과`;document.getElementById('resultTitle').textContent=data.title;document.getElementById('resultText').textContent=data.text;document.getElementById('guideList').innerHTML=data.guide.map(x=>`<li>${x}</li>`).join('');quiz.hidden=true;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'start'})}
+function resetChoice(){quiz.hidden=true;result.hidden=true;grid.hidden=false;document.getElementById('tests').scrollIntoView({behavior:'smooth',block:'start'})}
+document.getElementById('resultBtn').addEventListener('click',showResult);document.getElementById('backBtn').addEventListener('click',resetChoice);document.getElementById('anotherBtn').addEventListener('click',resetChoice);document.getElementById('retryBtn').addEventListener('click',()=>startTest(currentKey));makeCards();
