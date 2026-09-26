@@ -17,8 +17,72 @@
     <section id="selectView" class="view active">
       <p class="kicker">TEST</p>
       <h1 class="page-title">지금 정리하고 싶은<br>관계와 공간을 선택하세요.</h1>
-      <p class="lead small">각 테스트는 약 3분 소요됩니다.</p>
+      <p class="lead small">정리 성향을 보거나, 지금 바로 비울 물건을 선택할 수 있어요.</p>
       <div id="categoryGrid" class="simple-card-grid"></div>
+    </section>
+
+    <section id="disposeView" class="view">
+      <div class="quiz-status">
+        <button id="backFromDispose" class="icon-btn" type="button">←</button>
+        <div>
+          <b>바로 비우기</b>
+          <span>버릴지, 수거할지, 분리배출할지 확인하세요.</span>
+        </div>
+      </div>
+
+      <section class="dispose-hero">
+        <p class="small-label">CLEAR NOW</p>
+        <h1>이 물건,<br>어떻게 비울까요?</h1>
+        <p>버리기 전에 무료수거, 대형폐기물 신고, 기부, 분리배출 가능성을 먼저 확인해보세요.</p>
+      </section>
+
+      <div class="dispose-grid">
+        <article class="dispose-card">
+          <span>01</span>
+          <h2>소형가전</h2>
+          <p>전기밥솥, 선풍기, 청소기, 노트북, 프린터 등은 5개 이상 모이면 무료수거 가능 여부를 먼저 확인하세요.</p>
+          <div class="action-buttons">
+            <a class="primary-cta" href="https://www.15990903.or.kr/portal/main/main.do" target="_blank" rel="noopener">수거 예약</a>
+            <a class="secondary-cta" href="tel:15990903">1599-0903</a>
+          </div>
+        </article>
+
+        <article class="dispose-card">
+          <span>02</span>
+          <h2>대형폐기물</h2>
+          <p>책상, 의자, 침대, 매트리스, 장롱처럼 큰 물건은 거주 지역의 시청·구청 대형폐기물 신고가 필요해요.</p>
+          <div class="action-buttons">
+            <a class="primary-cta" href="https://www.google.com/search?q=%EB%8C%80%ED%98%95%ED%8F%90%EA%B8%B0%EB%AC%BC+%EC%8B%A0%EA%B3%A0" target="_blank" rel="noopener">지역 신고 찾기</a>
+          </div>
+        </article>
+
+        <article class="dispose-card">
+          <span>03</span>
+          <h2>의류·신발</h2>
+          <p>깨끗한 옷과 신발은 의류수거함이나 기부를 먼저 고려하고, 오염·훼손이 심하면 종량제 배출을 확인하세요.</p>
+          <div class="action-buttons">
+            <a class="primary-cta" href="https://www.google.com/search?q=%EB%82%B4+%EC%A3%BC%EB%B3%80+%EC%9D%98%EB%A5%98%EC%88%98%EA%B1%B0%ED%95%A8" target="_blank" rel="noopener">수거함 찾기</a>
+          </div>
+        </article>
+
+        <article class="dispose-card">
+          <span>04</span>
+          <h2>책·종이</h2>
+          <p>책, 노트, 종이류는 비닐·스프링·테이프를 분리한 뒤 배출하고, 상태가 좋으면 중고 판매나 기부도 좋아요.</p>
+          <div class="action-buttons">
+            <a class="primary-cta" href="https://www.google.com/search?q=%EC%B1%85+%EA%B8%B0%EB%B6%80+%EB%B0%A9%EB%B2%95" target="_blank" rel="noopener">기부 방법 찾기</a>
+          </div>
+        </article>
+
+        <article class="dispose-card">
+          <span>05</span>
+          <h2>재활용</h2>
+          <p>플라스틱, 캔, 병, 종이팩은 내용물을 비우고 재질별로 분리하세요. 오염이 심하면 재활용이 어려울 수 있어요.</p>
+          <div class="action-buttons">
+            <a class="primary-cta" href="https://www.google.com/search?q=%EB%82%B4+%EC%86%90%EC%95%88%EC%9D%98+%EB%B6%84%EB%A6%AC%EB%B0%B0%EC%B6%9C" target="_blank" rel="noopener">분리배출 확인</a>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section id="quizView" class="view">
@@ -53,17 +117,6 @@
         <span>오늘의 미션</span>
         <strong id="missionText"></strong>
       </section>
-
-      <section class="action-card small-electronics-card">
-        <p class="small-label">정리 후 행동</p>
-        <h2>소형가전은 버리기 전에<br>무료수거 가능 여부를 확인하세요.</h2>
-        <p>전기밥솥, 선풍기, 청소기, 노트북, 프린터 같은 소형가전은 5개 이상 모이면 폐가전 무상방문수거로 연결할 수 있어요.</p>
-        <div class="action-buttons">
-          <a class="primary-cta" href="https://www.15990903.or.kr/portal/main/main.do" target="_blank" rel="noopener">소형가전 수거 예약</a>
-          <a class="secondary-cta" href="tel:15990903">1599-0903 문의</a>
-        </div>
-      </section>
-
       <button id="shareResult" class="primary-cta button full" type="button">결과 공유하기</button>
       <details class="detail-toggle">
         <summary>결과 상세 보기</summary>
