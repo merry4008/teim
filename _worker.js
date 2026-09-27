@@ -16,15 +16,65 @@ export default {
     }
 
     const response = await env.ASSETS.fetch(request);
+
+    if (url.pathname.endsWith("/script.js") || url.pathname === "/script.js") {
+      return rewriteScript(response);
+    }
+
     return rewriteHtmlNavigation(response, url.pathname);
   },
 };
+
+function rewriteScript(response) {
+  const type = response.headers.get("content-type") || "";
+  if (!type.includes("javascript") && !type.includes("text/plain")) return response;
+
+  return response.text().then((js) => {
+    let rewritten = js
+      .replace(
+        /<div class=\\"mission-action\\"><span>\$\{m\.tag\}<\/span><strong>\$\{m\.action\}<\/strong><\/div>/g,
+        '<a class=\\"mission-action mission-record-link\\" href=\\"challenge.html\\"><span>${m.tag}</span><strong>${m.action}</strong></a>'
+      )
+      .replace(
+        /<div class=\\"mission-action\\"><span>기본 정리<\/span><strong>눈에 가장 먼저 들어오는 물건 5개만 제자리로 돌려놓아 보세요\.<\/strong><\/div>/g,
+        '<a class=\\"mission-action mission-record-link\\" href=\\"challenge.html\\"><span>기록</span><strong>눈에 가장 먼저 들어오는 물건 5개만 제자리로 돌려놓아 보세요.</strong></a>'
+      );
+
+    const headers = new Headers(response.headers);
+    headers.set("content-type", "application/javascript; charset=utf-8");
+    return new Response(rewritten, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  });
+}
 
 function rewriteHtmlNavigation(response, pathname) {
   const type = response.headers.get("content-type") || "";
   if (!type.includes("text/html")) return response;
 
   return response.text().then((html) => {
+    let pageHtml = html;
+
+    pageHtml = pageHtml.replace(/<title>트임 \| 지금해냄<\/title>/g, "<title>트임 | 공간비움</title>");
+    pageHtml = pageHtml.replace(/<title>트임 \| 바로시작<\/title>/g, "<title>트임 | 트임타임</title>");
+    pageHtml = pageHtml.replace(/<title>트임 \| 정리 챌린지<\/title>/g, "<title>트임 | 트임기록</title>");
+    pageHtml = pageHtml.replace(/<h1>바로 해냄<\/h1>/g, "<h1>트임타임</h1>");
+    pageHtml = pageHtml.replace(/<h1>14일 정리 챌린지<\/h1>/g, "<h1>트임기록</h1>");
+    pageHtml = pageHtml.replace(/14 DAYS CHALLENGE/g, "14 DAYS RECORD");
+    pageHtml = pageHtml.replace(/챌린지 초기화/g, "기록 초기화");
+    pageHtml = pageHtml.replace(/챌린지 인증 사진/g, "트임기록 인증 사진");
+    pageHtml = pageHtml.replace(/챌린지/g, "트임기록");
+    pageHtml = pageHtml.replace(/바로시작/g, "트임타임");
+    pageHtml = pageHtml.replace(/지금해냄/g, "공간비움");
+
+    pageHtml = pageHtml.replace(
+      /<a class="service-item" href="action\.html">((?:(?!<\/a>).)*<span>집중음악<\/span>(?:(?!<\/a>).)*)<\/a>/gs,
+      '<a class="service-item" href="action.html#musicSection">$1</a>'
+    );
+    pageHtml = pageHtml.replace(/href="action\.html">바로해냄 열기/g, 'href="action.html">트임타임 열기');
+
     const active = pathname.includes("test.html")
       ? "test"
       : pathname.includes("space.html")
@@ -40,11 +90,18 @@ function rewriteHtmlNavigation(response, pathname) {
     const item = (key, href, label) =>
       `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${label}</a>`;
 
-    const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "챌린지")}${item("action", "action.html", "바로시작")}${item("program", "program.html", "문의")}</nav>`;
+    const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "트임기록")}${item("action", "action.html", "트임타임")}${item("program", "program.html", "문의")}</nav>`;
 
-    const rewritten = html.includes('class="bottom-nav"')
-      ? html.replace(/<nav class="bottom-nav">[\s\S]*?<\/nav>/, nav)
-      : html.replace("</body>", `${nav}</body>`);
+    if (!pageHtml.includes("mission-record-link-style")) {
+      pageHtml = pageHtml.replace(
+        "</head>",
+        `<style id="mission-record-link-style">.mission-record-link{background:#FFC928!important;color:#183B6B!important;text-decoration:none}.mission-record-link span{background:#fff!important;color:#183B6B!important}.mission-record-link strong{color:#183B6B!important}</style></head>`
+      );
+    }
+
+    const rewritten = pageHtml.includes('class="bottom-nav"')
+      ? pageHtml.replace(/<nav class="bottom-nav">[\s\S]*?<\/nav>/, nav)
+      : pageHtml.replace("</body>", `${nav}</body>`);
 
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
@@ -114,10 +171,10 @@ async function handleWeatherMission(request) {
       message: "날씨 데이터를 불러오지 못했습니다.",
       weather: null,
       mission: {
-        title: "오늘의 기본 트임 미션",
-        emotion: "날씨를 불러오지 못했지만, 오늘도 작게 시작할 수 있어요.",
-        action: "눈에 가장 먼저 들어오는 물건 5개만 제자리로 돌려놓아 보세요.",
-        tag: "기본 미션",
+        title: "오늘의 기본 트임 기록",
+        emotion: "날씨를 불러오지 못했지만, 오늘도 작게 기록할 수 있어요.",
+        action: "눈에 가장 먼저 들어오는 물건 5개만 제자리로 돌려놓고 사진으로 기록해보세요.",
+        tag: "기록",
       },
     });
   }
@@ -146,8 +203,8 @@ function createTeimMission(weather) {
     return {
       title: "습기가 쌓이는 날이에요",
       emotion: "오늘처럼 습하고 무거운 날에는 몸도 마음도 쉽게 처질 수 있어요. 큰 정리보다 공기를 바꾸는 작은 행동부터 시작해도 충분합니다.",
-      action: "신발장이나 옷장 문을 열고 10분만 환기한 뒤, 눅눅하거나 냄새나는 물건 1개만 따로 빼두세요.",
-      tag: "옷장·신발장 점검",
+      action: "신발장이나 옷장 문을 열고 10분만 환기한 뒤, 눅눅하거나 냄새나는 물건 1개를 사진으로 기록해보세요.",
+      tag: "기록",
     };
   }
 
@@ -155,8 +212,8 @@ function createTeimMission(weather) {
     return {
       title: "비 오는 날엔 작은 구역부터",
       emotion: "비 오는 날에는 움직임이 줄고 마음도 조금 가라앉을 수 있어요. 오늘은 넓은 공간보다 손이 닿는 작은 곳이 잘 맞습니다.",
-      action: "침대 옆, 책상 위, 식탁 위 중 한 곳만 골라 눈에 보이는 물건 5개를 제자리로 돌려놓으세요.",
-      tag: "작은 공간 정리",
+      action: "침대 옆, 책상 위, 식탁 위 중 한 곳만 골라 정리하고 사진으로 기록해보세요.",
+      tag: "기록",
     };
   }
 
@@ -164,8 +221,8 @@ function createTeimMission(weather) {
     return {
       title: "더운 날엔 가볍게만",
       emotion: "더운 날에는 정리를 시작하기도 전에 피로감이 먼저 올 수 있어요. 오래 걸리는 정리보다 땀이 나지 않는 정리가 좋습니다.",
-      action: "냉장고 문 쪽이나 책상 서랍처럼 오래 움직이지 않아도 되는 공간 하나만 정리하세요.",
-      tag: "가벼운 정리",
+      action: "냉장고 문 쪽이나 책상 서랍처럼 오래 움직이지 않아도 되는 공간 하나를 사진으로 기록해보세요.",
+      tag: "기록",
     };
   }
 
@@ -173,8 +230,8 @@ function createTeimMission(weather) {
     return {
       title: "추운 날엔 앉아서 정리해요",
       emotion: "추운 날에는 몸이 움츠러들면서 정리 의욕도 같이 줄어들 수 있어요. 따뜻한 자리에서 할 수 있는 정리가 좋습니다.",
-      action: "가방 속 물건, 영수증, 종이류처럼 앉아서 할 수 있는 물건 10개만 분류해보세요.",
-      tag: "종이·가방 정리",
+      action: "가방 속 물건, 영수증, 종이류를 분류하고 사진으로 기록해보세요.",
+      tag: "기록",
     };
   }
 
@@ -182,16 +239,16 @@ function createTeimMission(weather) {
     return {
       title: "마음이 산만한 날엔 제자리부터",
       emotion: "바람이 강한 날에는 괜히 마음도 산만하게 느껴질 수 있어요. 새로운 정리보다 흐트러진 것을 다시 잡아주는 정리가 좋습니다.",
-      action: "현관 주변의 신발, 우산, 가방 중 하나만 골라 제자리를 정해주세요.",
-      tag: "현관 정리",
+      action: "현관 주변의 신발, 우산, 가방 중 하나를 정리하고 사진으로 기록해보세요.",
+      tag: "기록",
     };
   }
 
   return {
-    title: "작은 기준을 만들기 좋은 날",
-    emotion: "오늘은 무리하지 않고 작은 루틴을 만들기 좋은 날이에요. 완벽하게 치우기보다 다시 어지러워지지 않는 기준 하나를 만드는 게 좋습니다.",
-    action: "가장 자주 쓰는 물건 3개의 자리를 정하고, 오늘 하루만 그 자리에 다시 놓아보세요.",
-    tag: "루틴 만들기",
+    title: "작은 기록을 만들기 좋은 날",
+    emotion: "오늘은 무리하지 않고 작은 기록을 만들기 좋은 날이에요. 완벽하게 치우기보다 오늘의 변화를 남겨보는 게 좋습니다.",
+    action: "가장 자주 쓰는 물건 3개의 자리를 정하고, 정리한 모습을 사진으로 기록해보세요.",
+    tag: "기록",
   };
 }
 
