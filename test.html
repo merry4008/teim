@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f6f1ea" />
-  <meta name="description" content="트임 정리방해요인 테스트 — 한 화면에 한 문항씩 진행하는 사람 중심 정리 테스트." />
-  <title>트임 | 정리방해요인 테스트</title>
+  <meta name="description" content="트임 성향테스트 — 한 화면에 한 문항씩 진행하는 사람 중심 정리 테스트." />
+  <title>트임 | 성향테스트</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="test">
@@ -17,8 +17,8 @@
   <main class="screen test-screen">
     <section id="selectView" class="view active">
       <p class="kicker">TEST</p>
-      <h1 class="page-title">지금 정리하고 싶은<br>관계와 공간을 선택하세요.</h1>
-      <p class="lead small">각 테스트는 약 3분 소요됩니다.</p>
+      <h1 class="page-title">요즘 어디에서<br>가장 답답한가요?</h1>
+      <p class="lead small">가볍게 답하면 오늘의 10분 비움을 찾아드려요.</p>
       <div id="categoryGrid" class="simple-card-grid"></div>
     </section>
 
@@ -27,7 +27,7 @@
         <button id="backToSelect" class="icon-btn" type="button">←</button>
         <div>
           <b id="progressText">1 / 24</b>
-          <span>예상 소요시간 약 3분</span>
+          <span>편하게 골라주세요</span>
         </div>
       </div>
       <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
@@ -58,7 +58,7 @@
         <strong id="missionText"></strong>
       </section>
 
-      <button id="shareResult" class="primary-cta button full" type="button">결과 공유하기</button>
+      <button id="startMission" class="primary-cta button full" type="button">10분 비우기 시작</button><div id="timerBox" class="timer-box" hidden><b id="timerText">10:00</b><p id="timerMission"></p><button id="completeMission" class="secondary-cta full" type="button">비우기 완료</button></div><section class="friends-card"><span>지금 마음 비우는 친구들</span><strong id="friendCount">27명</strong><small>함께 작은 비움을 시작하고 있어요.</small></section>
 
       <details class="detail-toggle">
         <summary>결과 상세 보기</summary>
@@ -76,7 +76,7 @@
 
   <nav class="bottom-nav">
     <a href="index.html">홈</a>
-    <a class="active" href="test.html">테스트</a>
+    <a class="active" href="test.html">성향테스트</a>
     <a href="share.html">자랑</a>
     <a href="program.html">문의</a>
   </nav>
