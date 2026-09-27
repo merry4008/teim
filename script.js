@@ -1,9 +1,10 @@
 const categories={
-  self:{no:'01',title:'나',subtitle:'혼자 쓰는 공간을 정리하고 싶을 때'},
-  couple:{no:'02',title:'연인·부부',subtitle:'함께 사는 공간의 기준이 다를 때'},
-  family:{no:'03',title:'가족',subtitle:'가족 물건과 공용공간이 부담될 때'},
-  child:{no:'04',title:'아이',subtitle:'아이 물건이 계속 늘어날 때'},
-  team:{no:'05',title:'직장·팀',subtitle:'일하는 공간이 자꾸 무너질 때'}
+ love:{no:'01',title:'연애',subtitle:'관계 비움 · 나는 연애에서 무엇을 못 놓을까?'},
+ work:{no:'02',title:'직장',subtitle:'일상 비움 · 요즘 일이 나를 얼마나 채우고 있을까?'},
+ family:{no:'03',title:'부모·가족',subtitle:'관계 비움 · 가족 앞에서 나는 어떤 사람이 될까?'},
+ study:{no:'04',title:'학업',subtitle:'행동 비움 · 나는 왜 해야 할 일을 자꾸 미룰까?'},
+ achieve:{no:'05',title:'성취',subtitle:'마음 비움 · 나는 왜 쉬어도 쉰 것 같지 않을까?'},
+ all:{no:'06',title:'종합',subtitle:'나에게 필요한 비움 · 나는 지금 어디에서 가장 답답할까?'}
 };
 
 const factors={
@@ -11,30 +12,18 @@ const factors={
 };
 
 const questions=[
-  {factor:'E',text:'물건을 보면 사람, 시기, 기억이 떠올라 쉽게 정리하지 못한다.'},
-  {factor:'E',text:'지금 쓰지 않는 물건도 버리면 그때의 마음까지 사라질 것 같다.'},
-  {factor:'E',text:'선물, 사진, 작품, 기념품은 필요 없어도 남겨두는 편이다.'},
-  {factor:'E',text:'물건을 버리는 일이 누군가에게 미안한 일처럼 느껴질 때가 있다.'},
-  {factor:'D',text:'버릴지 말지 판단하다가 지쳐서 그대로 둔 적이 많다.'},
-  {factor:'D',text:'정리하다 보면 “일단 보류” 물건이 계속 늘어난다.'},
-  {factor:'D',text:'확신이 들지 않으면 결정을 다음으로 미루는 편이다.'},
-  {factor:'D',text:'정리 기준을 정하려다가 오히려 선택지가 많아져 멈춘다.'},
-  {factor:'P',text:'정리를 시작하면 한 번에 완벽하게 끝내야 마음이 편하다.'},
-  {factor:'P',text:'제대로 할 시간이 없으면 아예 시작하지 않는 편이다.'},
-  {factor:'P',text:'정리용품이나 계획이 준비되지 않으면 시작하기 어렵다.'},
-  {factor:'P',text:'정리 중간에 더 어질러지는 과정이 싫어서 시작이 부담스럽다.'},
-  {factor:'L',text:'정리해야 한다는 건 알지만 몸이 너무 지쳐 움직이기 어렵다.'},
-  {factor:'L',text:'하루 일과가 끝나면 집 상태를 봐도 손댈 힘이 없다.'},
-  {factor:'L',text:'정리를 못 하는 가장 큰 이유는 기준보다 에너지 부족에 가깝다.'},
-  {factor:'L',text:'한 번 치워도 유지할 체력이 없어서 다시 무너진다.'},
-  {factor:'C',text:'물건마다 정확한 자리가 정해져 있지 않다.'},
-  {factor:'C',text:'같은 종류의 물건이 여러 곳에 흩어져 있다.'},
-  {factor:'C',text:'수납공간은 있는데 어떻게 나눠야 할지 모르겠다.'},
-  {factor:'C',text:'치워도 며칠 지나면 다시 원래대로 돌아간다.'},
-  {factor:'R',text:'함께 쓰는 사람이 정리하지 않아 스트레스를 받는다.'},
-  {factor:'R',text:'버리자고 말하면 갈등이 생길까 봐 그냥 둔다.'},
-  {factor:'R',text:'정리에 대해 지적받으면 반발심이 들거나 위축된다.'},
-  {factor:'R',text:'내 방식과 상대방의 방식이 달라 정리가 오래 유지되지 않는다.'}
+ {factor:'R',text:'요즘 사람과의 관계 때문에 마음이 복잡한 날이 많다.'},
+ {factor:'R',text:'누군가와 관련된 물건이나 기억을 쉽게 놓지 못한다.'},
+ {factor:'L',text:'일이나 해야 할 일이 많아 내 공간까지 신경 쓸 여유가 없다.'},
+ {factor:'L',text:'자주 머무는 공간을 보면 피곤하다는 생각부터 든다.'},
+ {factor:'D',text:'정리해야 한다고 생각하면서도 계속 다음으로 미룬다.'},
+ {factor:'D',text:'어디부터 손대야 할지 몰라 시작하지 못할 때가 많다.'},
+ {factor:'P',text:'쉬고 있어도 해야 할 일이 떠올라 마음이 편하지 않다.'},
+ {factor:'P',text:'다른 사람과 비교하며 스스로를 압박하는 편이다.'},
+ {factor:'C',text:'집에서 가장 신경 쓰이는 공간이 분명히 있다.'},
+ {factor:'C',text:'회사나 학교에서 내 주변이 복잡하면 집중하기 어렵다.'},
+ {factor:'E',text:'물건을 보면 기억이나 감정이 떠올라 쉽게 비우지 못한다.'},
+ {factor:'E',text:'지금 쓰지 않아도 언젠가 필요할 것 같아 남겨두는 편이다.'}
 ];
 
 const typeMap={
@@ -85,12 +74,14 @@ function initTest(){
   const selectView=$('#selectView'),quizView=$('#quizView'),resultView=$('#resultView');
   const grid=$('#categoryGrid');
   grid.innerHTML=Object.entries(categories).map(([key,c])=>`<button class="select-card" data-category="${key}" type="button"><span>${c.no}</span><b>${c.title}</b><p>${c.subtitle}</p></button>`).join('');
+  const direct=new URLSearchParams(location.search).get('type'); if(direct&&categories[direct]){setTimeout(()=>grid.querySelector(`[data-category="${direct}"]`)?.click(),0);}
   grid.addEventListener('click',e=>{
     const btn=e.target.closest('[data-category]');
     if(!btn)return;
     state.category=btn.dataset.category;
     state.index=0;
     state.answers=Array(questions.length).fill(null);
+    localStorage.setItem('teimTestCategory',state.category);
     show('quiz');
     renderQuestion();
   });
@@ -145,4 +136,12 @@ function initTest(){
     $('#scoreBars').innerHTML=ranked.map(f=>`<div class="score-row"><b>${f.key} ${factors[f.key].name}</b><div class="bar-track"><div class="bar-fill" style="width:${f.score}%"></div></div><span>${f.score}</span></div>`).join('');
     $('#guideList').innerHTML=type.guide.map(g=>`<li>${g}</li>`).join('');
   }
+}
+
+if(page==='test'){
+ const start=document.querySelector('#startMission'), box=document.querySelector('#timerBox'), timer=document.querySelector('#timerText'), tm=document.querySelector('#timerMission'), done=document.querySelector('#completeMission');
+ let remain=600, tick;
+ if(start) start.addEventListener('click',()=>{const mission=document.querySelector('#missionText')?.textContent||'눈에 가장 거슬리는 한 곳에서 필요 없는 물건 5개 치우기';tm.textContent=mission;box.hidden=false;start.hidden=true;tick=setInterval(()=>{remain--;timer.textContent=String(Math.floor(remain/60)).padStart(2,'0')+':'+String(remain%60).padStart(2,'0');if(remain<=0){clearInterval(tick);done.click()}},1000)});
+ if(done) done.addEventListener('click',()=>{clearInterval(tick);const mission=tm.textContent;const rec=JSON.parse(localStorage.getItem('teimRecords')||'[]');rec.unshift({date:new Date().toISOString(),category:localStorage.getItem('teimTestCategory')||'종합',mission,seconds:600-remain,complete:true});localStorage.setItem('teimRecords',JSON.stringify(rec));box.innerHTML='<div class="completion-card"><b>오늘도 하나 트였습니다.</b><p>'+mission+'</p><small>트임기록에 저장했어요.</small></div>'});
+ const fc=document.querySelector('#friendCount');if(fc){const base=24+(new Date().getHours()%9);fc.textContent=base+'명';}
 }
