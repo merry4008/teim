@@ -15,9 +15,46 @@ export default {
       return env.ASSETS.fetch(new Request(url.toString(), request));
     }
 
-    return env.ASSETS.fetch(request);
+    const response = await env.ASSETS.fetch(request);
+    return rewriteHtmlNavigation(response, url.pathname);
   },
 };
+
+function rewriteHtmlNavigation(response, pathname) {
+  const type = response.headers.get("content-type") || "";
+  if (!type.includes("text/html")) return response;
+
+  return response.text().then((html) => {
+    const active = pathname.includes("test.html")
+      ? "test"
+      : pathname.includes("space.html")
+      ? "space"
+      : pathname.includes("challenge.html")
+      ? "challenge"
+      : pathname.includes("action.html")
+      ? "action"
+      : pathname.includes("program.html")
+      ? "program"
+      : "home";
+
+    const item = (key, href, label) =>
+      `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${label}</a>`;
+
+    const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "챌린지")}${item("action", "action.html", "바로시작")}${item("program", "program.html", "문의")}</nav>`;
+
+    const rewritten = html.includes('class="bottom-nav"')
+      ? html.replace(/<nav class="bottom-nav">[\s\S]*?<\/nav>/, nav)
+      : html.replace("</body>", `${nav}</body>`);
+
+    const headers = new Headers(response.headers);
+    headers.set("content-type", "text/html; charset=utf-8");
+    return new Response(rewritten, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  });
+}
 
 async function handleWeatherMission(request) {
   const url = new URL(request.url);
