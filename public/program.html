@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>트임 | 트임 AI</title>
+  <link rel="stylesheet" href="styles.css?v=teim-ai-1" />
+  <style>
+    .ai-screen{padding-top:20px}.ai-hero{position:relative;overflow:hidden;background:#2563EB;color:#fff;border-radius:34px;padding:28px 22px 30px;box-shadow:0 18px 44px rgba(37,99,235,.22)}.ai-hero:after{content:'';position:absolute;width:150px;height:150px;border-radius:50%;right:-34px;top:-48px;background:#FFC928}.ai-hero>*{position:relative;z-index:1}.ai-hero .small-label{color:#FFC928}.ai-hero h1{margin:0;font-size:36px;line-height:1.08;letter-spacing:-.075em;color:#fff}.ai-hero p{margin:12px 0 0;color:rgba(255,255,255,.86);font-size:15px;max-width:520px}.ai-card{margin-top:14px;background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:28px;padding:20px 18px;box-shadow:0 14px 34px rgba(37,99,235,.08)}.ai-card h2{margin:0;color:#183B6B;font-size:22px;letter-spacing:-.055em}.ai-card>p{margin:6px 0 0;color:#64748b;font-size:13px}.ai-label{display:block;margin-top:20px;color:#183B6B;font-weight:1000;font-size:14px}.ai-options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:10px}.ai-option{border:1px solid #dbe7ff;background:#fff;color:#183B6B;border-radius:18px;padding:14px 11px;text-align:left;font-size:14px;font-weight:900;cursor:pointer}.ai-option.active{border-color:#2563EB;background:#EEF4FF;color:#2563EB;box-shadow:inset 0 0 0 1px #2563EB}.ai-time-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}.ai-time{border:1px solid #dbe7ff;background:#fff;color:#183B6B;border-radius:18px;padding:13px 8px;font-weight:1000;cursor:pointer}.ai-time.active{border-color:#2563EB;background:#2563EB;color:#fff}.ai-generate{width:100%;margin-top:20px;border:0;border-radius:999px;background:#2563EB;color:#fff;font-size:15px;font-weight:1000;padding:15px 18px;cursor:pointer;box-shadow:0 12px 25px rgba(37,99,235,.2)}.ai-generate:disabled{opacity:.55;cursor:wait}.ai-context{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 12px;border-radius:16px;background:#F8FAFF;color:#64748b;font-size:12px}.ai-result{margin-top:14px;position:relative;overflow:hidden;background:#FFC928;color:#183B6B;border-radius:30px;padding:23px 20px;box-shadow:0 16px 38px rgba(255,201,40,.2)}.ai-result[hidden]{display:none}.ai-result .small-label{color:#2563EB}.ai-result h2{margin:4px 0 0;font-size:30px;line-height:1.12;letter-spacing:-.07em;color:#183B6B}.ai-target{display:inline-flex;margin-top:12px;border-radius:999px;background:#fff;color:#183B6B;font-size:12px;font-weight:1000;padding:7px 10px}.ai-action{margin-top:14px;background:#fff;border-radius:20px;padding:16px;color:#183B6B}.ai-action b{display:block;font-size:17px;letter-spacing:-.04em}.ai-action p{margin:7px 0 0;color:#475569;font-size:13px}.ai-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.ai-meta span{border-radius:999px;background:rgba(255,255,255,.65);padding:6px 9px;font-size:11px;font-weight:950}.ai-result-actions{display:flex;gap:8px;margin-top:17px}.ai-done,.ai-again{border:0;border-radius:999px;padding:13px 15px;font-weight:1000;cursor:pointer}.ai-done{background:#2563EB;color:#fff}.ai-again{background:#fff;color:#183B6B}.ai-done-state{padding:8px 0 2px}.ai-done-state .sun{font-size:28px}.ai-done-state h2{margin-top:5px}.ai-history{margin-top:14px;background:#fff;border:1px solid rgba(37,99,235,.12);border-radius:28px;padding:19px 18px}.ai-history-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.ai-history h2{margin:0;color:#183B6B;font-size:20px;letter-spacing:-.05em}.ai-history-head span{font-size:11px;color:#64748b}.ai-history-list{display:grid;gap:8px;margin-top:12px}.ai-history-item{display:grid;grid-template-columns:1fr auto;gap:8px;padding:13px;border-radius:18px;background:#F8FAFF}.ai-history-item b{color:#183B6B;font-size:13px}.ai-history-item p{grid-column:1/-1;margin:0;color:#64748b;font-size:12px}.ai-history-item span{color:#2563EB;font-size:11px;font-weight:950}.ai-empty{margin:0;color:#94a3b8;font-size:13px}.ai-privacy{margin:14px 2px 0;color:#94a3b8;font-size:11px;line-height:1.55}.ai-error{margin-top:12px;color:#b42318;font-size:12px;font-weight:800;display:none}@media(max-width:640px){.ai-hero{border-radius:28px;padding:24px 20px 26px}.ai-hero h1{font-size:31px}.ai-card,.ai-history{border-radius:25px}.ai-result{border-radius:26px}.ai-result h2{font-size:27px}.ai-option{font-size:13px}.ai-result-actions{flex-direction:column}.ai-done,.ai-again{width:100%}}
+  </style>
+</head>
+<body data-page="program">
+  <header class="topbar"><a href="index.html" aria-label="트임 홈" style="display:flex;align-items:center"><img src="/tuim_logo.png" alt="TEUM" style="display:block;height:34px;width:auto" /></a><a class="top-action" href="index.html">홈</a></header>
+  <main class="screen ai-screen">
+    <section class="ai-hero">
+      <p class="small-label">TEIM AI</p>
+      <h1>오늘의 나에게<br>딱 하나의 비움.</h1>
+      <p>지금 상태와 최근 트임 기록을 함께 보고, 오늘 바로 끝낼 수 있는 비움 하나만 골라드려요.</p>
+    </section>
+
+    <section class="ai-card">
+      <h2>오늘 나는 어떤가요?</h2>
+      <p>지금 가장 가까운 상태 하나만 골라주세요.</p>
+      <div class="ai-options" id="stateOptions">
+        <button class="ai-option" type="button" data-state="complex">🌀 머리가 복잡해요</button>
+        <button class="ai-option" type="button" data-state="tired">😮‍💨 몸이 지쳤어요</button>
+        <button class="ai-option" type="button" data-state="organize">🧺 뭔가 정리하고 싶어요</button>
+        <button class="ai-option" type="button" data-state="finish">✓ 그냥 하나 끝내고 싶어요</button>
+      </div>
+
+      <span class="ai-label">지금 쓸 수 있는 시간</span>
+      <div class="ai-time-options" id="timeOptions">
+        <button class="ai-time" type="button" data-minutes="3">3분</button>
+        <button class="ai-time" type="button" data-minutes="10">10분</button>
+        <button class="ai-time" type="button" data-minutes="20">20분</button>
+      </div>
+      <div class="ai-context" id="aiContext">최근 기록을 확인하고 있어요.</div>
+      <button class="ai-generate" id="generateMission" type="button">오늘의 비움 받기 →</button>
+      <div class="ai-error" id="aiError"></div>
+    </section>
+
+    <section class="ai-result" id="aiResult" hidden></section>
+
+    <section class="ai-history">
+      <div class="ai-history-head"><h2>최근 트임 AI 기록</h2><span>완료한 미션만 저장돼요</span></div>
+      <div class="ai-history-list" id="aiHistoryList"></div>
+      <p class="ai-privacy">최근 완료 기록은 현재 브라우저에 저장됩니다. AI 추천 요청에는 최근 기록의 미션명·분류·완료 시점만 전달합니다.</p>
+    </section>
+  </main>
+
+  <nav class="bottom-nav"><a data-nav="home" href="index.html">홈</a><a data-nav="test" href="test.html">마음비움</a><a data-nav="space" href="space.html">공간비움</a><a data-nav="challenge" href="challenge.html">트임기록</a><a data-nav="action" href="action.html">트임타임</a><a class="active" data-nav="program" href="program.html">트임 AI</a></nav>
+
+  <script>
+  (function(){
+    var state='', minutes=0, current=null;
+    var stateOptions=document.getElementById('stateOptions');
+    var timeOptions=document.getElementById('timeOptions');
+    var generate=document.getElementById('generateMission');
+    var result=document.getElementById('aiResult');
+    var historyList=document.getElementById('aiHistoryList');
+    var context=document.getElementById('aiContext');
+    var error=document.getElementById('aiError');
+    var historyKey='teimAiHistory';
+
+    function getHistory(){try{var v=JSON.parse(localStorage.getItem(historyKey)||'[]');return Array.isArray(v)?v:[]}catch(e){return []}}
+    function setHistory(v){localStorage.setItem(historyKey,JSON.stringify(v.slice(-30)))}
+    function challengeDone(){try{var c=JSON.parse(localStorage.getItem('teimChallenge14')||'{}');return Object.keys(c).filter(function(k){return c[k]&&c[k].photo}).length}catch(e){return 0}}
+    function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})}
+    function stateLabel(v){return {complex:'머리가 복잡해요',tired:'몸이 지쳤어요',organize:'뭔가 정리하고 싶어요',finish:'그냥 하나 끝내고 싶어요'}[v]||v}
+    function updateContext(){var h=getHistory();var c=challengeDone();context.textContent=h.length?('최근 트임 AI 완료 '+h.length+'개'+(c?' · 트임기록 '+c+'일':'')+'를 참고해요.'):c?('트임기록 '+c+'일을 참고해요.'): '아직 기록이 없어요. 오늘부터 취향을 배워갈게요.'}
+    function renderHistory(){var h=getHistory().slice().reverse().slice(0,5);if(!h.length){historyList.innerHTML='<p class="ai-empty">아직 완료한 AI 미션이 없어요.</p>';return}historyList.innerHTML=h.map(function(x){var d=x.completedAt?new Date(x.completedAt):null;var date=d&&!isNaN(d)?(d.getMonth()+1)+'/'+d.getDate():'';return '<article class="ai-history-item"><b>'+esc(x.title)+'</b><span>'+esc(date)+'</span><p>'+esc(x.action)+'</p></article>'}).join('')}
+    function renderResult(m){current=m;result.hidden=false;result.innerHTML='<p class="small-label">오늘은 이것 하나만 👀</p><h2>'+esc(m.title)+'</h2><span class="ai-target">'+esc(m.target)+'</span><div class="ai-action"><b>'+esc(m.action)+'</b><p>'+esc(m.reason)+'</p></div><div class="ai-meta"><span>약 '+esc(m.duration)+'분</span><span>'+esc(m.category)+'</span></div><div class="ai-result-actions"><button class="ai-done" type="button">✓ 이걸로 해냈어요</button><button class="ai-again" type="button">↻ 다른 비움 받기</button></div>';result.scrollIntoView({behavior:'smooth',block:'center'});result.querySelector('.ai-done').onclick=completeMission;result.querySelector('.ai-again').onclick=requestMission}
+    function completeMission(){if(!current)return;var h=getHistory();h.push({title:current.title,target:current.target,action:current.action,category:current.category,duration:current.duration,state:stateLabel(state),completedAt:new Date().toISOString()});setHistory(h);renderHistory();updateContext();result.innerHTML='<div class="ai-done-state"><div class="sun">☀️</div><p class="small-label">+1 TEIM</p><h2>오늘도 틈 하나 만들었어요.</h2><p>방금 완료한 비움은 다음 추천부터 참고할게요.</p><div class="ai-result-actions"><button class="ai-again" type="button">하나 더 받아보기</button></div></div>';result.querySelector('.ai-again').onclick=requestMission}
+    async function requestMission(){
+      if(!state||!minutes){error.style.display='block';error.textContent='오늘 상태와 가능한 시간을 먼저 골라주세요.';return}
+      error.style.display='none';generate.disabled=true;generate.textContent='트임 AI가 고르는 중…';
+      var h=getHistory().slice(-5).map(function(x){return {title:x.title,category:x.category,completedAt:x.completedAt}});
+      try{
+        var res=await fetch('/api/teim-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:stateLabel(state),minutes:minutes,history:h,challengeDone:challengeDone(),excludeTitle:current&&current.title?current.title:''})});
+        var data=await res.json();
+        if(!res.ok||!data.mission)throw new Error(data&&data.message?data.message:'추천을 만들지 못했어요.');
+        renderResult(data.mission);
+      }catch(e){error.style.display='block';error.textContent='잠시 추천을 만들지 못했어요. 다시 한 번 눌러주세요.'}
+      finally{generate.disabled=false;generate.textContent='오늘의 비움 받기 →'}
+    }
+    stateOptions.addEventListener('click',function(e){var b=e.target.closest('[data-state]');if(!b)return;state=b.dataset.state;stateOptions.querySelectorAll('button').forEach(function(x){x.classList.toggle('active',x===b)})});
+    timeOptions.addEventListener('click',function(e){var b=e.target.closest('[data-minutes]');if(!b)return;minutes=Number(b.dataset.minutes);timeOptions.querySelectorAll('button').forEach(function(x){x.classList.toggle('active',x===b)})});
+    generate.onclick=requestMission;
+    updateContext();renderHistory();
+  })();
+  </script>
+</body>
+</html>
