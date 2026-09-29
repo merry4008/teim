@@ -1,7 +1,7 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);
+    if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);\n    if (url.pathname === "/api/teim-ai") return handleTeimAi(request, env);
     if (url.pathname === "/teum-logo.png" || url.pathname === "/tuim%20logo.png" || decodeURIComponent(url.pathname) === "/tuim logo.png") {
       url.pathname = "/tuim_logo.png";
       return env.ASSETS.fetch(new Request(url.toString(), request));
@@ -49,7 +49,7 @@ function rewriteHtml(response, pathname) {
     if (active === "home") pageHtml = enhanceHome(pageHtml);
 
     const item = (key, href, label) => `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${label}</a>`;
-    const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "트임기록")}${item("action", "action.html", "트임타임")}${item("program", "program.html", "문의")}</nav>`;
+    const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "트임기록")}${item("action", "action.html", "트임타임")}${item("program", "program.html", "트임 AI")}</nav>`;
 
     if (!pageHtml.includes("mission-record-link-style")) {
       pageHtml = pageHtml.replace("</head>", `<style id="mission-record-link-style">.mission-record-link{background:#FFC928!important;color:#183B6B!important;text-decoration:none}.mission-record-link span{background:#fff!important;color:#183B6B!important}.mission-record-link strong{color:#183B6B!important}</style></head>`);
@@ -83,6 +83,153 @@ function enhanceHome(pageHtml) {
 
 function quickScript() {
   return `<script id="quick-teim-flow-script">(function(){var card=document.querySelector('[data-quick-card]');var stage=document.querySelector('[data-quick-stage]');if(!card||!stage)return;var state={step:'intro',concern:'work',space:'desk'};var history=[];var aliases={kitchen:'living',entry:'living',bath:'living',transit:'outside'};var current=['💼 브라우저 탭 3개 닫기','다시 볼 것 같아도 일단 닫기. 필요하면 어차피 또 찾습니다 😌'];var base={bed:[['🛏 이불 위 물건 1개 내리기','침대 위에 올라온 것 하나만 내려도 충분해요.'],['📱 휴대폰 뒤집어놓고 1분 있기','일단 화면을 안 보이게만 해볼게요.'],['👕 침대 위 옷 1벌 옷장에 넣기','딱 한 벌만 제자리로 보내요.'],['📚 책 1권 책상에 두기','읽을지 말지는 나중에, 위치만 바꿔요.'],['🔌 충전선 1개 정리하기','꼬인 선 하나만 풀어도 시야가 가벼워져요.'],['🧦 양말 1켤레 빨래통에 넣기','가장 쉬운 것 하나만 움직여요.'],['🧴 침대 옆 물건 1개 서랍에 넣기','보이는 것을 하나만 줄여볼게요.'],['⏰ 알람 1개 끄기','나를 재촉하는 소리 하나를 줄여요.'],['🧻 휴지 1개 버리기','손에 잡히는 쓰레기 하나면 충분해요.'],['💡 조명 밝기 낮추기','공간을 조금 쉬는 모드로 바꿔요.'],['📝 내일 할 일 1개만 메모하기','머릿속에서 하나만 꺼내놓으세요.'],['🧺 침대 밑 물건 1개 빼기','깊게 말고 하나만 꺼내요.'],['📸 사진 1장 숨기기','계속 보이는 장면 하나만 잠깐 숨겨요.'],['🚪 방문 10초 열어두기','공기를 바꾸는 것도 비움이에요.'],['🧘 눈 감고 10초 쉬기','아무것도 안 하는 10초를 만들어보세요.']],desk:[['💼 브라우저 탭 3개 닫기','다시 볼 것 같아도 일단 닫기. 필요하면 어차피 또 찾습니다 😌'],['🗂 파일 3개 폴더에 넣기','바탕화면 복잡함 3개만 접어둘게요.'],['📄 종이 1장 버리기','판단 쉬운 종이 한 장만 비워요.'],['🖊 안 쓰는 펜 1개 서랍에 넣기','책상 위 도구 하나만 줄여요.'],['☕ 컵 1개 주방에 두기','컵 하나만 사라져도 책상이 달라져요.'],['📱 휴대폰 화면 뒤집기','시야에서 알림을 잠깐 빼요.'],['✅ 할 일 1개 삭제하기','오늘 안 해도 되는 것 하나만 덜어요.'],['🧽 책상 한 뼘 닦기','전부 말고 손바닥만큼만 닦아요.'],['🔌 충전기 선 1개 감기','선 하나만 정리해도 훨씬 덜 복잡해요.'],['🧾 영수증 1장 버리기','쌓인 기록 하나만 비워요.'],['🖥 창 1개 최소화하기','화면에 보이는 것 하나만 줄여요.'],['📌 메모 1개 떼기','이미 끝난 메모 하나만 빼요.'],['🎧 이어폰 케이스에 넣기','작은 물건 하나만 자리로 보내요.'],['⬜ A4 한 장 크기만 비우기','책상 전체 말고 한 장만큼만 비워요.'],['📝 지금 해야 할 일 1개만 남기기','나머지는 잠깐 뒤로 보내요.']],living:[['📦 테이블 위 물건 1개 제자리로','거실 전체 말고 하나만 움직여요.'],['☕ 컵 1개 주방에 두기','가장 쉬운 것부터 옮겨요.'],['👕 옷 1벌 방으로 가져가기','내 흔적 하나만 회수해요.'],['🎒 가방 1개 한쪽에 세우기','바닥에 퍼진 느낌을 줄여요.'],['🧾 영수증 1장 버리기','작은 종이 하나만 비워요.'],['📺 TV 1분 끄기','채우는 소리를 잠깐 줄여요.'],['🧸 쿠션 1개 바로 놓기','정리보다 정돈에 가까운 행동이에요.'],['🧻 쓰레기 1개 버리기','보이는 쓰레기 하나만 처리해요.'],['🔌 리모컨 제자리 두기','찾기 쉬운 자리를 하나 만들어요.'],['🧺 빨래 1개 빨래통에 넣기','한 개만 넣어도 시작이에요.'],['📚 책 1권 꽂기','읽을지 말지 말고 위치만 정해요.'],['🍽 접시 1개 싱크대로','가벼운 이동 하나면 충분해요.'],['🚪 현관 신발 1켤레 맞추기','나가는 자리부터 정돈해요.'],['🧴 화장품 1개 욕실로','제자리 하나만 찾아줘요.'],['🌬 창문 10초 열기','공기부터 살짝 바꿔요.']],outside:[['🔕 알림 1개 끄기','나를 부르는 소리 하나를 줄여요.'],['📱 앱 1개 홈 화면에서 빼기','보이는 입구 하나만 줄여요.'],['🌐 탭 3개 닫기','찾다 만 생각 3개를 닫아둘게요.'],['🖼 스크린샷 3장 삭제하기','손 안의 공간을 가볍게 해요.'],['💬 채팅방 1개 알림 끄기','지금 안 봐도 되는 방 하나만 조용히 해요.'],['📧 메일 3개 읽음 처리하기','알림 숫자부터 줄여요.'],['🎧 이어폰 빼고 1분 걷기','계속 채우지 않아도 괜찮아요.'],['📝 해야 할 일 1개만 메모하기','머릿속에서 하나만 꺼내요.'],['⭐ 사진 즐겨찾기 1장 해제','계속 보던 장면 하나만 덜어내요.'],['🚇 휴대폰 10초 내려놓기','이동 중에도 틈은 만들 수 있어요.'],['📍 저장 장소 1개 삭제하기','안 갈 곳 하나만 지워요.'],['🛒 장바구니 1개 삭제하기','살지 말지 고민 하나를 줄여요.'],['🧾 결제 알림 1개 지우기','지나간 알림 하나를 비워요.'],['📆 오늘 안 할 일 1개 내일로','오늘의 나를 조금 덜 몰아붙여요.'],['🌤 하늘 10초 보기','화면 말고 바깥을 잠깐 봐요.']]};var flavor={love:['관계 생각이 떠오르면, 일단 보이는 것 하나만 줄여요.','지금은 끊어내기보다 덜 보이게 하기.','마음이 흔들릴수록 행동은 작게 가요.'],work:['일 생각이 따라올 땐 화면과 알림부터 줄여요.','퇴근 모드로 바꾸는 작은 신호예요.','다 해내기보다 하나 덜어내기.'],family:['가족 전체가 아니라 내 몫 하나만 정리해요.','내 공간의 경계를 작게 세워요.','버리는 게 아니라 제자리로 보내요.'],study:['공부 시작 전, 시작선을 작게 만들어봐요.','계획보다 눈앞 하나가 먼저예요.','미루는 마음엔 아주 작은 행동이 좋아요.'],self:['성과보다 회복을 먼저 둬요.','나를 재촉하는 것을 하나 줄여요.','오늘은 잘하기보다 덜어내기예요.']};var mind={love:['근데 왜 아직 못 놓고 있을까요?','💗 관계 마음비움 해보기 →','test.html?type=love'],work:['퇴근했는데 머리는 아직 출근 중?','💼 일상 마음비움 해보기 →','test.html?type=work'],family:['가족 앞에만 가면 왜 내 페이스가 사라질까?','🏠 가족 마음비움 해보기 →','test.html?type=family'],study:['해야 하는 건 아는데 왜 시작은 안 될까?','📚 해야 할 일 마음비움 해보기 →','test.html?type=study'],self:['쉬고 있는데도 왜 계속 뭔가 해야 할 것 같지?','☀️ 나 자신 마음비움 해보기 →','test.html?type=self']};function render(step,pop){state.step=step;card.dataset.step=step;if(pop){card.classList.remove('quick-pop');void card.offsetWidth;card.classList.add('quick-pop')}var html='';if(step==='intro')html='<p class="small-label">TRY TEIM</p><h2>지금 딱 하나만<br>비워볼까요?</h2><p>지금 내 상태에 맞는 작은 비움 하나를 찾아드려요.</p><span class="quick-time">약 30초 · 바로 시작</span><button class="quick-main-btn" data-next="concern">시작하기 →</button>';if(step==='concern')html='<p class="small-label">STEP 01</p><h2>지금 뭐가<br>제일 막혀요?</h2><div class="quick-options"><button data-concern="love">💗 관계</button><button data-concern="work">💼 일상</button><button data-concern="family">🏠 가족</button><button data-concern="study">📚 해야 할 일</button><button data-concern="self">☀️ 나 자신</button></div>';if(step==='space')html='<p class="small-label">STEP 02</p><h2>지금 어디에<br>있나요?</h2><div class="quick-options"><button data-space="bed">🛏 침대</button><button data-space="desk">🖥 책상</button><button data-space="living">🛋 거실</button><button data-space="kitchen">🍳 주방</button><button data-space="entry">🚪 현관</button><button data-space="bath">🛁 화장실</button><button data-space="outside">🚶 밖</button><button data-space="transit">🚇 이동 중</button></div>';if(step==='result')html='<div class="quick-stage result-pop"><p class="small-label">오늘은 이것 하나만 👀</p><h2>'+titleBreak(current[0])+'</h2><p>'+current[1]+'</p><span class="quick-time">약 10초~1분</span><button class="quick-done">✓ 했어요</button><button class="quick-ghost quick-again">↻ 이건 싫어요. 다른 거 주세요</button></div>';if(step==='complete'){var m=mind[state.concern]||mind.work;html='<div class="quick-sun">☀️ +1 트임</div><h2>오, 진짜 했네요.</h2><p>작아 보여도<br>방금 내 공간에 틈 하나 만든 거예요.</p><p class="quick-next-copy">그런데 혹시 요즘<br><b>'+m[0]+'</b></p><a class="quick-complete-link" href="'+m[2]+'">'+m[1]+'</a><button class="quick-ghost quick-restart">하나 더 비우기</button>';}stage.className='quick-stage'+(step==='result'?' result-pop':'');stage.innerHTML=html}function titleBreak(t){return t.replace(/ (\d개|\d장|\d분|\d벌|\d권|\dm|\d초|1켤레)/,'<br>$1')}function pick(){var space=aliases[state.space]||state.space;var list=base[space]||base.desk;var idx=Math.floor(Math.random()*list.length);var guard=0;while(history.indexOf(space+'-'+idx)>-1&&guard<20){idx=Math.floor(Math.random()*list.length);guard++}history.push(space+'-'+idx);if(history.length>8)history.shift();var item=list[idx];var fl=flavor[state.concern]||flavor.work;current=[item[0],item[1]+' '+fl[Math.floor(Math.random()*fl.length)]]}card.addEventListener('click',function(e){var btn=e.target.closest('button,a');if(!btn)return;if(btn.dataset.next)render(btn.dataset.next,true);if(btn.dataset.concern){state.concern=btn.dataset.concern;render('space',true)}if(btn.dataset.space){state.space=btn.dataset.space;pick();render('result',true)}if(btn.classList.contains('quick-done'))render('complete',true);if(btn.classList.contains('quick-again')){pick();render('result',true)}if(btn.classList.contains('quick-restart'))render('concern',true)});render('intro',false)})();</script>`;
+}
+
+
+async function handleTeimAi(request, env) {
+  if (request.method !== "POST") return privateJsonResponse({ ok: false, message: "POST 요청만 지원합니다." }, 405);
+  let body = {};
+  try { body = await request.json(); } catch (e) { return privateJsonResponse({ ok: false, message: "요청 형식이 올바르지 않습니다." }, 400); }
+
+  const state = String(body.state || "").slice(0, 40);
+  const minutes = [3, 10, 20].includes(Number(body.minutes)) ? Number(body.minutes) : 3;
+  const history = Array.isArray(body.history) ? body.history.slice(-5).map((x) => ({
+    title: String((x && x.title) || "").slice(0, 80),
+    category: String((x && x.category) || "").slice(0, 30),
+    completedAt: String((x && x.completedAt) || "").slice(0, 40)
+  })) : [];
+  const challengeDone = Math.max(0, Math.min(14, Number(body.challengeDone) || 0));
+  const excludeTitle = String(body.excludeTitle || "").slice(0, 80);
+
+  if (!state) return privateJsonResponse({ ok: false, message: "오늘 상태를 선택해주세요." }, 400);
+
+  const fallback = createFallbackAiMission({ state, minutes, history, excludeTitle });
+  if (!env.OPENAI_API_KEY) return privateJsonResponse({ ok: true, mode: "fallback", mission: fallback });
+
+  const systemPrompt = [
+    "너는 정리·비움 플랫폼 '트임'의 오늘의 비움 추천 AI다.",
+    "사용자의 현재 상태, 가능한 시간, 최근 완료 기록을 보고 지금 바로 실행할 수 있는 단 하나의 구체적인 행동만 추천한다.",
+    "규칙:",
+    "1. 반드시 미션 하나만 추천한다.",
+    "2. 사용자가 선택한 시간을 넘지 않는다.",
+    "3. 최근 기록 및 제외 미션과 같은 행동을 가능하면 반복하지 않는다.",
+    "4. '추억 물건', '마음 정리', '필요 없는 것'처럼 판단하기 어려운 추상어만으로 지시하지 않는다. 무엇을 어디서 몇 개/어디까지 할지 구체적으로 쓴다.",
+    "5. 대청소, 고강도 작업, 물건 대량 폐기를 요구하지 않는다.",
+    "6. 사용자가 지쳤다면 앉아서 하거나 3분 안에 끝낼 수 있는 쉬운 행동을 우선한다.",
+    "7. 가족·동거인의 물건을 허락 없이 버리거나 옮기라고 하지 않는다.",
+    "8. 위험물, 약, 중요 문서, 신분증, 금융자료 등 안전·법률상 주의가 필요한 물건을 버리라고 하지 않는다.",
+    "9. 사용자의 심리 상태를 진단하거나 치료한다고 표현하지 않는다.",
+    "10. 20~30대가 부담 없이 읽는 짧고 명확한 한국어를 쓴다.",
+    "11. reason은 추천 이유를 1문장으로 설명하며 과도한 심리 해석을 하지 않는다."
+  ].join("\\n");
+
+  const payload = {
+    state,
+    available_minutes: minutes,
+    recent_completed_missions: history,
+    teim_record_days: challengeDone,
+    do_not_repeat: excludeTitle || null
+  };
+
+  try {
+    const aiResponse = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + env.OPENAI_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-5.4-mini",
+        store: false,
+        input: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: JSON.stringify(payload) }
+        ],
+        max_output_tokens: 450,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "teim_daily_mission",
+            strict: true,
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                title: { type: "string" },
+                target: { type: "string" },
+                action: { type: "string" },
+                reason: { type: "string" },
+                duration: { type: "integer", minimum: 1, maximum: 20 },
+                category: { type: "string", enum: ["공간비움", "디지털비움", "일상비움", "마음비움"] }
+              },
+              required: ["title", "target", "action", "reason", "duration", "category"]
+            }
+          }
+        }
+      })
+    });
+
+    if (!aiResponse.ok) throw new Error("OpenAI response error: " + aiResponse.status);
+    const data = await aiResponse.json();
+    const text = extractOpenAiText(data);
+    if (!text) throw new Error("Empty AI response");
+    const mission = JSON.parse(text);
+    mission.duration = Math.min(minutes, Math.max(1, Number(mission.duration) || minutes));
+    return privateJsonResponse({ ok: true, mode: "ai", mission });
+  } catch (error) {
+    return privateJsonResponse({ ok: true, mode: "fallback", mission: fallback });
+  }
+}
+
+function extractOpenAiText(data) {
+  if (data && typeof data.output_text === "string" && data.output_text) return data.output_text;
+  const output = data && Array.isArray(data.output) ? data.output : [];
+  for (const item of output) {
+    const content = item && Array.isArray(item.content) ? item.content : [];
+    for (const part of content) {
+      if (part && part.type === "output_text" && typeof part.text === "string") return part.text;
+    }
+  }
+  return "";
+}
+
+function createFallbackAiMission({ state, minutes, history, excludeTitle }) {
+  const pools = {
+    "머리가 복잡해요": [
+      { title: "화면부터 세 칸 비우기", target: "휴대폰 또는 브라우저", action: "지금 필요 없는 탭이나 앱 화면 3개만 닫아주세요.", reason: "생각을 더 정리하려 하지 말고 눈에 들어오는 정보량부터 작게 줄여볼게요.", duration: 3, category: "디지털비움" },
+      { title: "책상 A4 한 장만큼 비우기", target: "책상 위", action: "A4 한 장이 놓일 자리만 만들고 그 안의 물건만 제자리로 보내주세요.", reason: "범위를 눈에 보이게 제한하면 시작과 끝이 분명해져요.", duration: 10, category: "공간비움" }
+    ],
+    "몸이 지쳤어요": [
+      { title: "앉아서 가방 하나만 비우기", target: "오늘 쓴 가방", action: "가방 안 영수증과 포장지만 꺼내 버려주세요.", reason: "움직임을 최소화하고 판단이 쉬운 것만 골라 빠르게 끝내요.", duration: 3, category: "공간비움" },
+      { title: "침대 옆 세 개만 제자리로", target: "침대 주변", action: "가장 가까운 물건 3개만 원래 자리로 보내주세요.", reason: "오늘은 넓게 정리하지 않고 손 닿는 범위만 끝내는 편이 좋아요.", duration: 10, category: "공간비움" }
+    ],
+    "뭔가 정리하고 싶어요": [
+      { title: "서랍 한 칸만 끝내기", target: "자주 여는 서랍 한 칸", action: "서랍 한 칸에서 쓰레기만 버리고 같은 종류끼리 모아주세요.", reason: "정리하고 싶은 에너지를 한 칸에만 써서 완료감을 남겨요.", duration: 20, category: "공간비움" },
+      { title: "컵과 그릇만 제자리로", target: "지금 보이는 테이블", action: "테이블 위 컵과 그릇만 골라 싱크대로 옮겨주세요.", reason: "한 종류만 골라 움직이면 짧은 시간에도 변화가 바로 보여요.", duration: 10, category: "공간비움" }
+    ],
+    "그냥 하나 끝내고 싶어요": [
+      { title: "스크린샷 다섯 장 지우기", target: "휴대폰 사진첩", action: "최근 스크린샷에서 다시 볼 일 없는 사진 5장만 삭제해주세요.", reason: "시작과 끝이 분명한 작은 작업 하나를 바로 완료해요.", duration: 3, category: "디지털비움" },
+      { title: "현관 신발 두 켤레만 맞추기", target: "현관", action: "지금 가장 흐트러진 신발 2켤레만 가지런히 맞춰주세요.", reason: "결과가 바로 보이는 행동 하나로 오늘의 완료를 만들어요.", duration: 3, category: "공간비움" }
+    ]
+  };
+  const pool = pools[state] || pools["그냥 하나 끝내고 싶어요"];
+  const used = new Set((history || []).map((x) => x.title).concat(excludeTitle ? [excludeTitle] : []));
+  let candidates = pool.filter((x) => x.duration <= minutes && !used.has(x.title));
+  if (!candidates.length) candidates = pool.filter((x) => x.duration <= minutes);
+  if (!candidates.length) candidates = pool;
+  const chosen = { ...candidates[0] };
+  chosen.duration = Math.min(minutes, chosen.duration);
+  return chosen;
+}
+
+function privateJsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    }
+  });
 }
 
 async function handleWeatherMission(request) {
