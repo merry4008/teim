@@ -6,6 +6,7 @@ export default {
       url.pathname = "/tuim_logo.png";
       return env.ASSETS.fetch(new Request(url.toString(), request));
     }
+
     const response = await env.ASSETS.fetch(request);
     if (url.pathname.endsWith("/script.js") || url.pathname === "/script.js") return rewriteScript(response);
     return rewriteHtml(response, url.pathname);
@@ -15,6 +16,7 @@ export default {
 function rewriteScript(response) {
   const type = response.headers.get("content-type") || "";
   if (!type.includes("javascript") && !type.includes("text/plain")) return response;
+
   return response.text().then((js) => {
     const rewritten = js
       .replace(/<div class=\\"mission-action\\"><span>\$\{m\.tag\}<\/span><strong>\$\{m\.action\}<\/strong><\/div>/g, '<a class=\\"mission-action mission-record-link\\" href=\\"challenge.html\\"><span>${m.tag}</span><strong>${m.action}</strong></a>')
@@ -28,6 +30,7 @@ function rewriteScript(response) {
 function rewriteHtml(response, pathname) {
   const type = response.headers.get("content-type") || "";
   if (!type.includes("text/html")) return response;
+
   return response.text().then((html) => {
     let pageHtml = html
       .replace(/<title>트임 \| 지금해냄<\/title>/g, "<title>트임 | 공간비움</title>")
@@ -42,11 +45,13 @@ function rewriteHtml(response, pathname) {
       .replace(/바로시작/g, "트임타임")
       .replace(/지금해냄/g, "공간비움");
 
-    pageHtml = pageHtml.replace(/<a class="service-item" href="action\.html">((?:(?!<\/a>).)*<span>집중음악<\/span>(?:(?!<\/a>).)*)<\/a>/gs, '<a class="service-item" href="action.html#musicSection">$1</a>')
+    pageHtml = pageHtml
+      .replace(/<a class="service-item" href="action\.html">((?:(?!<\/a>).)*<span>집중음악<\/span>(?:(?!<\/a>).)*)<\/a>/gs, '<a class="service-item" href="action.html#musicSection">$1</a>')
       .replace(/href="action\.html">바로해냄 열기/g, 'href="action.html">트임타임 열기');
 
     const active = pathname.includes("test.html") ? "test" : pathname.includes("space.html") ? "space" : pathname.includes("challenge.html") ? "challenge" : pathname.includes("action.html") ? "action" : pathname.includes("program.html") ? "program" : "home";
-    if (active === "home") pageHtml = enhanceHome(pageHtml);
+
+    if (active === "home") pageHtml = applyTodayMissionCard(pageHtml);
 
     const item = (key, href, label) => `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${label}</a>`;
     const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "트임기록")}${item("action", "action.html", "트임타임")}${item("program", "program.html", "문의")}</nav>`;
@@ -62,46 +67,104 @@ function rewriteHtml(response, pathname) {
   });
 }
 
-function enhanceHome(pageHtml) {
-  let html = pageHtml.replace(/부모·가족/g, "가족");
-  html = html.replace(/<section class="mind-section( home-mind-service-ux)?">/g, '<section class="mind-section home-mind-service-ux">');
-  html = html.replace(/(<section class="service-section">[\s\S]*?<\/section>)\s*(<section class="mind-section home-mind-service-ux">[\s\S]*?<\/section>)/, "$2\n$1");
-  html = html.replace(/<p class="kicker">PERSONALITY TEST<\/p><h1>나는 왜<br>정리가 어려울까\?<\/h1><p>물건보다 먼저 마음과 행동 패턴을 확인해보세요\.<\/p><a href="test\.html">성향테스트 시작<\/a>/, '<p class="kicker">TRY TEIM</p><h1>지금 딱 하나만<br>비워볼까요?</h1><p>지금 내 상태에 맞는 작은 비움 하나를 찾아드려요.</p><a href="#quickTeimExperience">시작하기 →</a>');
+function applyTodayMissionCard(pageHtml) {
+  const style = `<style id="today-mission-final-style">
+#todayTeimMission{position:relative!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;min-height:132px!important;margin-top:12px!important;padding:18px 18px 18px 20px!important;border:0!important;border-radius:28px!important;background:linear-gradient(120deg,#2563EB 0%,#43B6FF 64%,#FFC928 150%)!important;box-shadow:0 18px 42px rgba(37,99,235,.22)!important;overflow:hidden!important;color:#fff!important;writing-mode:horizontal-tb!important}#todayTeimMission *{box-sizing:border-box!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important}#todayTeimMission:before{content:'';position:absolute;right:46px;top:-54px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.14);pointer-events:none}#todayTeimMission .today-left{position:relative;z-index:2;flex:1 1 auto!important;min-width:0!important;max-width:none!important;width:auto!important;display:block!important}#todayTeimMission .small-label{display:block!important;margin:0 0 6px!important;color:rgba(255,255,255,.78)!important;font-size:10.5px!important;font-weight:950!important;letter-spacing:.12em!important;line-height:1.1!important;text-transform:uppercase!important}#todayTeimMission .today-weather-line{display:flex!important;flex-direction:row!important;align-items:flex-end!important;gap:9px!important;margin:0 0 5px!important;white-space:nowrap!important}#todayTeimMission .today-temp{display:inline-block!important;color:#fff!important;font-size:34px!important;font-weight:800!important;line-height:.95!important;letter-spacing:-.06em!important;white-space:nowrap!important}#todayTeimMission .today-weather-text{display:inline-block!important;color:rgba(255,255,255,.95)!important;font-size:13px!important;font-weight:950!important;line-height:1.15!important;padding-bottom:2px!important;white-space:nowrap!important}#todayTeimMission .today-meta{display:block!important;margin:0 0 5px!important;color:rgba(255,255,255,.78)!important;font-size:11px!important;font-weight:800!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}#todayTeimMission .today-title{display:block!important;margin:0 0 6px!important;color:#fff!important;font-size:17px!important;font-weight:1000!important;line-height:1.24!important;letter-spacing:-.045em!important;white-space:normal!important;word-break:keep-all!important;overflow:visible!important;text-overflow:clip!important}#todayTeimMission .today-action-text{display:block!important;margin:0 0 10px!important;color:rgba(255,255,255,.9)!important;font-size:12px!important;font-weight:800!important;line-height:1.35!important;white-space:normal!important;word-break:keep-all!important;overflow:visible!important;text-overflow:clip!important}#todayTeimMission .today-buttons{display:flex!important;align-items:center!important;gap:7px!important;margin:0!important}#todayTeimMission .today-buttons a,#todayTeimMission .today-buttons button{display:inline-flex!important;align-items:center!important;justify-content:center!important;height:32px!important;padding:0 12px!important;border-radius:999px!important;border:0!important;background:#fff!important;color:#2563EB!important;font-size:12px!important;font-weight:1000!important;line-height:1!important;text-decoration:none!important;white-space:nowrap!important}#todayTeimMission .today-buttons button{background:rgba(255,255,255,.18)!important;color:#fff!important}#todayTeimMission .today-art{position:relative!important;z-index:2!important;flex:0 0 64px!important;width:64px!important;height:64px!important;display:grid!important;place-items:center!important;margin:0!important}#todayTeimMission .today-art svg{display:block!important;width:64px!important;height:64px!important;filter:drop-shadow(0 8px 14px rgba(0,0,0,.12))!important}@media(max-width:640px){#todayTeimMission{min-height:124px!important;padding:16px!important;gap:10px!important;border-radius:24px!important}#todayTeimMission .today-temp{font-size:30px!important}#todayTeimMission .today-title{font-size:15.5px!important;line-height:1.26!important}#todayTeimMission .today-action-text{font-size:11.5px!important}#todayTeimMission .today-art{flex-basis:54px!important;width:54px!important;height:54px!important}#todayTeimMission .today-art svg{width:54px!important;height:54px!important}}</style>`;
 
-  const quickSection = `<section id="quickTeimExperience" class="quick-teim-panel" aria-label="지금 딱 하나만 비워보기"><div class="quick-teim-card" data-quick-card data-step="intro"><div class="quick-stage" data-quick-stage></div></div></section>`;
-  if (html.includes('id="quickTeimExperience"')) html = html.replace(/<section[^>]*id="quickTeimExperience"[\s\S]*?<\/section>/, quickSection);
-  else html = html.replace("</main>", `${quickSection}</main>`);
+  const script = `<script id="today-mission-final-script">(function(){
+function icon(t){if(t==='맑음')return '<svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="25" fill="#FFC928"/><g fill="#FFC928"><rect x="60" y="14" width="8" height="22" rx="4"/><rect x="60" y="92" width="8" height="22" rx="4"/><rect x="14" y="60" width="22" height="8" rx="4"/><rect x="92" y="60" width="22" height="8" rx="4"/></g><path d="M51 50c6-7 17-10 23-8" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".75"/></svg>';if(t==='비'||t==='소나기')return '<svg viewBox="0 0 128 128"><path d="M34 78c-12 0-22-9-22-21 0-11 9-20 20-20 4 0 7 1 10 3 5-13 17-22 32-22 18 0 33 14 34 32 9 1 16 8 16 18 0 10-8 18-19 18H34z" fill="#DDEBFF"/><g stroke="#fff" stroke-width="8" stroke-linecap="round"><path d="M43 95l-6 14"/><path d="M64 95l-6 14"/><path d="M85 95l-6 14"/></g></svg>';if(t==='눈')return '<svg viewBox="0 0 128 128"><path d="M34 78c-12 0-22-9-22-21 0-11 9-20 20-20 4 0 7 1 10 3 5-13 17-22 32-22 18 0 33 14 34 32 9 1 16 8 16 18 0 10-8 18-19 18H34z" fill="#DDEBFF"/><g fill="#fff"><circle cx="45" cy="100" r="5"/><circle cx="65" cy="108" r="5"/><circle cx="86" cy="100" r="5"/></g></svg>';if(t==='천둥')return '<svg viewBox="0 0 128 128"><path d="M34 78c-12 0-22-9-22-21 0-11 9-20 20-20 4 0 7 1 10 3 5-13 17-22 32-22 18 0 33 14 34 32 9 1 16 8 16 18 0 10-8 18-19 18H34z" fill="#DDEBFF"/><path d="M61 80h20l-14 22h15l-31 30 10-26H45z" fill="#FFC928"/></svg>';if(t==='안개')return '<svg viewBox="0 0 128 128"><path d="M34 70c-12 0-22-9-22-21 0-11 9-20 20-20 4 0 7 1 10 3 5-13 17-22 32-22 18 0 33 14 34 32 9 1 16 8 16 18 0 10-8 18-19 18H34z" fill="#DDEBFF"/><g stroke="#fff" stroke-width="8" stroke-linecap="round"><path d="M24 92h80"/><path d="M34 108h60"/></g></svg>';return '<svg viewBox="0 0 128 128"><path d="M34 83c-12 0-22-9-22-21 0-11 9-20 20-20 4 0 7 1 10 3 5-13 17-22 32-22 18 0 33 14 34 32 9 1 16 8 16 18 0 10-8 18-19 18H34z" fill="#DDEBFF"/><path d="M45 47c6-11 18-18 31-18 16 0 29 11 33 26" fill="#fff" opacity=".42"/></svg>'}
+function title(t){if(t==='맑음')return '햇살 좋은 날, 마음도 가볍게';if(t==='구름')return '흐름이 느린 날, 시원하게 하나부터';if(t==='흐림')return '마음이 무거운 날, 시야 하나 비우기';if(t==='비')return '비 오는 날엔 손 닿는 곳부터';if(t==='소나기')return '소나기처럼 짧게, 10초 비움';if(t==='천둥')return '우루루쾅쾅 한 날, 제자리부터';if(t==='눈')return '눈 오는 날엔 앉아서 차분히';if(t==='안개')return '뿌연 날엔 시야부터 트이게';return '오늘의 트임 미션'}
+function paint(data){var card=document.getElementById('todayTeimMission');if(!card)return;var w=(data&&data.weather)||{};var m=(data&&data.mission)||{};var wt=w.weatherText||'구름';var temp=Number.isFinite(w.temperature)?Math.round(w.temperature)+'°':'--°';var d=new Date();var date=(d.getMonth()+1)+'월 '+d.getDate()+'일';card.className='today-card-horizontal';card.innerHTML='<div class="today-left"><p class="small-label">TODAY MISSION</p><div class="today-weather-line"><strong class="today-temp">'+temp+'</strong><span class="today-weather-text">'+wt+'</span></div><p class="today-meta">'+date+' · 오늘의 트임</p><h2 class="today-title">'+title(wt)+'</h2><p class="today-action-text">'+(m.action||'눈에 보이는 물건 하나만 제자리로 옮겨보세요.')+'</p><div class="today-buttons"><a href="challenge.html">오늘 기록하기</a></div></div><div class="today-art" aria-hidden="true">'+icon(wt)+'</div>'}
+function load(){fetch('/api/weather-mission?lat=37.3943&lon=126.9568&t='+Date.now()).then(function(r){return r.json()}).then(paint).catch(function(){paint({weather:{weatherText:'구름'},mission:{action:'눈에 보이는 물건 하나만 제자리로 옮겨보세요.'}})})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load);else load();setTimeout(load,700);
+})();</script>`;
 
-  if (!html.includes("home-mind-ux-style")) {
-    html = html.replace("</head>", `<style id="home-mind-ux-style">.banner-copy h1{font-size:24px!important;line-height:1.18!important}.home-mind-service-ux .mind-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:14px 8px!important}.home-mind-service-ux .mind-card:nth-child(4),.home-mind-service-ux .mind-card:nth-child(5){display:none!important}.home-mind-service-ux .mind-card{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;gap:8px!important;color:#183B6B!important;font-weight:850!important;font-size:12px!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}.home-mind-service-ux .mind-icon{width:48px!important;height:48px!important;border-radius:17px!important;border:1px solid rgba(37,99,235,.22)!important;background:#fff!important;color:#183B6B!important}.home-mind-service-ux .mind-icon svg{width:27px!important;height:27px!important;stroke:#183B6B!important;stroke-width:1.75!important}.home-mind-service-ux .mind-card b{margin:0!important;font-size:12px!important;font-weight:850!important;color:#183B6B!important}.home-mind-service-ux .mind-card p,.home-mind-service-ux .mind-card span:last-child{display:none!important}.quick-teim-panel{margin-top:12px;background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:30px;padding:18px;box-shadow:0 16px 38px rgba(37,99,235,.08)}.quick-teim-card{position:relative;overflow:hidden;border-radius:26px;background:#2563EB;color:#fff;padding:24px 20px;min-height:292px;display:flex;align-items:center;transition:background .28s ease,transform .22s ease}.quick-teim-card[data-step="complete"]{background:#FFC928;color:#183B6B}.quick-stage{width:100%;animation:quickSlide .24s ease}.quick-teim-card.quick-pop{animation:quickPop .3s ease}.quick-stage.result-pop h2{animation:resultBounce .38s ease}.quick-stage .small-label{color:#FFC928;margin:0 0 9px;font-size:12px;font-weight:950;letter-spacing:.12em}.quick-teim-card[data-step="complete"] .small-label{color:#183B6B}.quick-stage h2{margin:0;color:inherit;font-size:31px;line-height:1.12;letter-spacing:-.075em}.quick-stage p{margin:12px 0 0;color:rgba(255,255,255,.86);font-size:14px;line-height:1.55}.quick-teim-card[data-step="complete"] p{color:#183B6B}.quick-time{display:inline-flex;margin-top:14px;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font-size:12px;font-weight:900;padding:8px 11px}.quick-teim-card[data-step="complete"] .quick-time{background:#fff;color:#183B6B}.quick-main-btn,.quick-done{margin-top:20px;border:0;border-radius:999px;background:#fff;color:#2563EB;font-size:15px;font-weight:1000;padding:14px 18px}.quick-options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:18px}.quick-options button{border:1px solid rgba(255,255,255,.22);border-radius:18px;background:#fff;color:#183B6B;font-weight:950;font-size:15px;padding:14px 10px;text-align:left}.quick-ghost{margin-top:10px;border:0;background:transparent;color:#fff;font-weight:900;padding:8px;display:block}.quick-teim-card[data-step="complete"] .quick-ghost{color:#183B6B;margin-left:auto;margin-right:auto}.quick-complete-link{display:inline-flex;border-radius:999px;background:#2563EB;color:#fff!important;font-weight:1000;padding:13px 16px;margin-top:16px}.quick-sun{font-size:22px;font-weight:1000;margin-bottom:8px}.quick-next-copy{margin-top:18px!important}.quick-next-copy b{font-weight:1000}@keyframes quickSlide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}@keyframes quickPop{0%{transform:scale(1)}45%{transform:scale(.985) translateY(3px)}100%{transform:scale(1)}}@keyframes resultBounce{0%{opacity:0;transform:translateY(12px) scale(.98)}60%{opacity:1;transform:translateY(-4px) scale(1.02)}100%{transform:none}}@media(max-width:640px){.banner-copy h1{font-size:22px!important}.home-mind-service-ux .mind-grid{grid-template-columns:repeat(4,1fr)!important;gap:14px 4px!important}.home-mind-service-ux .mind-icon{width:42px!important;height:42px!important;border-radius:15px!important}.home-mind-service-ux .mind-icon svg{width:24px!important;height:24px!important}.home-mind-service-ux .mind-card b{font-size:11px!important}.quick-teim-panel{border-radius:26px;padding:14px}.quick-teim-card{border-radius:24px;padding:22px 18px;min-height:278px}.quick-stage h2{font-size:28px}.quick-options button{font-size:14px;padding:13px 9px}}</style></head>`);
-  }
-
-  html = html.replace(/<script id="quick-teim-flow-script">[\s\S]*?<\/script>/g, "");
-  html = html.replace("</body>", `${quickScript()}</body>`);
-  return html;
-}
-
-function quickScript() {
-  return `<script id="quick-teim-flow-script">(function(){var card=document.querySelector('[data-quick-card]');var stage=document.querySelector('[data-quick-stage]');if(!card||!stage)return;var state={step:'intro',concern:'work',space:'desk'};var history=[];var aliases={kitchen:'living',entry:'living',bath:'living',transit:'outside'};var current=['💼 브라우저 탭 3개 닫기','다시 볼 것 같아도 일단 닫기. 필요하면 어차피 또 찾습니다 😌'];var base={bed:[['🛏 이불 위 물건 1개 내리기','침대 위에 올라온 것 하나만 내려도 충분해요.'],['📱 휴대폰 뒤집어놓고 1분 있기','일단 화면을 안 보이게만 해볼게요.'],['👕 침대 위 옷 1벌 옷장에 넣기','딱 한 벌만 제자리로 보내요.'],['📚 책 1권 책상에 두기','읽을지 말지는 나중에, 위치만 바꿔요.'],['🔌 충전선 1개 정리하기','꼬인 선 하나만 풀어도 시야가 가벼워져요.'],['🧦 양말 1켤레 빨래통에 넣기','가장 쉬운 것 하나만 움직여요.'],['🧴 침대 옆 물건 1개 서랍에 넣기','보이는 것을 하나만 줄여볼게요.'],['⏰ 알람 1개 끄기','나를 재촉하는 소리 하나를 줄여요.'],['🧻 휴지 1개 버리기','손에 잡히는 쓰레기 하나면 충분해요.'],['💡 조명 밝기 낮추기','공간을 조금 쉬는 모드로 바꿔요.'],['📝 내일 할 일 1개만 메모하기','머릿속에서 하나만 꺼내놓으세요.'],['🧺 침대 밑 물건 1개 빼기','깊게 말고 하나만 꺼내요.'],['📸 사진 1장 숨기기','계속 보이는 장면 하나만 잠깐 숨겨요.'],['🚪 방문 10초 열어두기','공기를 바꾸는 것도 비움이에요.'],['🧘 눈 감고 10초 쉬기','아무것도 안 하는 10초를 만들어보세요.']],desk:[['💼 브라우저 탭 3개 닫기','다시 볼 것 같아도 일단 닫기. 필요하면 어차피 또 찾습니다 😌'],['🗂 파일 3개 폴더에 넣기','바탕화면 복잡함 3개만 접어둘게요.'],['📄 종이 1장 버리기','판단 쉬운 종이 한 장만 비워요.'],['🖊 안 쓰는 펜 1개 서랍에 넣기','책상 위 도구 하나만 줄여요.'],['☕ 컵 1개 주방에 두기','컵 하나만 사라져도 책상이 달라져요.'],['📱 휴대폰 화면 뒤집기','시야에서 알림을 잠깐 빼요.'],['✅ 할 일 1개 삭제하기','오늘 안 해도 되는 것 하나만 덜어요.'],['🧽 책상 한 뼘 닦기','전부 말고 손바닥만큼만 닦아요.'],['🔌 충전기 선 1개 감기','선 하나만 정리해도 훨씬 덜 복잡해요.'],['🧾 영수증 1장 버리기','쌓인 기록 하나만 비워요.'],['🖥 창 1개 최소화하기','화면에 보이는 것 하나만 줄여요.'],['📌 메모 1개 떼기','이미 끝난 메모 하나만 빼요.'],['🎧 이어폰 케이스에 넣기','작은 물건 하나만 자리로 보내요.'],['⬜ A4 한 장 크기만 비우기','책상 전체 말고 한 장만큼만 비워요.'],['📝 지금 해야 할 일 1개만 남기기','나머지는 잠깐 뒤로 보내요.']],living:[['📦 테이블 위 물건 1개 제자리로','거실 전체 말고 하나만 움직여요.'],['☕ 컵 1개 주방에 두기','가장 쉬운 것부터 옮겨요.'],['👕 옷 1벌 방으로 가져가기','내 흔적 하나만 회수해요.'],['🎒 가방 1개 한쪽에 세우기','바닥에 퍼진 느낌을 줄여요.'],['🧾 영수증 1장 버리기','작은 종이 하나만 비워요.'],['📺 TV 1분 끄기','채우는 소리를 잠깐 줄여요.'],['🧸 쿠션 1개 바로 놓기','정리보다 정돈에 가까운 행동이에요.'],['🧻 쓰레기 1개 버리기','보이는 쓰레기 하나만 처리해요.'],['🔌 리모컨 제자리 두기','찾기 쉬운 자리를 하나 만들어요.'],['🧺 빨래 1개 빨래통에 넣기','한 개만 넣어도 시작이에요.'],['📚 책 1권 꽂기','읽을지 말지 말고 위치만 정해요.'],['🍽 접시 1개 싱크대로','가벼운 이동 하나면 충분해요.'],['🚪 현관 신발 1켤레 맞추기','나가는 자리부터 정돈해요.'],['🧴 화장품 1개 욕실로','제자리 하나만 찾아줘요.'],['🌬 창문 10초 열기','공기부터 살짝 바꿔요.']],outside:[['🔕 알림 1개 끄기','나를 부르는 소리 하나를 줄여요.'],['📱 앱 1개 홈 화면에서 빼기','보이는 입구 하나만 줄여요.'],['🌐 탭 3개 닫기','찾다 만 생각 3개를 닫아둘게요.'],['🖼 스크린샷 3장 삭제하기','손 안의 공간을 가볍게 해요.'],['💬 채팅방 1개 알림 끄기','지금 안 봐도 되는 방 하나만 조용히 해요.'],['📧 메일 3개 읽음 처리하기','알림 숫자부터 줄여요.'],['🎧 이어폰 빼고 1분 걷기','계속 채우지 않아도 괜찮아요.'],['📝 해야 할 일 1개만 메모하기','머릿속에서 하나만 꺼내요.'],['⭐ 사진 즐겨찾기 1장 해제','계속 보던 장면 하나만 덜어내요.'],['🚇 휴대폰 10초 내려놓기','이동 중에도 틈은 만들 수 있어요.'],['📍 저장 장소 1개 삭제하기','안 갈 곳 하나만 지워요.'],['🛒 장바구니 1개 삭제하기','살지 말지 고민 하나를 줄여요.'],['🧾 결제 알림 1개 지우기','지나간 알림 하나를 비워요.'],['📆 오늘 안 할 일 1개 내일로','오늘의 나를 조금 덜 몰아붙여요.'],['🌤 하늘 10초 보기','화면 말고 바깥을 잠깐 봐요.']]};var flavor={love:['관계 생각이 떠오르면, 일단 보이는 것 하나만 줄여요.','지금은 끊어내기보다 덜 보이게 하기.','마음이 흔들릴수록 행동은 작게 가요.'],work:['일 생각이 따라올 땐 화면과 알림부터 줄여요.','퇴근 모드로 바꾸는 작은 신호예요.','다 해내기보다 하나 덜어내기.'],family:['가족 전체가 아니라 내 몫 하나만 정리해요.','내 공간의 경계를 작게 세워요.','버리는 게 아니라 제자리로 보내요.'],study:['공부 시작 전, 시작선을 작게 만들어봐요.','계획보다 눈앞 하나가 먼저예요.','미루는 마음엔 아주 작은 행동이 좋아요.'],self:['성과보다 회복을 먼저 둬요.','나를 재촉하는 것을 하나 줄여요.','오늘은 잘하기보다 덜어내기예요.']};var mind={love:['근데 왜 아직 못 놓고 있을까요?','💗 관계 마음비움 해보기 →','test.html?type=love'],work:['퇴근했는데 머리는 아직 출근 중?','💼 일상 마음비움 해보기 →','test.html?type=work'],family:['가족 앞에만 가면 왜 내 페이스가 사라질까?','🏠 가족 마음비움 해보기 →','test.html?type=family'],study:['해야 하는 건 아는데 왜 시작은 안 될까?','📚 해야 할 일 마음비움 해보기 →','test.html?type=study'],self:['쉬고 있는데도 왜 계속 뭔가 해야 할 것 같지?','☀️ 나 자신 마음비움 해보기 →','test.html?type=self']};function render(step,pop){state.step=step;card.dataset.step=step;if(pop){card.classList.remove('quick-pop');void card.offsetWidth;card.classList.add('quick-pop')}var html='';if(step==='intro')html='<p class="small-label">TRY TEIM</p><h2>지금 딱 하나만<br>비워볼까요?</h2><p>지금 내 상태에 맞는 작은 비움 하나를 찾아드려요.</p><span class="quick-time">약 30초 · 바로 시작</span><button class="quick-main-btn" data-next="concern">시작하기 →</button>';if(step==='concern')html='<p class="small-label">STEP 01</p><h2>지금 뭐가<br>제일 막혀요?</h2><div class="quick-options"><button data-concern="love">💗 관계</button><button data-concern="work">💼 일상</button><button data-concern="family">🏠 가족</button><button data-concern="study">📚 해야 할 일</button><button data-concern="self">☀️ 나 자신</button></div>';if(step==='space')html='<p class="small-label">STEP 02</p><h2>지금 어디에<br>있나요?</h2><div class="quick-options"><button data-space="bed">🛏 침대</button><button data-space="desk">🖥 책상</button><button data-space="living">🛋 거실</button><button data-space="kitchen">🍳 주방</button><button data-space="entry">🚪 현관</button><button data-space="bath">🛁 화장실</button><button data-space="outside">🚶 밖</button><button data-space="transit">🚇 이동 중</button></div>';if(step==='result')html='<div class="quick-stage result-pop"><p class="small-label">오늘은 이것 하나만 👀</p><h2>'+titleBreak(current[0])+'</h2><p>'+current[1]+'</p><span class="quick-time">약 10초~1분</span><button class="quick-done">✓ 했어요</button><button class="quick-ghost quick-again">↻ 이건 싫어요. 다른 거 주세요</button></div>';if(step==='complete'){var m=mind[state.concern]||mind.work;html='<div class="quick-sun">☀️ +1 트임</div><h2>오, 진짜 했네요.</h2><p>작아 보여도<br>방금 내 공간에 틈 하나 만든 거예요.</p><p class="quick-next-copy">그런데 혹시 요즘<br><b>'+m[0]+'</b></p><a class="quick-complete-link" href="'+m[2]+'">'+m[1]+'</a><button class="quick-ghost quick-restart">하나 더 비우기</button>';}stage.className='quick-stage'+(step==='result'?' result-pop':'');stage.innerHTML=html}function titleBreak(t){return t.replace(/ (\d개|\d장|\d분|\d벌|\d권|\dm|\d초|1켤레)/,'<br>$1')}function pick(){var space=aliases[state.space]||state.space;var list=base[space]||base.desk;var idx=Math.floor(Math.random()*list.length);var guard=0;while(history.indexOf(space+'-'+idx)>-1&&guard<20){idx=Math.floor(Math.random()*list.length);guard++}history.push(space+'-'+idx);if(history.length>8)history.shift();var item=list[idx];var fl=flavor[state.concern]||flavor.work;current=[item[0],item[1]+' '+fl[Math.floor(Math.random()*fl.length)]]}card.addEventListener('click',function(e){var btn=e.target.closest('button,a');if(!btn)return;if(btn.dataset.next)render(btn.dataset.next,true);if(btn.dataset.concern){state.concern=btn.dataset.concern;render('space',true)}if(btn.dataset.space){state.space=btn.dataset.space;pick();render('result',true)}if(btn.classList.contains('quick-done'))render('complete',true);if(btn.classList.contains('quick-again')){pick();render('result',true)}if(btn.classList.contains('quick-restart'))render('concern',true)});render('intro',false)})();</script>`;
+  if (!pageHtml.includes('today-mission-final-style')) pageHtml = pageHtml.replace("</head>", `${style}</head>`);
+  if (!pageHtml.includes('today-mission-final-script')) pageHtml = pageHtml.replace("</body>", `${script}</body>`);
+  return pageHtml;
 }
 
 async function handleWeatherMission(request) {
   const url = new URL(request.url);
-  const latitude = sanitizeNumber(url.searchParams.get("lat"), 37.5665);
-  const longitude = sanitizeNumber(url.searchParams.get("lon"), 126.9780);
+  const latitude = sanitizeNumber(url.searchParams.get("lat"), 37.3943);
+  const longitude = sanitizeNumber(url.searchParams.get("lon"), 126.9568);
+
   try {
     const weatherUrl = new URL("https://api.open-meteo.com/v1/forecast");
-    weatherUrl.search = new URLSearchParams({ latitude: String(latitude), longitude: String(longitude), current: "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m", timezone: "Asia/Seoul" });
-    const weatherResponse = await fetch(weatherUrl.toString(), { headers: { Accept: "application/json" }, cf: { cacheTtl: 900, cacheEverything: true } });
+    weatherUrl.search = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      current: "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m",
+      timezone: "Asia/Seoul",
+    });
+
+    const weatherResponse = await fetch(weatherUrl.toString(), {
+      headers: { Accept: "application/json" },
+      cf: { cacheTtl: 900, cacheEverything: true },
+    });
     if (!weatherResponse.ok) throw new Error("Open-Meteo API error");
+
     const weatherData = await weatherResponse.json();
     const current = weatherData.current;
-    return jsonResponse({ ok: true, source: "open-meteo", location: { latitude, longitude }, weather: { temperature: current.temperature_2m, humidity: current.relative_humidity_2m, weatherCode: current.weather_code, windSpeed: current.wind_speed_10m, weatherText: getWeatherText(current.weather_code) }, mission: createTeimMission({ temperature: current.temperature_2m, humidity: current.relative_humidity_2m, weatherCode: current.weather_code, windSpeed: current.wind_speed_10m }) });
+    const weather = {
+      temperature: current.temperature_2m,
+      humidity: current.relative_humidity_2m,
+      weatherCode: current.weather_code,
+      windSpeed: current.wind_speed_10m,
+      weatherText: getWeatherText(current.weather_code),
+    };
+
+    return jsonResponse({ ok: true, source: "open-meteo", location: { latitude, longitude }, weather, mission: createTeimMission(weather) });
   } catch (error) {
-    return jsonResponse({ ok: false, message: "날씨 데이터를 불러오지 못했습니다.", weather: null, mission: { title: "오늘의 기본 트임 기록", emotion: "날씨를 불러오지 못했지만, 오늘도 작게 기록할 수 있어요.", action: "눈에 가장 먼저 들어오는 물건 5개만 제자리로 돌려놓고 사진으로 기록해보세요.", tag: "기록" } });
+    return jsonResponse({ ok: false, message: "날씨 데이터를 불러오지 못했습니다.", weather: null, mission: fallbackMission() });
   }
 }
-function sanitizeNumber(value, fallback) { const number = Number(value); return Number.isFinite(number) ? number : fallback; }
-function getWeatherText(code) { if (code === 0) return "맑음"; if ([1,2,3].includes(code)) return "구름"; if ([45,48].includes(code)) return "안개"; if (code >= 51 && code <= 67) return "비"; if (code >= 71 && code <= 77) return "눈"; if (code >= 80 && code <= 82) return "소나기"; if (code >= 95) return "천둥"; return "흐림"; }
-function createTeimMission(weather) { const { temperature, humidity, weatherCode, windSpeed } = weather; if (humidity >= 75) return { title: "습기가 쌓이는 날이에요", emotion: "오늘처럼 습하고 무거운 날에는 몸도 마음도 쉽게 처질 수 있어요.", action: "신발장이나 옷장 문을 열고 10분만 환기한 뒤, 눅눅하거나 냄새나는 물건 1개를 사진으로 기록해보세요.", tag: "기록" }; if ((weatherCode >= 51 && weatherCode <= 67) || (weatherCode >= 80 && weatherCode <= 82)) return { title: "비 오는 날엔 작은 구역부터", emotion: "비 오는 날에는 움직임이 줄고 마음도 조금 가라앉을 수 있어요.", action: "침대 옆, 책상 위, 식탁 위 중 한 곳만 골라 정리하고 사진으로 기록해보세요.", tag: "기록" }; if (temperature >= 28) return { title: "더운 날엔 가볍게만", emotion: "더운 날에는 정리를 시작하기도 전에 피로감이 먼저 올 수 있어요.", action: "냉장고 문 쪽이나 책상 서랍처럼 오래 움직이지 않아도 되는 공간 하나를 사진으로 기록해보세요.", tag: "기록" }; if (temperature <= 5) return { title: "추운 날엔 앉아서 정리해요", emotion: "추운 날에는 몸이 움츠러들면서 정리 의욕도 같이 줄어들 수 있어요.", action: "가방 속 물건, 영수증, 종이류를 분류하고 사진으로 기록해보세요.", tag: "기록" }; if (windSpeed >= 25) return { title: "마음이 산만한 날엔 제자리부터", emotion: "바람이 강한 날에는 괜히 마음도 산만하게 느껴질 수 있어요.", action: "현관 주변의 신발, 우산, 가방 중 하나를 정리하고 사진으로 기록해보세요.", tag: "기록" }; return { title: "작은 기록을 만들기 좋은 날", emotion: "오늘은 무리하지 않고 작은 기록을 만들기 좋은 날이에요.", action: "가장 자주 쓰는 물건 3개의 자리를 정하고, 정리한 모습을 사진으로 기록해보세요.", tag: "기록" }; }
-function jsonResponse(data, status = 200) { return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=900", "Access-Control-Allow-Origin": "*" } }); }
+
+function sanitizeNumber(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function getWeatherText(code) {
+  if (code === 0) return "맑음";
+  if ([1, 2].includes(code)) return "구름";
+  if (code === 3) return "흐림";
+  if ([45, 48].includes(code)) return "안개";
+  if (code >= 51 && code <= 67) return "비";
+  if (code >= 71 && code <= 77) return "눈";
+  if (code >= 80 && code <= 82) return "소나기";
+  if (code >= 95) return "천둥";
+  return "흐림";
+}
+
+function createTeimMission(weather) {
+  const { weatherCode } = weather;
+  if (weatherCode === 0) return mission("햇살 좋은 날, 마음도 가볍게", "오늘은 가볍게 시작하기 좋은 날이에요.", "가장 자주 쓰는 물건 3개의 자리를 정하고, 정리한 모습을 사진으로 기록해보세요.");
+  if ([1, 2].includes(weatherCode)) return mission("흐름이 느린 날, 시원하게 하나부터", "느리게 흘러가는 날에는 눈앞의 작은 것부터 시작해도 충분해요.", "책상 위나 테이블 위 물건 하나만 제자리로 옮겨보세요.");
+  if (weatherCode === 3) return mission("마음이 무거운 날, 시야 하나 비우기", "하늘이 흐린 날에는 시야를 조금 비우는 것만으로도 답답함이 줄어요.", "눈앞에 가장 먼저 보이는 물건 하나만 치워보세요.");
+  if (weatherCode >= 51 && weatherCode <= 67) return mission("비 오는 날엔 손 닿는 곳부터", "비 오는 날에는 멀리 움직이기보다 손이 닿는 곳부터 가볍게 시작해요.", "침대 옆, 책상 위, 식탁 위 중 한 곳만 골라 정리하고 사진으로 기록해보세요.");
+  if (weatherCode >= 80 && weatherCode <= 82) return mission("소나기처럼 짧게, 10초 비움", "길게 붙잡지 말고 소나기처럼 짧게 끝내도 좋아요.", "10초 안에 끝낼 수 있는 물건 하나만 제자리로 옮겨보세요.");
+  if (weatherCode >= 95) return mission("우루루쾅쾅 한 날, 제자리부터", "요란한 날에는 큰 정리보다 제자리 하나가 더 잘 맞아요.", "현관 주변의 신발, 우산, 가방 중 하나를 정리하고 사진으로 기록해보세요.");
+  if (weatherCode >= 71 && weatherCode <= 77) return mission("눈 오는 날엔 앉아서 차분히", "눈 오는 날에는 움직임을 줄이고 앉아서 할 수 있는 정리가 좋아요.", "가방 속 물건, 영수증, 종이류를 분류하고 사진으로 기록해보세요.");
+  if ([45, 48].includes(weatherCode)) return mission("뿌연 날엔 시야부터 트이게", "뿌연 날에는 보이는 곳 하나를 비워 시야를 먼저 틔워요.", "창가나 책상 위에서 시야를 가리는 물건 하나만 치워보세요.");
+  return fallbackMission();
+}
+
+function mission(title, emotion, action) {
+  return { title, emotion, action, tag: "기록" };
+}
+
+function fallbackMission() {
+  return mission("오늘의 트임 미션", "오늘은 무리하지 않고 작은 기록을 만들기 좋은 날이에요.", "눈에 가장 먼저 들어오는 물건 하나만 제자리로 옮겨보세요.");
+}
+
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "public, max-age=900",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+}
