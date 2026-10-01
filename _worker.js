@@ -48,7 +48,15 @@ function rewriteHtml(response, pathname) {
     const active = pathname.includes("test.html") ? "test" : pathname.includes("space.html") ? "space" : pathname.includes("challenge.html") ? "challenge" : pathname.includes("action.html") ? "action" : pathname.includes("program.html") ? "program" : "home";
     if (active === "home") pageHtml = enhanceHome(pageHtml);
 
-    const item = (key, href, label) => `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${label}</a>`;
+    const navIcon = (key) => ({
+      home: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.8V21h13V9.8"/><path d="M9.5 21v-6h5v6"/></svg>',
+      test: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>',
+      space: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4"/><path d="M4 7v10l8 4 8-4V7"/><path d="M9 15h6"/></svg>',
+      challenge: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h6"/><path d="M9 3h6v4H9z"/><path d="M7 5H5.8A1.8 1.8 0 0 0 4 6.8v13.4h16V6.8A1.8 1.8 0 0 0 18.2 5H17"/><path d="m8 14 2.3 2.3L16 10.6"/></svg>',
+      action: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.3 2"/></svg>',
+      program: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.2 3.3L16.5 7.5l-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18.5 13 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="M5 13.5v6h9"/></svg>'
+    })[key] || '';
+    const item = (key, href, label) => `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${navIcon(key)}<span class="nav-label">${label}</span></a>`;
     const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "트임기록")}${item("action", "action.html", "트임타임")}${item("program", "program.html", "트임 AI")}</nav>`;
 
     if (!pageHtml.includes("mission-record-link-style")) {
