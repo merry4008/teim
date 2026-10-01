@@ -1,7 +1,8 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);\n    if (url.pathname === "/api/teim-ai") return handleTeimAi(request, env);
+    if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);
+    if (url.pathname === "/api/teim-ai") return handleTeimAi(request, env);
     if (url.pathname === "/teum-logo.png" || url.pathname === "/tuim%20logo.png" || decodeURIComponent(url.pathname) === "/tuim logo.png") {
       url.pathname = "/tuim_logo.png";
       return env.ASSETS.fetch(new Request(url.toString(), request));
