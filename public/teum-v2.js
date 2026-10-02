@@ -8,6 +8,11 @@
   var month = today.slice(0,7);
   var dailyKey = 'teumV2Daily';
   var bingoKey = 'teumV2Bingo';
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var toastTimer;
+  function toast(message) { var node = $('#teum2Toast'); if (!node) return; clearTimeout(toastTimer); node.textContent=message; node.hidden=false; node.classList.remove('teum2-toast-out','teum2-toast-in'); void node.offsetWidth; node.classList.add('teum2-toast-in'); toastTimer=setTimeout(function(){node.classList.remove('teum2-toast-in');node.classList.add('teum2-toast-out');toastTimer=setTimeout(function(){node.hidden=true;node.classList.remove('teum2-toast-out');},reducedMotion?0:200);},2600); }
+  function animateClass(node,name) { if (!node || reducedMotion) return; node.classList.remove(name); void node.offsetWidth; node.classList.add(name); node.addEventListener('animationend',function clear(e){if(e.target===node){node.classList.remove(name);node.removeEventListener('animationend',clear);}}); }
+  function setValueWithUnit(selector,value,unit) { var node=$(selector); node.replaceChildren(document.createTextNode(String(value))); var suffix=document.createElement('small');suffix.textContent=unit;node.appendChild(suffix); }
   function load(key, fallback) {
     try { var v = JSON.parse(localStorage.getItem(key) || 'null'); return v && typeof v === 'object' ? v : fallback; }
     catch (_) { return fallback; }
@@ -32,6 +37,9 @@
       $('#teum2RecommendationLink').textContent = choice.cta;
       $('#teum2RecommendationLink').href = choice.href;
       $('#teum2Recommendation').hidden = false;
+      animateClass($('#teum2Recommendation'),'teum2-reveal');
+      var banner = $('.teum2-hero'); banner.dataset.mood=button.dataset.mood;
+      $('#teum2HeroMood').textContent = ({complex:'😵‍💫 생각 많은 날엔, 하나씩 덜어봐요.',rest:'😮‍💨 오늘은 쉬는 것도 트임이에요.',active:'⚡ 그 에너지로 딱 하나만 시작!',good:'😎 좋은 날의 순간도 기록해요.'})[button.dataset.mood];
     });
   });
   var daily = [
@@ -52,13 +60,15 @@
     var done = completedDays[today] === true, button = $('#teum2DailyDone');
     button.setAttribute('aria-pressed', String(done));
     button.textContent = done ? '완료했어요 ✓' : '했어요 ✓';
+    $('.teum2-daily').dataset.done=String(done);
     $('#teum2DailyStatus').textContent = done ? '오늘의 작은 틈을 기록했어요. 내일 또 만나요!' : '완료 버튼을 누르면 이 브라우저에 기록됩니다.';
   }
   $('#teum2DailyDone').addEventListener('click', function () {
-    completedDays[today] = !completedDays[today];
-    if (!save(dailyKey, completedDays)) $('#teum2DailyStatus').textContent = '브라우저 저장이 제한되어 기록을 보존하지 못했어요.';
-    else updateDaily();
-    updateArchive();
+    var next = !completedDays[today]; completedDays[today] = next;
+    if (!save(dailyKey, completedDays)) { completedDays[today]=!next; $('#teum2DailyStatus').textContent = '브라우저 저장이 제한되어 기록을 보존하지 못했어요.'; toast('저장이 제한돼 있어요. 브라우저 설정을 확인해주세요.'); return; }
+    updateDaily(); updateArchive();
+    if (next) { animateClass($('.teum2-daily'),'teum2-celebrate'); animateClass($('.teum2-stat-grid'),'teum2-stat-bump'); toast('✳ +1 트임! 오늘의 작은 틈이 기록됐어요.'); }
+    else toast('오늘의 비움 체크를 취소했어요.');
   });
   var tasks = [
     '가방 속 영수증 정리','열린 탭 3개 닫기','신발 한 켤레 정돈',
@@ -85,9 +95,13 @@
     var text = document.createElement('span'); text.textContent = title;
     button.appendChild(check); button.appendChild(text);
     button.addEventListener('click', function () {
+      var previous = combinations.filter(function(line){return line.every(function(i){return bingoMonths[month][i];});}).length;
       bingoMonths[month][index] = !bingoMonths[month][index];
-      save(bingoKey, bingoMonths);
+      if (!save(bingoKey,bingoMonths)) { bingoMonths[month][index] = !bingoMonths[month][index]; toast('빙고 저장이 제한돼 있어요.');return; }
       updateBingo(); updateArchive();
+      var now = combinations.filter(function(line){return line.every(function(i){return bingoMonths[month][i];});}).length;
+      if (bingoMonths[month][index]) { animateClass(button,'teum2-pop'); toast(now>previous?'☀️ 빙고 한 줄 완성!':'✳ 비움 빙고 한 칸을 채웠어요.'); }
+      else toast('빙고 체크를 취소했어요.');
     });
     $('#teum2BingoGrid').appendChild(button);
   });
@@ -96,9 +110,16 @@
     var count = bingoMonths[month].filter(Boolean).length;
     var quick = 0;
     try { quick = Math.max(0, Number(localStorage.getItem('teimQuickCount') || 0) || 0); } catch (_) {}
-    $('#teum2MonthDays').innerHTML = String(days) + '<small>일</small>';
-    $('#teum2MonthBingo').innerHTML = String(count) + '<small>칸</small>';
-    $('#teum2QuickCount').innerHTML = String(quick) + '<small>번</small>';
+    setValueWithUnit('#teum2MonthDays',days,'일');
+    setValueWithUnit('#teum2MonthBingo',count,'칸');
+    setValueWithUnit('#teum2QuickCount',quick,'번');
+    var elapsed = Number(today.slice(-2));
+    var percentage = Math.min(100,Math.round(100*days/elapsed));
+    $('#teum2RingPercent').textContent=percentage+'%';
+    $('#teum2Ring').setAttribute('aria-label','이번 달 오늘까지 '+elapsed+'일 중 '+days+'일 비움 실천, '+percentage+'퍼센트');
+    $('#teum2RingFill').style.strokeDashoffset=String(320.442*(1-percentage/100));
+    $('#teum2DashboardTitle').textContent=days===0?'오늘 첫 틈을 만들어볼까요?':days===1?'첫 번째 틈이 생겼어요!':days+'일의 작은 틈이 모였어요.';
+    $('#teum2DashboardText').textContent='이번 달 오늘까지 '+elapsed+'일 중 '+days+'일 실천했어요. 작은 행동도 기록으로 남아요.';
   }
   var quickApp = $('#quickTeimApp');
   if (quickApp) quickApp.addEventListener('click', function (event) {
