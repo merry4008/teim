@@ -3,6 +3,8 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);
     if (url.pathname === "/api/teim-ai") return handleTeimAi(request, env);
+    if (url.pathname === "/api/clothing-bins") return handleClothingBins(request, env);
+    if (url.pathname === "/api/clothing-bins/geocode") return handleClothingBinsGeocode(request, env);
     if (url.pathname === "/teum-logo.png" || url.pathname === "/tuim%20logo.png" || decodeURIComponent(url.pathname) === "/tuim logo.png") {
       url.pathname = "/tuim_logo.png";
       return env.ASSETS.fetch(new Request(url.toString(), request));
@@ -46,7 +48,7 @@ function rewriteHtml(response, pathname) {
     pageHtml = pageHtml.replace(/<a class="service-item" href="action\.html">((?:(?!<\/a>).)*<span>집중음악<\/span>(?:(?!<\/a>).)*)<\/a>/gs, '<a class="service-item" href="action.html#musicSection">$1</a>')
       .replace(/href="action\.html">바로해냄 열기/g, 'href="action.html">트임타임 열기');
 
-    const active = pathname.includes("test.html") ? "test" : pathname.includes("space.html") ? "space" : pathname.includes("challenge.html") ? "challenge" : pathname.includes("action.html") ? "action" : pathname.includes("program.html") ? "program" : "home";
+    const active = pathname.includes("test.html") ? "test" : pathname.includes("space.html") || pathname.includes("clothing-bins.html") ? "space" : pathname.includes("challenge.html") ? "challenge" : pathname.includes("action.html") ? "action" : pathname.includes("program.html") ? "program" : "home";
     if (active === "home" && !pageHtml.includes('data-home-version="2"')) pageHtml = enhanceHome(pageHtml);
 
     const navIcon = (key) => ({
@@ -265,3 +267,182 @@ function createTeimMission(weather) { const { temperature, humidity, weatherCode
 function jsonResponse(data, status = 200) { return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=900", "Access-Control-Allow-Origin": "*" } }); }
 
 // Deploy trigger: mobile bottom navigation SVG icons (2026-10-01).
+
+
+/* TEUM: clothing collection bins. Official nationwide public data / Kakao keyword fallback.
+   Secrets are Worker runtime bindings only: DATA_GO_KR_SERVICE_KEY, KAKAO_REST_API_KEY.
+   Do not cache user coordinates or search terms; only publicly available bins are cached. */
+const TEUM_BINS_SOURCE = "https://www.data.go.kr/data/15139214/standard.do";
+const TEUM_BINS_ENDPOINT = "https://api.data.go.kr/openapi/tn_pubr_public_clothing_collect_bins_api";
+const TEUM_BINS_COLUMNS = {
+  name: ["INSTL_PLC_NM", "instlPlcNm", "설치장소명"],
+  region: ["CTPV_NM", "ctpvNm", "시도명"],
+  district: ["SGG_NM", "sggNm", "시군구명"],
+  address: ["LCTN_ROAD_NM_ADDR", "lctnRoadNmAddr", "소재지도로명주소"],
+  lotAddress: ["LCTN_LOTNO_ADDR", "lctnLotnoAddr", "소재지지번주소"],
+  lat: ["LAT", "lat", "위도"],
+  lng: ["LOT", "lot", "경도", "longitude"],
+  detail: ["DTL_PSTN", "dtlPstn", "상세위치"],
+  date: ["DATA_CRTR_YMD", "dataCrtrYmd", "데이터기준일자"],
+  authority: ["MNG_INST_NM", "mngInstNm", "관리기관명"]
+};
+function teumBinField(item, keys) {
+  for (const k of keys) if (item && item[k] != null && String(item[k]).trim()) return String(item[k]).trim();
+  return "";
+}
+function teumBinNum(value) { if (value === "" || value == null) return null; const n = Number(value); return Number.isFinite(n) ? n : null; }
+function teumBinKm(a, b, x, y) {
+  const radians = Math.PI / 180;
+  const dlat = (x - a) * radians, dlng = (y - b) * radians;
+  const h = Math.sin(dlat/2)**2 + Math.cos(a*radians) * Math.cos(x*radians) * Math.sin(dlng/2)**2;
+  return 12742 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h));
+}
+function teumBinsResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), { status, headers: { "Content-Type":"application/json; charset=utf-8", "Cache-Control":"no-store", "X-Content-Type-Options":"nosniff" } });
+}
+function teumBinKey(env) {
+  let key = String(env.DATA_GO_KR_SERVICE_KEY || env.DATA_GO_KR_API_KEY || "").trim();
+  if (/%[0-9a-fA-F]{2}/.test(key)) { try { key = decodeURIComponent(key); } catch (_) {} }
+  return key;
+}
+function teumBinNormalize(row, index) {
+  const f = TEUM_BINS_COLUMNS;
+  const lat = teumBinNum(teumBinField(row,f.lat)), lng = teumBinNum(teumBinField(row,f.lng));
+  const region = teumBinField(row,f.region), district = teumBinField(row,f.district);
+  const address = teumBinField(row,f.address) || teumBinField(row,f.lotAddress);
+  const detail = teumBinField(row,f.detail);
+  const name = teumBinField(row,f.name) || (detail || "의류수거함");
+  if (!name && !address && !detail) return null;
+  if (lat !== null && (lat < 33 || lat > 39)) return null;
+  if (lng !== null && (lng < 124 || lng > 132)) return null;
+  return {id:"official-"+index,name,region,district,address,detail,lat,lng,referenceDate:teumBinField(row,f.date),authority:teumBinField(row,f.authority),source:"official"};
+}
+async function teumBinOfficialData(request, env) {
+  const cache = typeof caches !== "undefined" ? caches.default : null;
+  const cacheUrl = new URL("/__internal/teum-clothing-bins-official-v1", request.url);
+  const cacheRequest = new Request(cacheUrl.toString(), {method:"GET"});
+  if (cache) {
+    const hit = await cache.match(cacheRequest);
+    if (hit) { try { const cached = await hit.json(); if (Array.isArray(cached) && cached.length) return cached; } catch (_) {} }
+  }
+  const key = teumBinKey(env);
+  if (!key) throw new Error("OFFICIAL_KEY_MISSING");
+  const combined = [];
+  const pageSize = 1000;
+  let expected = null;
+  for (let page = 1; page <= 60; page++) {
+    const sourceUrl = new URL(TEUM_BINS_ENDPOINT);
+    sourceUrl.search = new URLSearchParams({serviceKey:key,pageNo:String(page),numOfRows:String(pageSize),type:"json"}).toString();
+    const upstream = await fetch(sourceUrl.toString(), {headers:{Accept:"application/json"}, signal:AbortSignal.timeout(12000)});
+    if (!upstream.ok) throw new Error("OFFICIAL_UPSTREAM_"+upstream.status);
+    let raw;
+    try { raw = await upstream.json(); } catch (_) { throw new Error("OFFICIAL_FORMAT"); }
+    const code = String(raw?.response?.header?.resultCode ?? raw?.response?.header?.resultCd ?? "00");
+    if (code !== "00" && code !== "0" && code !== "NORMAL_SERVICE") throw new Error("OFFICIAL_RESULT_"+code);
+    const body = raw?.response?.body || raw?.body || raw;
+    let rows = body.items?.item ?? body.items ?? body.data ?? raw?.data ?? [];
+    if (rows && !Array.isArray(rows) && typeof rows === "object") rows = [rows];
+    if (!Array.isArray(rows)) throw new Error("OFFICIAL_FORMAT");
+    if (expected === null) {const n = Number(body.totalCount ?? body.total_count); if (Number.isFinite(n) && n >= 0) expected = n;}
+    combined.push(...rows);
+    if ((expected !== null && combined.length >= expected) || rows.length < pageSize) break;
+    if (page === 60) throw new Error("OFFICIAL_TOO_MANY_PAGES");
+  }
+  const cleaned = combined.map(teumBinNormalize).filter(Boolean);
+  if (!cleaned.length) return [];
+  if (cache) {
+    try { await cache.put(cacheRequest, new Response(JSON.stringify(cleaned), {headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=43200"}})); } catch (_) {}
+  }
+  return cleaned;
+}
+async function teumBinKakaoSearch(lat, lng, radius, env) {
+  const key = String(env.KAKAO_REST_API_KEY || "").trim();
+  if (!key) return [];
+  const queries = ["헌옷수거함", "의류수거함"];
+  const found = [];
+  const unique = new Set();
+  for (const query of queries) {
+    const url = new URL("https://dapi.kakao.com/v2/local/search/keyword.json");
+    url.search = new URLSearchParams({query,x:String(lng),y:String(lat),radius:String(Math.min(radius,20000)),size:"15",page:"1",sort:"distance"}).toString();
+    const response = await fetch(url.toString(), {headers:{Authorization:"KakaoAK "+key},signal:AbortSignal.timeout(9000)});
+    if (!response.ok) continue;
+    const result = await response.json();
+    for (const p of (Array.isArray(result.documents) ? result.documents : [])) {
+      if (!/의류\s*수거함|헌옷\s*수거함|헌의류\s*수거함/.test(p.place_name || "")) continue;
+      const itemLat = teumBinNum(p.y), itemLng = teumBinNum(p.x);
+      if (itemLat === null || itemLng === null || itemLat < 33 || itemLat > 39 || itemLng < 124 || itemLng > 132) continue;
+      const id = String(p.id || (itemLat+","+itemLng));
+      if (unique.has(id)) continue;
+      unique.add(id);
+      found.push({id:"kakao-"+id,name:p.place_name,address:p.road_address_name || p.address_name || "",detail:"",region:"",district:"",lat:itemLat,lng:itemLng,referenceDate:"",authority:"",placeUrl:/^https:\/\/place\.map\.kakao\.com\/\d+$/.test(p.place_url || "")?p.place_url:"",source:"kakao"});
+    }
+  }
+  return found;
+}
+function teumBinResult(item,lat,lng) {
+  const km = item.lat != null && item.lng != null && lat != null && lng != null ? teumBinKm(lat,lng,item.lat,item.lng) : null;
+  return {...item,distanceMeters:km === null ? null : Math.round(km*1000)};
+}
+function teumBinTokens(query) {
+  const aliases = {서울:"서울특별시",경기:"경기도",인천:"인천광역시",부산:"부산광역시",대구:"대구광역시",대전:"대전광역시",광주:"광주광역시",울산:"울산광역시",세종:"세종특별자치시",강원:"강원특별자치도",충북:"충청북도",충남:"충청남도",전북:"전북특별자치도",전남:"전라남도",경북:"경상북도",경남:"경상남도",제주:"제주특별자치도"};
+  return query.split(/\s+/).map(t=>aliases[t] || t).filter(Boolean);
+}
+async function handleClothingBins(request,env) {
+  if (request.method !== "GET") return teumBinsResponse({ok:false,code:"METHOD",message:"GET 요청만 지원합니다."},405);
+  const u = new URL(request.url), latRaw = u.searchParams.get("lat"), lngRaw = u.searchParams.get("lng");
+  const lat = teumBinNum(latRaw), lng = teumBinNum(lngRaw);
+  const hasLocation = latRaw !== null || lngRaw !== null;
+  if (hasLocation && (lat === null || lng === null || lat < 33 || lat > 39 || lng < 124 || lng > 132)) return teumBinsResponse({ok:false,code:"INVALID_COORDS",message:"국내 위치 좌표를 확인해주세요."},400);
+  const query = String(u.searchParams.get("query") || "").trim().slice(0,80);
+  if (!hasLocation && !query) return teumBinsResponse({ok:false,code:"MISSING_SEARCH",message:"현재 위치 또는 검색할 동네를 알려주세요."},400);
+  const radius = [1000,3000,5000,10000].includes(Number(u.searchParams.get("radius"))) ? Number(u.searchParams.get("radius")) : 1000;
+  const officialAvailable = !!teumBinKey(env), kakaoAvailable = !!String(env.KAKAO_REST_API_KEY || "").trim();
+  if (!officialAvailable && !(kakaoAvailable && hasLocation)) return teumBinsResponse({
+    ok:false,code:"DATA_NOT_CONFIGURED",message:"공식 수거함 데이터 연결이 아직 준비되지 않았습니다. 공공데이터포털 API 인증키 설정이 필요합니다.",
+    sourceUrl:TEUM_BINS_SOURCE,canOpenMap:true
+  },503);
+  let official = [], officialFailed = false;
+  if (officialAvailable) {
+    try { official = await teumBinOfficialData(request,env); } catch (_) { officialFailed = true; }
+  }
+  if (officialFailed && !(kakaoAvailable && hasLocation)) return teumBinsResponse({ok:false,code:"UPSTREAM_ERROR",message:"공공데이터 조회가 일시적으로 원활하지 않습니다. 잠시 후 다시 시도해주세요.",sourceUrl:TEUM_BINS_SOURCE},502);
+  let matches = official;
+  if (hasLocation) {
+    matches = matches.filter(i=>i.lat !== null && i.lng !== null).map(i=>teumBinResult(i,lat,lng)).filter(i=>i.distanceMeters <= radius);
+    if (kakaoAvailable) {
+      let kakao = [];
+      try { kakao = await teumBinKakaoSearch(lat,lng,radius,env); } catch (_) {}
+      const already = new Set(matches.map(i=> i.lat != null ? (i.lat.toFixed(4)+":"+i.lng.toFixed(4)):""));
+      const extra = kakao.map(i=>teumBinResult(i,lat,lng)).filter(i=>i.distanceMeters <= radius && !already.has(i.lat.toFixed(4)+":"+i.lng.toFixed(4)));
+      matches = matches.concat(extra);
+    }
+    matches.sort((a,b)=>a.distanceMeters-b.distanceMeters);
+  } else {
+    const tokens = teumBinTokens(query);
+    matches = matches.filter(i=>tokens.every(t=>[i.name,i.region,i.district,i.address,i.detail].join(" ").includes(t))).map(i=>teumBinResult(i,null,null));
+  }
+  return teumBinsResponse({ok:true,items:matches.slice(0,30),count:matches.length,radius:hasLocation?radius:null,sourceUrl:TEUM_BINS_SOURCE,officialConnected:officialAvailable&&!officialFailed,kakaoConnected:kakaoAvailable,partial:officialFailed,notes:officialFailed?"공식 자료 조회가 원활하지 않아 카카오맵 등록 장소만 표시합니다.":"등록 정보와 실제 설치 상태가 다를 수 있으므로 방문 전 확인해주세요."});
+}
+async function handleClothingBinsGeocode(request,env) {
+  if (request.method !== "GET") return teumBinsResponse({ok:false,code:"METHOD"},405);
+  const key = String(env.KAKAO_REST_API_KEY || "").trim(), query = String(new URL(request.url).searchParams.get("query") || "").trim().slice(0,80);
+  if (query.length < 2) return teumBinsResponse({ok:false,code:"INVALID_QUERY",message:"두 글자 이상 입력해주세요."},400);
+  if (!key) return teumBinsResponse({ok:false,code:"GEOCODE_NOT_CONFIGURED",message:"주소 좌표 변환을 사용하려면 카카오 REST API 키가 필요합니다."},503);
+  try {
+    const url = new URL("https://dapi.kakao.com/v2/local/search/address.json");
+    url.searchParams.set("query",query);url.searchParams.set("size","1");
+    let response = await fetch(url.toString(),{headers:{Authorization:"KakaoAK "+key},signal:AbortSignal.timeout(9000)});
+    if (!response.ok) throw new Error("address");
+    let data = await response.json(), item = data.documents?.[0];
+    if (!item) {
+      const backup = new URL("https://dapi.kakao.com/v2/local/search/keyword.json");
+      backup.searchParams.set("query",query);backup.searchParams.set("size","1");
+      response = await fetch(backup.toString(),{headers:{Authorization:"KakaoAK "+key},signal:AbortSignal.timeout(9000)});
+      if (!response.ok) throw new Error("keyword");
+      data = await response.json(); item = data.documents?.[0];
+    }
+    const lat = teumBinNum(item?.y), lng = teumBinNum(item?.x);
+    if (lat === null || lng === null || lat < 33 || lat > 39 || lng < 124 || lng > 132) return teumBinsResponse({ok:false,code:"NOT_FOUND",message:"입력한 지역의 좌표를 찾지 못했습니다."},404);
+    return teumBinsResponse({ok:true,lat,lng,label:item.address_name || item.place_name || query});
+  } catch (_) { return teumBinsResponse({ok:false,code:"GEOCODE_ERROR",message:"주소를 확인하지 못했습니다. 지역명을 조금 더 구체적으로 입력해주세요."},502); }
+}
