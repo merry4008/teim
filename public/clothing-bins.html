@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#ffffff" />
+<meta name="description" content="내 위치 또는 동네 이름으로 가까운 헌옷수거함을 찾아보세요. 공공데이터 기반 위치 정보와 카카오맵 길찾기." />
+<title>트임 | 내 주변 헌옷수거함 찾기</title>
+<link rel="stylesheet" href="styles.css?v=teum-bins-1" />
+<link rel="stylesheet" href="clothing-bins.css?v=1" />
+</head>
+<body data-page="space">
+<header class="topbar">
+  <a href="index.html" aria-label="트임 홈" class="bins-brand"><img src="/tuim_logo.png" alt="TEUM" /></a>
+  <a class="top-action" href="test.html#clear">비우기 목록</a>
+</header>
+<main class="screen bins-screen">
+  <section class="bins-hero" aria-labelledby="binsHeading">
+    <p class="bins-eyebrow">SPACE CLEARING · CLOTHING</p>
+    <h1 id="binsHeading">안 입는 옷,<br>가까운 곳에 비워볼까요?</h1>
+    <p>현재 위치나 동네 이름으로 가까운 헌옷수거함을 찾아보세요.</p>
+    <div class="bins-hero-art" aria-hidden="true"><span>↗</span></div>
+  </section>
+
+  <section class="bins-panel bins-search" aria-labelledby="binsSearchTitle">
+    <div class="bins-section-title"><p class="bins-eyebrow">01 · FIND NEAR ME</p><h2 id="binsSearchTitle">수거함 위치 찾기</h2><p>GPS 위치는 검색에만 사용하며 트임기록에 저장하지 않아요.</p></div>
+    <button type="button" id="binsLocate" class="bins-locate"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>내 현재 위치로 찾기</span><span aria-hidden="true">→</span></button>
+    <div class="bins-or"><span>또는 직접 검색</span></div>
+    <form id="binsForm" class="bins-query">
+      <label for="binsAddress">동네 또는 주소 입력</label>
+      <div class="bins-query-row"><input id="binsAddress" name="address" type="search" autocomplete="street-address" maxlength="80" placeholder="예: 송파구 잠실동, 군포시 산본동" required/><button type="submit">찾기</button></div>
+      <p>주소 좌표 검색을 사용하면 주변 수거함을 거리순으로 표시해요. 미설정 시 공식 데이터에서 지역명으로 검색합니다.</p>
+    </form>
+    <p id="binsStatus" class="bins-status" role="status" aria-live="polite">현재 위치 또는 동네를 선택해 주세요.</p>
+  </section>
+
+  <section class="bins-panel bins-results" aria-labelledby="binsResultsTitle">
+    <div class="bins-section-title bins-results-heading"><div><p class="bins-eyebrow">02 · NEARBY RESULTS</p><h2 id="binsResultsTitle">검색 결과</h2><p id="binsResultsCaption">공식 자료에 등록된 수거함과 지도 등록 장소를 구분해 표시해요.</p></div><span class="bins-count" id="binsCount" aria-live="polite">0곳</span></div>
+    <div class="bins-radius" id="binsRadius" role="group" aria-label="검색 반경" hidden>
+      <button type="button" data-radius="1000" aria-pressed="true">1km</button>
+      <button type="button" data-radius="3000" aria-pressed="false">3km</button>
+      <button type="button" data-radius="5000" aria-pressed="false">5km</button>
+      <button type="button" data-radius="10000" aria-pressed="false">10km</button>
+    </div>
+    <div id="binsList" class="bins-list" aria-live="polite"><div class="bins-empty">검색하면 가까운 수거함 목록을 보여드려요.</div></div>
+    <p class="bins-disclaimer">공공데이터의 기준일과 실제 설치 상태가 다를 수 있습니다. 표시되는 거리는 직선거리이며 실제 이동 거리는 길찾기로 확인해주세요.</p>
+    <div class="bins-source"><span>자료 출처</span><a href="https://www.data.go.kr/data/15139214/standard.do" target="_blank" rel="noopener noreferrer">전국의류수거함표준데이터 ↗</a></div>
+  </section>
+
+  <section class="bins-panel bins-bottom" aria-labelledby="binsNextTitle">
+    <p class="bins-eyebrow">03 · MAKE SPACE</p>
+    <h2 id="binsNextTitle">옷을 비웠다면, 기록도 남겨요.</h2>
+    <p>수거함에 직접 배출을 완료한 뒤 트임기록에 사진으로 남길 수 있어요.</p>
+    <a class="bins-record" href="challenge.html">트임기록으로 이동 →</a>
+  </section>
+</main>
+<nav class="bottom-nav" aria-label="하단 메뉴"><a data-nav="home" href="index.html">홈</a><a data-nav="action" href="index.html#today">오늘의 트임</a><a class="active" data-nav="space" href="index.html#quickTeimExperience">바로 비우기</a><a data-nav="test" href="test.html">마음 비움</a><a data-nav="challenge" href="challenge.html">MY</a></nav>
+<script src="clothing-bins.js?v=1" defer></script>
+</body>
+</html>
