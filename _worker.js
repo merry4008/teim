@@ -273,7 +273,6 @@ function jsonResponse(data, status = 200) { return new Response(JSON.stringify(d
    Secrets are Worker runtime bindings only: DATA_GO_KR_SERVICE_KEY, KAKAO_REST_API_KEY.
    Do not cache user coordinates or search terms; only publicly available bins are cached. */
 const TEUM_BINS_SOURCE = "https://www.data.go.kr/data/15139214/standard.do";
-const TEUM_BINS_ENDPOINT = "https://api.data.go.kr/openapi/tn_pubr_public_clothing_collect_bins_api";
 const TEUM_BINS_COLUMNS = {
   name: ["INSTL_PLC_NM", "instlPlcNm", "설치장소명"],
   region: ["CTPV_NM", "ctpvNm", "시도명"],
