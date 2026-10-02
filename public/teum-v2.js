@@ -123,7 +123,7 @@
   }
   var quickApp = $('#quickTeimApp');
   if (quickApp) quickApp.addEventListener('click', function (event) {
-    if (event.target.closest('.quick-complete')) requestAnimationFrame(updateArchive);
+    if (event.target.closest('.quick-complete')) requestAnimationFrame(function(){updateArchive();animateClass($('.teum2-stat-grid'),'teum2-stat-bump');toast('✳ 방금 비운 한 가지도 기록에 더했어요!');});
   });
   function highlightNav() {
     var key = location.hash === '#today' ? 'action' : location.hash === '#quickTeimExperience' ? 'space' : 'home';
