@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#ffffff" />
   <title>트임 | 정리 챌린지</title>
   <link rel="stylesheet" href="styles.css?v=teum-action-1" />
+  <link rel="stylesheet" href="teum-rewards.css?v=1" />
   <style>
     .challenge-screen{padding-top:20px}.challenge-hero{background:#2563EB;color:#fff;border-radius:34px;padding:26px 22px;box-shadow:0 18px 44px rgba(37,99,235,.22)}.challenge-hero .small-label{color:#FFC928}.challenge-hero h1{margin:0;font-size:36px;line-height:1.08;letter-spacing:-.075em;color:#fff}.challenge-hero p{margin:12px 0 0;color:rgba(255,255,255,.86);font-size:15px}.challenge-progress{margin-top:14px;background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:28px;padding:18px;box-shadow:0 14px 34px rgba(37,99,235,.08)}.challenge-progress b{display:block;color:#183B6B;font-size:21px;letter-spacing:-.05em}.challenge-progress p{margin:5px 0 12px;color:#64748b;font-size:13px}.challenge-track{height:10px;border-radius:999px;background:#eaf1ff;overflow:hidden}.challenge-fill{height:100%;width:0;background:linear-gradient(90deg,#2563EB,#FFC928);border-radius:999px;transition:.2s}.challenge-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px}.day-cell{background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:20px;padding:10px 7px;min-height:112px;box-shadow:0 12px 28px rgba(37,99,235,.07);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center}.day-cell.done{border-color:#2563EB;background:#f8fbff}.day-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#EEF4FF;color:#2563EB;font-weight:1000;font-size:12px}.day-cell.done .day-num{background:#2563EB;color:#fff}.day-check{width:26px;height:26px;border-radius:50%;border:2px solid #dbe7ff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:1000;font-size:14px}.day-cell.done .day-check{background:#FFC928;border-color:#FFC928;color:#183B6B}.photo-preview{display:none;width:100%;aspect-ratio:1/1;border-radius:13px;object-fit:cover;background:#EEF4FF;margin:8px 0}.day-cell.has-photo .photo-preview{display:block}.photo-btn{width:100%;border:0;border-radius:14px;background:#FFC928;color:#183B6B;font-size:11px;font-weight:1000;padding:9px 4px;cursor:pointer}.photo-input{display:none}.reset-box{margin-top:14px;background:#fff;border:1px solid rgba(37,99,235,.12);border-radius:24px;padding:16px;text-align:center}.reset-box p{margin:0 0 10px;color:#64748b;font-size:13px}.reset-box button{border:0;border-radius:999px;background:#EEF4FF;color:#2563EB;font-weight:950;padding:11px 15px}@media(max-width:640px){.challenge-hero{border-radius:28px;padding:23px 20px}.challenge-hero h1{font-size:31px}.challenge-calendar{grid-template-columns:repeat(2,1fr);gap:9px}.day-cell{min-height:148px;border-radius:20px;padding:12px}.day-num{width:34px;height:34px}.photo-btn{font-size:12px;padding:10px 7px}}
   </style>
@@ -14,6 +15,38 @@
   <header class="topbar"><a href="index.html" aria-label="트임 홈" style="display:flex;align-items:center"><img src="/tuim_logo.png" alt="TEUM" style="display:block;height:34px;width:auto" /></a><a class="top-action" href="index.html">홈</a></header>
   <main class="screen challenge-screen">
     <section class="challenge-hero"><p class="small-label">14 DAYS CHALLENGE</p><h1>14일 정리 챌린지</h1><p>달력에서 원하는 날짜를 선택하고, 사진을 올리면 체크가 완료됩니다. 인증 사진은 현재 기기 브라우저에만 저장됩니다.</p></section>
+    <section class="teum-rewards" aria-labelledby="rewardHeading">
+      <div class="tr-section-heading"><p class="tr-kicker">MY LITTLE SPACE · REWARD</p><h2 id="rewardHeading">내가 모은 틈, 얼마나 커졌을까?</h2><p>작은 실행들이 남긴 기록을 한눈에 살펴봐요.</p></div>
+      <div class="tr-summary">
+        <div class="tr-summary-text"><span class="tr-pill">내가 만든 작은 변화</span><div class="tr-total"><strong id="trTotal">0</strong><span>개의 틈 ✳</span></div><p id="trHeadline">첫 틈이 생길 준비가 됐어요.</p><span class="tr-footnote">이 브라우저의 현재 완료 기록을 합산해요.</span></div>
+        <div class="tr-circle" role="img" id="trCircle" aria-label="다음 디지털 선물까지 진행 현황">
+          <svg viewBox="0 0 160 160" aria-hidden="true"><circle class="tr-circle-back" cx="80" cy="80" r="66"></circle><circle class="tr-circle-value" id="trCircleValue" cx="80" cy="80" r="66"></circle></svg>
+          <div class="tr-circle-inner"><span>다음 선물까지</span><strong id="trRemaining">1</strong><span id="trNextText">틈 남음</span></div>
+        </div>
+      </div>
+      <div class="tr-source" aria-label="완료 기록 구성"><span>오늘의 비움 <b id="trDaily">0</b></span><span>비움 빙고 <b id="trBingo">0</b></span><span>바로 비우기 <b id="trQuick">0</b></span><span>사진 기록 <b id="trPhoto">0</b></span></div>
+      <div class="tr-map">
+        <div class="tr-map-head"><div><p class="tr-kicker">MY TEUM MAP</p><h3>어떤 틈을 만들었나요?</h3><p>영역을 누르면 다음에 해볼 작은 비움을 추천해요.</p></div><span class="tr-map-icon" aria-hidden="true">✳</span></div>
+        <div class="tr-categories" role="group" aria-label="비움 영역 선택">
+          <button type="button" class="tr-category" data-kind="space" aria-pressed="true"><span class="tr-category-top"><b>공간 비움</b><strong id="trSpace">0</strong></span><span class="tr-bar"><i id="trSpaceBar"></i></span><small>책상·신발·옷</small></button>
+          <button type="button" class="tr-category" data-kind="digital" aria-pressed="false"><span class="tr-category-top"><b>디지털 비움</b><strong id="trDigital">0</strong></span><span class="tr-bar"><i id="trDigitalBar"></i></span><small>사진·탭·알림</small></button>
+          <button type="button" class="tr-category" data-kind="daily" aria-pressed="false"><span class="tr-category-top"><b>일상 비움</b><strong id="trRoutine">0</strong></span><span class="tr-bar"><i id="trRoutineBar"></i></span><small>영수증·메모</small></button>
+        </div>
+        <p class="tr-chart-note">완료된 오늘의 비움·빙고를 종류별로 묶은 기록이에요. 바로 비우기·사진 기록은 유형을 확인할 수 없어 위 그래프에 임의로 배분하지 않았어요.</p>
+        <div class="tr-next" aria-live="polite"><span class="tr-next-pill" id="trSuggestionTag">다음 작은 틈</span><h4 id="trSuggestionTitle">책상 위 물건 하나 제자리로</h4><p id="trSuggestionBody">전체를 정리할 필요 없어요. 지금 보이는 것 하나면 충분해요.</p><a href="index.html#bingo" id="trSuggestionLink">미션으로 이동 ↗</a></div>
+        <p class="tr-encourage" id="trEncourage"></p>
+      </div>
+      <div class="tr-gifts"><div class="tr-map-head"><div><p class="tr-kicker">LITTLE PRESENTS</p><h3>틈을 모아 열어보는 선물함</h3><p>기록이 쌓이면 무료 디지털 트임카드가 열려요.</p></div></div>
+        <div class="tr-gift-grid" id="trGifts">
+          <button type="button" class="tr-gift" data-needed="1"><span class="tr-gift-icon" aria-hidden="true">✳</span><b>첫 틈 선물</b><small>1틈</small><em>잠김</em></button>
+          <button type="button" class="tr-gift" data-needed="3"><span class="tr-gift-icon" aria-hidden="true">☀</span><b>작은 시작 카드</b><small>3틈</small><em>잠김</em></button>
+          <button type="button" class="tr-gift" data-needed="7"><span class="tr-gift-icon" aria-hidden="true">♡</span><b>나를 위한 쉼표</b><small>7틈</small><em>잠김</em></button>
+          <button type="button" class="tr-gift" data-needed="15"><span class="tr-gift-icon" aria-hidden="true">✦</span><b>나의 트임 선언</b><small>15틈</small><em>잠김</em></button>
+        </div>
+        <div class="tr-gift-open" id="trGiftOpen" aria-live="polite" hidden><span class="tr-pill">A LITTLE GIFT FOR YOU</span><h4 id="trGiftTitle"></h4><p id="trGiftMessage"></p><button type="button" id="trGiftClose">닫기</button></div>
+        <p class="tr-chart-note">선물은 디지털 카드이며 실제 상품·쿠폰이 아닙니다. 기록 체크를 취소하거나 초기화하면 현재 보상 단계도 함께 다시 계산됩니다.</p>
+      </div>
+    </section>
     <section class="challenge-progress"><b id="progressTitle">0 / 14 완료</b><p id="progressText">사진 인증을 올리면 해당 날짜가 체크됩니다.</p><div class="challenge-track"><div id="challengeFill" class="challenge-fill"></div></div></section>
     <section id="challengeCalendar" class="challenge-calendar" aria-label="14일 정리 챌린지 달력"></section>
     <section class="reset-box"><p>체크는 사진을 올린 날짜만 완료 처리됩니다.</p><button id="resetChallenge" type="button">챌린지 초기화</button></section>
@@ -29,9 +62,10 @@
     try{data=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){data={}}
     function save(){localStorage.setItem(key,JSON.stringify(data))}
     function resizeImage(file,cb){const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');const size=640;const ratio=Math.min(size/img.width,size/img.height,1);canvas.width=Math.round(img.width*ratio);canvas.height=Math.round(img.height*ratio);const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);cb(canvas.toDataURL('image/jpeg',.78))};img.src=reader.result};reader.readAsDataURL(file)}
-    function render(){calendar.innerHTML='';let done=0;Array.from({length:14}).forEach((_,i)=>{const day=i+1;const item=data[day];if(item&&item.photo)done++;const cell=document.createElement('article');cell.className='day-cell'+(item&&item.photo?' done has-photo':'');cell.innerHTML=`<span class="day-num">${day}일</span><img class="photo-preview" alt="${day}일차 인증 사진" src="${item&&item.photo?item.photo:''}"><span class="day-check">✓</span><label class="photo-btn">${item&&item.photo?'사진 변경':'사진 올리기'}<input class="photo-input" type="file" accept="image/*"></label>`;cell.querySelector('input').addEventListener('change',e=>{const file=e.target.files&&e.target.files[0];if(!file)return;resizeImage(file,photo=>{data[day]={photo,doneAt:new Date().toISOString()};save();render()})});calendar.appendChild(cell)});progressTitle.textContent=`${done} / 14 완료`;progressText.textContent=done===14?'14일 체크를 모두 완료했습니다.':done===0?'사진 인증을 올리면 해당 날짜가 체크됩니다.':`${14-done}일 남았습니다.`;fill.style.width=(done/14*100)+'%'}
+    function render(){calendar.innerHTML='';let done=0;Array.from({length:14}).forEach((_,i)=>{const day=i+1;const item=data[day];if(item&&item.photo)done++;const cell=document.createElement('article');cell.className='day-cell'+(item&&item.photo?' done has-photo':'');cell.innerHTML=`<span class="day-num">${day}일</span><img class="photo-preview" alt="${day}일차 인증 사진" src="${item&&item.photo?item.photo:''}"><span class="day-check">✓</span><label class="photo-btn">${item&&item.photo?'사진 변경':'사진 올리기'}<input class="photo-input" type="file" accept="image/*"></label>`;cell.querySelector('input').addEventListener('change',e=>{const file=e.target.files&&e.target.files[0];if(!file)return;resizeImage(file,photo=>{data[day]={photo,doneAt:new Date().toISOString()};save();render()})});calendar.appendChild(cell)});progressTitle.textContent=`${done} / 14 완료`;progressText.textContent=done===14?'14일 체크를 모두 완료했습니다.':done===0?'사진 인증을 올리면 해당 날짜가 체크됩니다.':`${14-done}일 남았습니다.`;fill.style.width=(done/14*100)+'%';window.dispatchEvent(new Event('teum:records-updated'))}
     document.getElementById('resetChallenge').onclick=()=>{if(confirm('챌린지 인증 사진과 체크를 모두 초기화할까요?')){data={};save();render()}};
     render();
   </script>
+  <script src="teum-rewards.js?v=1" defer></script>
 </body>
 </html>
