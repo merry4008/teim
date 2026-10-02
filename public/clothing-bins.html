@@ -7,7 +7,7 @@
 <meta name="description" content="내 위치 또는 동네 이름으로 가까운 헌옷수거함을 찾아보세요. 공공데이터 기반 위치 정보와 카카오맵 길찾기." />
 <title>트임 | 내 주변 헌옷수거함 찾기</title>
 <link rel="stylesheet" href="styles.css?v=teum-bins-1" />
-<link rel="stylesheet" href="clothing-bins.css?v=2" />
+<link rel="stylesheet" href="clothing-bins.css?v=1" />
 </head>
 <body data-page="space">
 <header class="topbar">
@@ -35,14 +35,14 @@
   </section>
 
   <section class="bins-panel bins-results" aria-labelledby="binsResultsTitle">
-    <div class="bins-section-title bins-results-heading"><div><p class="bins-eyebrow">02 · NEARBY RESULTS</p><h2 id="binsResultsTitle">검색 결과</h2><p id="binsResultsCaption">내 위치나 동네를 입력하면 결과가 여기에 나타나요.</p></div><span class="bins-count" id="binsCount" aria-live="polite" hidden></span></div>
+    <div class="bins-section-title bins-results-heading"><div><p class="bins-eyebrow">02 · NEARBY RESULTS</p><h2 id="binsResultsTitle">검색 결과</h2><p id="binsResultsCaption">공식 자료에 등록된 수거함과 지도 등록 장소를 구분해 표시해요.</p></div><span class="bins-count" id="binsCount" aria-live="polite">0곳</span></div>
     <div class="bins-radius" id="binsRadius" role="group" aria-label="검색 반경" hidden>
       <button type="button" data-radius="1000" aria-pressed="true">1km</button>
       <button type="button" data-radius="3000" aria-pressed="false">3km</button>
       <button type="button" data-radius="5000" aria-pressed="false">5km</button>
       <button type="button" data-radius="10000" aria-pressed="false">10km</button>
     </div>
-    <div id="binsList" class="bins-list" aria-live="polite" aria-busy="false"><div class="bins-placeholder"><span class="bins-placeholder-icon" aria-hidden="true">⌖</span><strong>가까운 수거함을 찾아볼까요?</strong><p>위의 현재 위치 버튼을 누르거나 동네 이름을 검색해 주세요.</p></div></div>
+    <div id="binsList" class="bins-list" aria-live="polite"><div class="bins-empty">검색하면 가까운 수거함 목록을 보여드려요.</div></div>
     <p class="bins-disclaimer">공공데이터의 기준일과 실제 설치 상태가 다를 수 있습니다. 표시되는 거리는 직선거리이며 실제 이동 거리는 길찾기로 확인해주세요.</p>
     <div class="bins-source"><span>자료 출처</span><a href="https://www.data.go.kr/data/15139214/standard.do" target="_blank" rel="noopener noreferrer">전국의류수거함표준데이터 ↗</a></div>
   </section>
@@ -55,6 +55,6 @@
   </section>
 </main>
 <nav class="bottom-nav" aria-label="하단 메뉴"><a data-nav="home" href="index.html">홈</a><a data-nav="action" href="index.html#today">오늘의 트임</a><a class="active" data-nav="space" href="index.html#quickTeimExperience">바로 비우기</a><a data-nav="test" href="test.html">마음 비움</a><a data-nav="challenge" href="challenge.html">MY</a></nav>
-<script src="clothing-bins.js?v=2" defer></script>
+<script src="clothing-bins.js?v=1" defer></script>
 </body>
 </html>
