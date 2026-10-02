@@ -66,7 +66,7 @@ function rewriteHtml(response, pathname) {
 
     if (!pageHtml.includes("teum2-nav-style")) pageHtml = pageHtml.replace("</head>", '<style id="teum2-nav-style">.bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important}.bottom-nav .nav-label{white-space:normal!important;line-height:1.2}.bottom-nav a{font-size:10px!important}</style></head>');
 
-    const rewritten = pageHtml.includes('class="bottom-nav"') ? pageHtml.replace(/<nav class="bottom-nav">[\s\S]*?<\/nav>/, nav) : pageHtml.replace("</body>", `${nav}</body>`);
+    const rewritten = pageHtml.includes('class="bottom-nav"') ? pageHtml.replace(/<nav class="bottom-nav"(?:\s[^>]*)?>[\s\S]*?<\/nav>/, nav) : pageHtml.replace("</body>", `${nav}</body>`);
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
     return new Response(rewritten, { status: response.status, statusText: response.statusText, headers });
