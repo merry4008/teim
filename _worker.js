@@ -338,37 +338,73 @@ function teumBinRows(raw) {
   if(rows&&typeof rows==="object")return [rows];
   throw new Error("OFFICIAL_FORMAT");
 }
-async function teumBinOfficialData(request,env) {
-  const cache=typeof caches!=="undefined"?caches.default:null;
-  const cacheRequest=new Request(new URL("/__internal/teum-clothing-bins-dataset-v2",request.url).toString());
-  if(cache){const hit=await cache.match(cacheRequest);if(hit){try{const cached=await hit.json();if(Array.isArray(cached)&&cached.length)return cached;}catch(_){}}}
+/* Official nationwide API. The private service key is never returned to the browser. */
+const TEUM_BINS_API = "https://api.data.go.kr/openapi/tn_pubr_public_clothing_collect_bins_api";
+function teumBinParseOfficialJson(raw) {
+  const code=String(raw?.response?.header?.resultCode ?? raw?.response?.header?.resultCd ?? "00");
+  if(!["00","0","NORMAL_SERVICE","NORMAL_CODE"].includes(code))throw new Error("OFFICIAL_RESULT_"+code);
+  const body=raw?.response?.body || raw?.body || raw;
+  const total=Number(body?.totalCount ?? body?.total_count);
+  const empty=Number.isFinite(total)&&total===0;
+  const rows=empty&&body?.items==null?[]:teumBinRows(raw);
+  return {rows,total:Number.isFinite(total)&&total>=0?total:null};
+}
+async function teumBinFetchOfficialPage(key,page,pageSize){
+  const url=new URL(TEUM_BINS_API);
+  url.search=new URLSearchParams({serviceKey:key,pageNo:String(page),numOfRows:String(pageSize),type:"json"}).toString();
+  const response=await fetch(url.toString(),{headers:{Accept:"application/json"},signal:AbortSignal.timeout(12000)});
+  if(!response.ok)throw new Error("OFFICIAL_UPSTREAM_"+response.status);
+  const rawText=await response.text();
+  if(rawText.length>4000000)throw new Error("OFFICIAL_PAGE_TOO_LARGE");
+  let raw;try{raw=JSON.parse(rawText);}catch(_){throw new Error("OFFICIAL_JSON_ERROR");}
+  return teumBinParseOfficialJson(raw);
+}
+async function teumBinFetchOfficialApi(env){
+  const key=teumBinKey(env);if(!key)throw new Error("OFFICIAL_KEY_MISSING");
+  const pageSize=1000,maxPages=40;const all=[];let expected=null;
+  for(let page=1;page<=maxPages;page++){
+    const {rows,total}=await teumBinFetchOfficialPage(key,page,pageSize);
+    if(expected===null&&total!==null)expected=total;
+    all.push(...rows);
+    if((expected!==null&&all.length>=expected)||rows.length<pageSize)return all;
+  }
+  throw new Error("OFFICIAL_PAGE_LIMIT"); /* Never present truncated results. */
+}
+async function teumBinFetchConfiguredFile(request,env){
   const configured=String(env.CLOTHING_BINS_DATA_URL||"").trim();
   let upstream;
-  if(configured) {
+  if(configured){
     const src=new URL(configured);
-    if(src.protocol!=="https:" || !["www.data.go.kr","data.go.kr","api.data.go.kr","apis.data.go.kr","api.odcloud.kr"].includes(src.hostname))throw new Error("OFFICIAL_SOURCE_NOT_ALLOWED");
-    if(src.hostname==="api.data.go.kr"||src.hostname==="apis.data.go.kr") {
+    if(src.protocol!=="https:"||!["www.data.go.kr","data.go.kr","api.data.go.kr","apis.data.go.kr","api.odcloud.kr"].includes(src.hostname))throw new Error("OFFICIAL_SOURCE_NOT_ALLOWED");
+    if(src.hostname==="api.data.go.kr"||src.hostname==="apis.data.go.kr"){
       const key=teumBinKey(env);
-      if(key && !src.searchParams.has("serviceKey"))src.searchParams.set("serviceKey",key);
+      if(key&&!src.searchParams.has("serviceKey"))src.searchParams.set("serviceKey",key);
     }
     upstream=await fetch(src.toString(),{headers:{Accept:"application/json,text/csv,text/plain"},signal:AbortSignal.timeout(15000)});
   }else{
-    /* The official nationwide standard is published as downloadable CSV.
-       The operator may include its verified CSV as public/clothing-bins-data.csv. */
     upstream=await env.ASSETS.fetch(new Request(new URL("/clothing-bins-data.csv",request.url).toString()));
     if(!upstream.ok)throw new Error("OFFICIAL_NOT_CONFIGURED");
   }
   if(!upstream.ok)throw new Error("OFFICIAL_UPSTREAM_"+upstream.status);
   const content=await upstream.text();
   if(content.length>15000000)throw new Error("OFFICIAL_TOO_LARGE");
-  let rows;
-  const contentType=(upstream.headers.get("content-type")||"").toLowerCase();
-  if(contentType.includes("json")||/^\s*[\[{]/.test(content)) {
-    let parsed;try{parsed=JSON.parse(content)}catch(_){throw new Error("OFFICIAL_FORMAT")}
-    const code=String(parsed?.response?.header?.resultCode ?? parsed?.response?.header?.resultCd ?? "00");
-    if(!["00","0","NORMAL_SERVICE","NORMAL_CODE"].includes(code))throw new Error("OFFICIAL_RESULT_"+code);
-    rows=teumBinRows(parsed);
-  }else rows=teumBinCsv(content);
+  const type=(upstream.headers.get("content-type")||"").toLowerCase();
+  if(type.includes("json")||/^\s*[\[{]/.test(content)){
+    let parsed;try{parsed=JSON.parse(content);}catch(_){throw new Error("OFFICIAL_FORMAT");}
+    return teumBinParseOfficialJson(parsed).rows;
+  }
+  return teumBinCsv(content);
+}
+async function teumBinOfficialData(request,env){
+  const cache=typeof caches!=="undefined"?caches.default:null;
+  const cacheRequest=new Request(new URL("/__internal/teum-clothing-bins-dataset-api-v3",request.url).toString());
+  if(cache){const hit=await cache.match(cacheRequest);if(hit){try{const cached=await hit.json();if(Array.isArray(cached)&&cached.length)return cached;}catch(_){}}}
+  let rows,primaryError=null;
+  if(teumBinKey(env)){try{rows=await teumBinFetchOfficialApi(env);}catch(err){primaryError=err;}}
+  if(!Array.isArray(rows)||!rows.length){
+    try{rows=await teumBinFetchConfiguredFile(request,env);}
+    catch(fallbackError){throw primaryError||fallbackError;}
+  }
   const cleaned=rows.map(teumBinNormalize).filter(Boolean);
   if(!cleaned.length)throw new Error("OFFICIAL_EMPTY");
   if(cache){try{await cache.put(cacheRequest,new Response(JSON.stringify(cleaned),{headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=43200"}}));}catch(_){}}
@@ -418,7 +454,7 @@ async function handleClothingBins(request,env) {
   const kakaoAvailable = !!String(env.KAKAO_REST_API_KEY || "").trim();
   let official = [], officialFailed = false, missingSource = false;
   try { official = await teumBinOfficialData(request,env); } catch (err) { officialFailed = true; missingSource = String(err?.message || "") === "OFFICIAL_NOT_CONFIGURED"; }
-  if (officialFailed && !(kakaoAvailable && hasLocation)) return teumBinsResponse({ok:false,code:missingSource?"DATA_NOT_CONFIGURED":"UPSTREAM_ERROR",message:missingSource?"공식 수거함 CSV 데이터가 아직 연결되지 않았습니다. 지역 검색은 공공 CSV 등록 후 사용 가능합니다.":"공공데이터 조회가 원활하지 않습니다. 잠시 후 다시 시도해주세요.",sourceUrl:TEUM_BINS_SOURCE,canOpenMap:true},missingSource?503:502);
+  if (officialFailed && !(kakaoAvailable && hasLocation)) return teumBinsResponse({ok:false,code:missingSource?"DATA_NOT_CONFIGURED":"UPSTREAM_ERROR",message:missingSource?"공식 수거함 데이터가 아직 연결되지 않았습니다. Cloudflare에 DATA_GO_KR_SERVICE_KEY를 Secret으로 등록해주세요.":"공공데이터 조회가 원활하지 않습니다. 인증키 상태와 API 승인 여부를 확인한 뒤 다시 시도해주세요.",sourceUrl:TEUM_BINS_SOURCE,canOpenMap:true},missingSource?503:502);
   let matches = official;
   if (hasLocation) {
     matches = matches.filter(i=>i.lat !== null && i.lng !== null).map(i=>teumBinResult(i,lat,lng)).filter(i=>i.distanceMeters <= radius);
