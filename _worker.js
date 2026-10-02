@@ -280,10 +280,10 @@ const TEUM_BINS_COLUMNS = {
   district: ["SGG_NM", "sggNm", "시군구명"],
   address: ["LCTN_ROAD_NM_ADDR", "lctnRoadNmAddr", "소재지도로명주소"],
   lotAddress: ["LCTN_LOTNO_ADDR", "lctnLotnoAddr", "소재지지번주소"],
-  lat: ["LAT", "lat", "위도"],
-  lng: ["LOT", "lot", "경도", "longitude"],
+  lat: ["LAT", "lat", "latitude", "LATITUDE", "위도"],
+  lng: ["LOT", "lot", "lng", "LONGITUDE", "경도", "longitude"],
   detail: ["DTL_PSTN", "dtlPstn", "상세위치"],
-  date: ["DATA_CRTR_YMD", "dataCrtrYmd", "데이터기준일자"],
+  date: ["DATA_CRTR_YMD", "dataCrtrYmd", "crtrYmd", "데이터기준일자"],
   authority: ["MNG_INST_NM", "mngInstNm", "관리기관명"]
 };
 function teumBinField(item, keys) {
@@ -317,42 +317,62 @@ function teumBinNormalize(row, index) {
   if (lng !== null && (lng < 124 || lng > 132)) return null;
   return {id:"official-"+index,name,region,district,address,detail,lat,lng,referenceDate:teumBinField(row,f.date),authority:teumBinField(row,f.authority),source:"official"};
 }
-async function teumBinOfficialData(request, env) {
-  const cache = typeof caches !== "undefined" ? caches.default : null;
-  const cacheUrl = new URL("/__internal/teum-clothing-bins-official-v1", request.url);
-  const cacheRequest = new Request(cacheUrl.toString(), {method:"GET"});
-  if (cache) {
-    const hit = await cache.match(cacheRequest);
-    if (hit) { try { const cached = await hit.json(); if (Array.isArray(cached) && cached.length) return cached; } catch (_) {} }
+/* Parse RFC4180-ish CSV: quoted commas, escaped quotes and multiline cells. */
+function teumBinCsv(text) {
+  const source=String(text||"").replace(/^\uFEFF/,""); const rows=[]; let row=[],field="",quoted=false;
+  for(let i=0;i<source.length;i++) {
+    const ch=source[i];
+    if(ch==='"') {if(quoted && source[i+1]==='"'){field+='"';i++;}else quoted=!quoted;}
+    else if(ch===','&&!quoted){row.push(field);field="";}
+    else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&source[i+1]==='\n')i++;row.push(field);field="";if(row.some(v=>String(v).trim()))rows.push(row);row=[];}
+    else field+=ch;
   }
-  const key = teumBinKey(env);
-  if (!key) throw new Error("OFFICIAL_KEY_MISSING");
-  const combined = [];
-  const pageSize = 1000;
-  let expected = null;
-  for (let page = 1; page <= 60; page++) {
-    const sourceUrl = new URL(TEUM_BINS_ENDPOINT);
-    sourceUrl.search = new URLSearchParams({serviceKey:key,pageNo:String(page),numOfRows:String(pageSize),type:"json"}).toString();
-    const upstream = await fetch(sourceUrl.toString(), {headers:{Accept:"application/json"}, signal:AbortSignal.timeout(12000)});
-    if (!upstream.ok) throw new Error("OFFICIAL_UPSTREAM_"+upstream.status);
-    let raw;
-    try { raw = await upstream.json(); } catch (_) { throw new Error("OFFICIAL_FORMAT"); }
-    const code = String(raw?.response?.header?.resultCode ?? raw?.response?.header?.resultCd ?? "00");
-    if (code !== "00" && code !== "0" && code !== "NORMAL_SERVICE") throw new Error("OFFICIAL_RESULT_"+code);
-    const body = raw?.response?.body || raw?.body || raw;
-    let rows = body.items?.item ?? body.items ?? body.data ?? raw?.data ?? [];
-    if (rows && !Array.isArray(rows) && typeof rows === "object") rows = [rows];
-    if (!Array.isArray(rows)) throw new Error("OFFICIAL_FORMAT");
-    if (expected === null) {const n = Number(body.totalCount ?? body.total_count); if (Number.isFinite(n) && n >= 0) expected = n;}
-    combined.push(...rows);
-    if ((expected !== null && combined.length >= expected) || rows.length < pageSize) break;
-    if (page === 60) throw new Error("OFFICIAL_TOO_MANY_PAGES");
+  row.push(field);if(row.some(v=>String(v).trim()))rows.push(row);
+  const header=(rows.shift()||[]).map(v=>v.trim().replace(/^\uFEFF/,""));
+  if(!header.length || !header.some(h=>/설치|위도|소재지|instl|latitude|lat/i.test(h)))throw new Error("OFFICIAL_FORMAT");
+  return rows.map(c=>Object.fromEntries(header.map((h,i)=>[h,(c[i]||"").trim()])));
+}
+function teumBinRows(raw) {
+  const body=raw?.response?.body || raw?.body || raw;
+  const rows=body?.items?.item ?? body?.items ?? body?.data ?? raw?.data ?? (Array.isArray(raw)?raw:null);
+  if(Array.isArray(rows))return rows;
+  if(rows&&typeof rows==="object")return [rows];
+  throw new Error("OFFICIAL_FORMAT");
+}
+async function teumBinOfficialData(request,env) {
+  const cache=typeof caches!=="undefined"?caches.default:null;
+  const cacheRequest=new Request(new URL("/__internal/teum-clothing-bins-dataset-v2",request.url).toString());
+  if(cache){const hit=await cache.match(cacheRequest);if(hit){try{const cached=await hit.json();if(Array.isArray(cached)&&cached.length)return cached;}catch(_){}}}
+  const configured=String(env.CLOTHING_BINS_DATA_URL||"").trim();
+  let upstream;
+  if(configured) {
+    const src=new URL(configured);
+    if(src.protocol!=="https:" || !["www.data.go.kr","data.go.kr","api.data.go.kr","apis.data.go.kr","api.odcloud.kr"].includes(src.hostname))throw new Error("OFFICIAL_SOURCE_NOT_ALLOWED");
+    if(src.hostname==="api.data.go.kr"||src.hostname==="apis.data.go.kr") {
+      const key=teumBinKey(env);
+      if(key && !src.searchParams.has("serviceKey"))src.searchParams.set("serviceKey",key);
+    }
+    upstream=await fetch(src.toString(),{headers:{Accept:"application/json,text/csv,text/plain"},signal:AbortSignal.timeout(15000)});
+  }else{
+    /* The official nationwide standard is published as downloadable CSV.
+       The operator may include its verified CSV as public/clothing-bins-data.csv. */
+    upstream=await env.ASSETS.fetch(new Request(new URL("/clothing-bins-data.csv",request.url).toString()));
+    if(!upstream.ok)throw new Error("OFFICIAL_NOT_CONFIGURED");
   }
-  const cleaned = combined.map(teumBinNormalize).filter(Boolean);
-  if (!cleaned.length) return [];
-  if (cache) {
-    try { await cache.put(cacheRequest, new Response(JSON.stringify(cleaned), {headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=43200"}})); } catch (_) {}
-  }
+  if(!upstream.ok)throw new Error("OFFICIAL_UPSTREAM_"+upstream.status);
+  const content=await upstream.text();
+  if(content.length>15000000)throw new Error("OFFICIAL_TOO_LARGE");
+  let rows;
+  const contentType=(upstream.headers.get("content-type")||"").toLowerCase();
+  if(contentType.includes("json")||/^\s*[\[{]/.test(content)) {
+    let parsed;try{parsed=JSON.parse(content)}catch(_){throw new Error("OFFICIAL_FORMAT")}
+    const code=String(parsed?.response?.header?.resultCode ?? parsed?.response?.header?.resultCd ?? "00");
+    if(!["00","0","NORMAL_SERVICE","NORMAL_CODE"].includes(code))throw new Error("OFFICIAL_RESULT_"+code);
+    rows=teumBinRows(parsed);
+  }else rows=teumBinCsv(content);
+  const cleaned=rows.map(teumBinNormalize).filter(Boolean);
+  if(!cleaned.length)throw new Error("OFFICIAL_EMPTY");
+  if(cache){try{await cache.put(cacheRequest,new Response(JSON.stringify(cleaned),{headers:{"Content-Type":"application/json","Cache-Control":"public, max-age=43200"}}));}catch(_){}}
   return cleaned;
 }
 async function teumBinKakaoSearch(lat, lng, radius, env) {
@@ -396,16 +416,10 @@ async function handleClothingBins(request,env) {
   const query = String(u.searchParams.get("query") || "").trim().slice(0,80);
   if (!hasLocation && !query) return teumBinsResponse({ok:false,code:"MISSING_SEARCH",message:"현재 위치 또는 검색할 동네를 알려주세요."},400);
   const radius = [1000,3000,5000,10000].includes(Number(u.searchParams.get("radius"))) ? Number(u.searchParams.get("radius")) : 1000;
-  const officialAvailable = !!teumBinKey(env), kakaoAvailable = !!String(env.KAKAO_REST_API_KEY || "").trim();
-  if (!officialAvailable && !(kakaoAvailable && hasLocation)) return teumBinsResponse({
-    ok:false,code:"DATA_NOT_CONFIGURED",message:"공식 수거함 데이터 연결이 아직 준비되지 않았습니다. 공공데이터포털 API 인증키 설정이 필요합니다.",
-    sourceUrl:TEUM_BINS_SOURCE,canOpenMap:true
-  },503);
-  let official = [], officialFailed = false;
-  if (officialAvailable) {
-    try { official = await teumBinOfficialData(request,env); } catch (_) { officialFailed = true; }
-  }
-  if (officialFailed && !(kakaoAvailable && hasLocation)) return teumBinsResponse({ok:false,code:"UPSTREAM_ERROR",message:"공공데이터 조회가 일시적으로 원활하지 않습니다. 잠시 후 다시 시도해주세요.",sourceUrl:TEUM_BINS_SOURCE},502);
+  const kakaoAvailable = !!String(env.KAKAO_REST_API_KEY || "").trim();
+  let official = [], officialFailed = false, missingSource = false;
+  try { official = await teumBinOfficialData(request,env); } catch (err) { officialFailed = true; missingSource = String(err?.message || "") === "OFFICIAL_NOT_CONFIGURED"; }
+  if (officialFailed && !(kakaoAvailable && hasLocation)) return teumBinsResponse({ok:false,code:missingSource?"DATA_NOT_CONFIGURED":"UPSTREAM_ERROR",message:missingSource?"공식 수거함 CSV 데이터가 아직 연결되지 않았습니다. 지역 검색은 공공 CSV 등록 후 사용 가능합니다.":"공공데이터 조회가 원활하지 않습니다. 잠시 후 다시 시도해주세요.",sourceUrl:TEUM_BINS_SOURCE,canOpenMap:true},missingSource?503:502);
   let matches = official;
   if (hasLocation) {
     matches = matches.filter(i=>i.lat !== null && i.lng !== null).map(i=>teumBinResult(i,lat,lng)).filter(i=>i.distanceMeters <= radius);
@@ -421,7 +435,7 @@ async function handleClothingBins(request,env) {
     const tokens = teumBinTokens(query);
     matches = matches.filter(i=>tokens.every(t=>[i.name,i.region,i.district,i.address,i.detail].join(" ").includes(t))).map(i=>teumBinResult(i,null,null));
   }
-  return teumBinsResponse({ok:true,items:matches.slice(0,30),count:matches.length,radius:hasLocation?radius:null,sourceUrl:TEUM_BINS_SOURCE,officialConnected:officialAvailable&&!officialFailed,kakaoConnected:kakaoAvailable,partial:officialFailed,notes:officialFailed?"공식 자료 조회가 원활하지 않아 카카오맵 등록 장소만 표시합니다.":"등록 정보와 실제 설치 상태가 다를 수 있으므로 방문 전 확인해주세요."});
+  return teumBinsResponse({ok:true,items:matches.slice(0,30),count:matches.length,radius:hasLocation?radius:null,sourceUrl:TEUM_BINS_SOURCE,officialConnected:!officialFailed,kakaoConnected:kakaoAvailable,partial:officialFailed,notes:officialFailed?"공식 자료 연결 전이거나 조회가 원활하지 않아 카카오맵 등록 장소만 표시합니다.":"등록 정보와 실제 설치 상태가 다를 수 있으므로 방문 전 확인해주세요."});
 }
 async function handleClothingBinsGeocode(request,env) {
   if (request.method !== "GET") return teumBinsResponse({ok:false,code:"METHOD"},405);
