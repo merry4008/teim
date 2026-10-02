@@ -47,7 +47,7 @@ function rewriteHtml(response, pathname) {
       .replace(/href="action\.html">바로해냄 열기/g, 'href="action.html">트임타임 열기');
 
     const active = pathname.includes("test.html") ? "test" : pathname.includes("space.html") ? "space" : pathname.includes("challenge.html") ? "challenge" : pathname.includes("action.html") ? "action" : pathname.includes("program.html") ? "program" : "home";
-    if (active === "home") pageHtml = enhanceHome(pageHtml);
+    if (active === "home" && !pageHtml.includes('data-home-version="2"')) pageHtml = enhanceHome(pageHtml);
 
     const navIcon = (key) => ({
       home: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.8V21h13V9.8"/><path d="M9.5 21v-6h5v6"/></svg>',
@@ -58,11 +58,13 @@ function rewriteHtml(response, pathname) {
       program: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.2 3.3L16.5 7.5l-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18.5 13 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="M5 13.5v6h9"/></svg>'
     })[key] || '';
     const item = (key, href, label) => `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${navIcon(key)}<span class="nav-label">${label}</span></a>`;
-    const nav = `<nav class="bottom-nav">${item("home", "index.html", "홈")}${item("test", "test.html", "마음비움")}${item("space", "space.html", "공간비움")}${item("challenge", "challenge.html", "트임기록")}${item("action", "action.html", "트임타임")}${item("program", "program.html", "트임 AI")}</nav>`;
+    const nav = `<nav class="bottom-nav" aria-label="하단 메뉴">${item("home", "index.html", "홈")}${item("action", "index.html#today", "오늘의 트임")}${item("space", "index.html#quickTeimExperience", "바로 비우기")}${item("test", "test.html", "마음 비움")}${item("challenge", "challenge.html", "MY")}</nav>`;
 
     if (!pageHtml.includes("mission-record-link-style")) {
       pageHtml = pageHtml.replace("</head>", `<style id="mission-record-link-style">.mission-record-link{background:#FFC928!important;color:#183B6B!important;text-decoration:none}.mission-record-link span{background:#fff!important;color:#183B6B!important}.mission-record-link strong{color:#183B6B!important}</style></head>`);
     }
+
+    if (!pageHtml.includes("teum2-nav-style")) pageHtml = pageHtml.replace("</head>", '<style id="teum2-nav-style">.bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important}.bottom-nav .nav-label{white-space:normal!important;line-height:1.2}.bottom-nav a{font-size:10px!important}</style></head>');
 
     const rewritten = pageHtml.includes('class="bottom-nav"') ? pageHtml.replace(/<nav class="bottom-nav">[\s\S]*?<\/nav>/, nav) : pageHtml.replace("</body>", `${nav}</body>`);
     const headers = new Headers(response.headers);
