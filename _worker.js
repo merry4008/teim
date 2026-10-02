@@ -312,7 +312,7 @@ function teumBinNormalize(row, index) {
   const address = teumBinField(row,f.address) || teumBinField(row,f.lotAddress);
   const detail = teumBinField(row,f.detail);
   const name = teumBinField(row,f.name) || (detail || "의류수거함");
-  if (!name && !address && !detail) return null;
+  if (!address && !detail && (lat === null || lng === null)) return null;
   if (lat !== null && (lat < 33 || lat > 39)) return null;
   if (lng !== null && (lng < 124 || lng > 132)) return null;
   return {id:"official-"+index,name,region,district,address,detail,lat,lng,referenceDate:teumBinField(row,f.date),authority:teumBinField(row,f.authority),source:"official"};
