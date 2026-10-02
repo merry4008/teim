@@ -58,3 +58,61 @@ html{scroll-behavior:smooth}
 .teum2-home a:focus-visible,.teum2-home button:focus-visible{outline:3px solid #183b6b;outline-offset:3px}
 @media(max-width:640px){.teum2-home{padding-top:12px;gap:14px;padding-bottom:110px}.teum2-hero{border-radius:26px;min-height:300px;padding:28px 23px;align-items:flex-start}.teum2-hero h1{font-size:34px}.teum2-hero-copy>p:not(.teum2-eyebrow){max-width:215px;font-size:13px}.teum2-orbit{width:245px;height:245px;right:-98px;top:-52px}.teum2-sunmark{right:23px;bottom:28px;width:72px;height:72px}.teum2-suneye{top:17px;left:24px;width:22px;height:26px}.teum2-suneye:after{width:8px;height:8px;right:5px;top:4px}.teum2-sunsmile{left:25px;top:48px;width:22px;height:9px}.teum2-hero-actions{gap:12px}.teum2-button{font-size:13px;padding:12px 14px}.teum2-panel{padding:19px 16px;border-radius:24px}.teum2-section-head{margin-bottom:16px}.teum2-section-head h2{font-size:23px}.teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.teum2-mood-grid button{min-height:89px;gap:5px}.teum2-mood-grid button b{font-size:12px}.teum2-daily{grid-template-columns:1fr;gap:12px;padding:18px}.teum2-daily .teum2-button{justify-self:start}.teum2-action-card{min-height:126px;padding:14px}.teum2-action-card b{font-size:15px}.teum2-bingo-grid{gap:7px}.teum2-bingo-grid button{min-height:89px;font-size:12px;padding:8px}.teum2-stat-grid>div{padding:12px 8px}.teum2-stat-grid span{font-size:10px}.teum2-stat-grid strong{font-size:25px}.teum2-stat-grid small{font-size:10px}.bottom-nav{bottom:10px}.bottom-nav .nav-icon{height:20px;width:20px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.teum2-progress-track>div{transition:none}}
+
+/* TEUM 2.5: friendly, contextual interactions (blue + sunshine yellow only). */
+.teum2-hero{isolation:isolate}
+.teum2-hero-bubble{display:inline-flex;align-items:center;max-width:315px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);padding:9px 12px;font-size:12px!important;font-weight:750;color:#fff!important;margin:0 0 20px!important;line-height:1.4!important;backdrop-filter:blur(5px)}
+.teum2-sunmark{animation:teum2SunHello .9s cubic-bezier(.22,1,.36,1) both}
+.teum2-suneye{transform-origin:50% 50%;animation:teum2EyeOpen 1.2s .2s both}
+.teum2-suneye:before{content:'';position:absolute;inset:-2px;border-radius:50%;background:#ffc928;z-index:2;transform-origin:50% 0;animation:teum2Eyelid 1.3s .1s both}
+.teum2-eye-shine{position:absolute;width:13px;height:13px;right:8px;top:6px;border-radius:50%;background:#fff}
+.teum2-suneye:after{display:none}
+.teum2-sun-twinkle{position:absolute;right:-14px;top:-10px;color:#fff;font-size:23px;animation:teum2Twinkle 1.3s .7s both}
+.teum2-hero[data-mood] .teum2-sunmark{animation:teum2MoodReact .42s ease-out}
+.teum2-hero[data-mood="rest"] .teum2-sunmark{transform:rotate(5deg)}
+.teum2-hero[data-mood="active"] .teum2-sunmark{transform:rotate(-18deg)}
+.teum2-hero[data-mood="good"] .teum2-sunmark{transform:rotate(-5deg)}
+.teum2-mood-grid button{transition:transform .2s ease,box-shadow .2s ease,background .2s ease,border-color .2s ease}
+.teum2-mood-grid button:hover{transform:translateY(-3px);box-shadow:0 9px 20px rgba(37,99,235,.09)}
+.teum2-mood-grid button[aria-pressed="true"]{transform:translateY(-2px);background:#fff6d7;border-color:#2563eb}
+.teum2-mood-grid button[aria-pressed="true"] span{animation:teum2MoodReact .38s ease-out}
+.teum2-recommendation.teum2-reveal{animation:teum2CardReveal .36s cubic-bezier(.22,1,.36,1)}
+.teum2-recommendation{border:1px solid #d5e4ff}
+.teum2-daily{position:relative;overflow:hidden}
+.teum2-daily[data-done="true"]{background:#194ca7}
+.teum2-daily #teum2DailyDone{transition:transform .2s ease,background .2s ease}
+.teum2-daily #teum2DailyDone:active{transform:scale(.96)}
+.teum2-completion-burst{pointer-events:none;position:absolute;right:46px;top:35px;font-size:40px;opacity:0;color:#ffc928}
+.teum2-daily.teum2-celebrate .teum2-completion-burst{animation:teum2Burst .9s ease-out}
+.teum2-dashboard{display:grid;grid-template-columns:144px minmax(0,1fr);gap:18px;align-items:center;padding:18px;background:#f7faff;border:1px solid #e2ecff;border-radius:22px;margin-bottom:14px}
+.teum2-ring{position:relative;width:134px;height:134px;margin:auto}
+.teum2-ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.teum2-ring circle{fill:none;stroke-width:10}
+.teum2-ring-bg{stroke:#e1eafa}
+.teum2-ring-fill{stroke:#2563eb;stroke-linecap:round;stroke-dasharray:320.442;stroke-dashoffset:320.442;transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1)}
+.teum2-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.teum2-ring-label strong{color:#183b6b;font-weight:950;letter-spacing:-.07em;font-size:31px;line-height:1.2}
+.teum2-ring-label span{color:#66768e;font-weight:800;font-size:10px}
+.teum2-dashboard-copy h3{font-size:20px;color:#183b6b;letter-spacing:-.055em;line-height:1.3;margin:10px 0 6px}
+.teum2-dashboard-copy p{font-size:13px;color:#64748b;line-height:1.55;margin:0 0 12px}
+.teum2-dashboard-copy a{color:#2563eb;font-size:13px;font-weight:900;text-decoration:underline;text-underline-offset:4px}
+.teum2-stat-grid strong{transition:opacity .2s ease,transform .2s ease}
+.teum2-stat-grid.teum2-stat-bump strong{animation:teum2NumberBump .37s ease}
+.teum2-bingo-grid button{transition:transform .17s ease,background .18s ease,border-color .18s ease}
+.teum2-bingo-grid button:active{transform:scale(.97)}
+.teum2-bingo-grid button.teum2-pop{animation:teum2MoodReact .4s ease}
+.teum2-progress-track>div{transition:width .55s cubic-bezier(.22,1,.36,1)}
+.teum2-toast{position:fixed;bottom:105px;left:50%;transform:translate(-50%,14px);z-index:60;max-width:min(360px,calc(100vw - 32px));width:max-content;padding:12px 18px;color:#fff;font-size:13px;font-weight:850;background:#183b6b;border:1px solid rgba(255,255,255,.25);border-radius:999px;box-shadow:0 12px 24px rgba(24,59,107,.22);opacity:0;pointer-events:none}
+.teum2-toast[hidden]{display:none}.teum2-toast.teum2-toast-in{animation:teum2ToastIn .22s forwards}.teum2-toast.teum2-toast-out{animation:teum2ToastOut .18s forwards}
+@keyframes teum2SunHello{from{opacity:0;transform:translateY(27px) rotate(5deg) scale(.78)}to{opacity:1;transform:translateY(0) rotate(-12deg) scale(1)}}
+@keyframes teum2Eyelid{0%,32%{transform:scaleY(1)}65%,100%{transform:scaleY(0)}}
+@keyframes teum2EyeOpen{from{transform:scaleY(.5)}to{transform:scaleY(1)}}
+@keyframes teum2Twinkle{0%{opacity:0;transform:scale(.5) rotate(-50deg)}70%{opacity:1;transform:scale(1.2) rotate(5deg)}100%{opacity:1;transform:scale(1)}}
+@keyframes teum2MoodReact{0%{transform:scale(.95)}60%{transform:scale(1.065)}100%{transform:scale(1)}}
+@keyframes teum2CardReveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes teum2Burst{0%{opacity:0;transform:scale(.4) rotate(-30deg)}45%{opacity:1;transform:scale(1.28) rotate(12deg)}100%{opacity:0;transform:translateY(-24px) scale(.7)}}
+@keyframes teum2NumberBump{50%{transform:translateY(-3px) scale(1.065)}}
+@keyframes teum2ToastIn{to{opacity:1;transform:translate(-50%,0)}}
+@keyframes teum2ToastOut{to{opacity:0;transform:translate(-50%,10px)}}
+@media(max-width:640px){.teum2-hero-bubble{max-width:210px;margin-bottom:13px!important;padding:8px 10px;font-size:10px!important}.teum2-dashboard{grid-template-columns:100px minmax(0,1fr);padding:14px;gap:12px}.teum2-ring{height:100px;width:100px}.teum2-ring-label strong{font-size:25px}.teum2-ring-label span{font-size:9px}.teum2-dashboard-copy h3{font-size:15px}.teum2-dashboard-copy p,.teum2-dashboard-copy a{font-size:11px}.teum2-dashboard-copy .teum2-chip{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.teum2-sunmark,.teum2-suneye,.teum2-suneye:before,.teum2-sun-twinkle,.teum2-hero[data-mood] .teum2-sunmark,.teum2-mood-grid button[aria-pressed="true"] span,.teum2-recommendation.teum2-reveal,.teum2-daily.teum2-celebrate .teum2-completion-burst,.teum2-stat-grid.teum2-stat-bump strong,.teum2-bingo-grid button.teum2-pop,.teum2-toast.teum2-toast-in,.teum2-toast.teum2-toast-out{animation:none!important}.teum2-suneye:before{transform:scaleY(0)}.teum2-sunmark{transform:rotate(-12deg)}.teum2-toast.teum2-toast-in{opacity:1;transform:translate(-50%,0)}.teum2-ring-fill,.teum2-bingo-grid button,.teum2-mood-grid button,.teum2-progress-track>div{transition:none!important}}
