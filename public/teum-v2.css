@@ -58,3 +58,127 @@ html{scroll-behavior:smooth}
 .teum2-home a:focus-visible,.teum2-home button:focus-visible{outline:3px solid #183b6b;outline-offset:3px}
 @media(max-width:640px){.teum2-home{padding-top:12px;gap:14px;padding-bottom:110px}.teum2-hero{border-radius:26px;min-height:300px;padding:28px 23px;align-items:flex-start}.teum2-hero h1{font-size:34px}.teum2-hero-copy>p:not(.teum2-eyebrow){max-width:215px;font-size:13px}.teum2-orbit{width:245px;height:245px;right:-98px;top:-52px}.teum2-sunmark{right:23px;bottom:28px;width:72px;height:72px}.teum2-suneye{top:17px;left:24px;width:22px;height:26px}.teum2-suneye:after{width:8px;height:8px;right:5px;top:4px}.teum2-sunsmile{left:25px;top:48px;width:22px;height:9px}.teum2-hero-actions{gap:12px}.teum2-button{font-size:13px;padding:12px 14px}.teum2-panel{padding:19px 16px;border-radius:24px}.teum2-section-head{margin-bottom:16px}.teum2-section-head h2{font-size:23px}.teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.teum2-mood-grid button{min-height:89px;gap:5px}.teum2-mood-grid button b{font-size:12px}.teum2-daily{grid-template-columns:1fr;gap:12px;padding:18px}.teum2-daily .teum2-button{justify-self:start}.teum2-action-card{min-height:126px;padding:14px}.teum2-action-card b{font-size:15px}.teum2-bingo-grid{gap:7px}.teum2-bingo-grid button{min-height:89px;font-size:12px;padding:8px}.teum2-stat-grid>div{padding:12px 8px}.teum2-stat-grid span{font-size:10px}.teum2-stat-grid strong{font-size:25px}.teum2-stat-grid small{font-size:10px}.bottom-nav{bottom:10px}.bottom-nav .nav-icon{height:20px;width:20px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.teum2-progress-track>div{transition:none}}
+
+
+/* TEUM editorial + widget dashboard: inspired by spacious typography and mobile card UI */
+body[data-home-version="2"]{--blue:#347df6;--navy:#142943;--yellow:#ffc83d;--bg:#f7f9fc;--ink:#142943;--paper:#fff;--muted:#768398;--line:#e7edf5;background:#f7f9fc;color:#142943}
+body[data-home-version="2"] .topbar{background:rgba(255,255,255,.95);border-bottom:1px solid #ecf0f6;padding:15px clamp(18px,4vw,30px)}
+body[data-home-version="2"] .top-action{background:#f0f5ff;color:#236ce6;box-shadow:none;font-size:12px;padding:10px 15px;border:1px solid #e3edff}
+body[data-home-version="2"] .teum2-home{width:min(1040px,100%);max-width:1040px;gap:18px;padding:22px 22px 132px}
+body[data-home-version="2"] .teum2-hero{min-height:450px;display:grid;grid-template-columns:minmax(0,1fr) minmax(225px,.79fr);gap:20px;padding:48px clamp(28px,6vw,66px);background:#fff;border:1px solid #edf1f6;border-radius:33px;box-shadow:0 14px 40px rgba(23,55,100,.035)}
+body[data-home-version="2"] .teum2-hero-copy{max-width:545px}
+body[data-home-version="2"] .teum2-hero .teum2-eyebrow{color:#347df6;font-size:11px;letter-spacing:.16em;display:flex;align-items:center;gap:8px;margin-bottom:24px}
+body[data-home-version="2"] .teum2-live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ffc83d;box-shadow:0 0 0 4px rgba(255,200,61,.2)}
+body[data-home-version="2"] .teum2-hero h1{font-size:clamp(44px,6.3vw,70px);font-weight:850;line-height:1.16;letter-spacing:-.077em;color:#182b43}
+body[data-home-version="2"] .teum2-hero h1 span{color:#347df6}
+body[data-home-version="2"] .teum2-hero-copy>p:not(.teum2-eyebrow){color:#6c7889;font-size:15px;line-height:1.8;margin:25px 0 25px;max-width:440px}
+body[data-home-version="2"] .teum2-hero .teum2-button-blue{background:#347df6;color:#fff;border-radius:15px;padding:15px 20px;box-shadow:0 10px 24px rgba(52,125,246,.18)}
+body[data-home-version="2"] .teum2-hero .teum2-text-link{color:#347df6;font-weight:800;font-size:13px}
+body[data-home-version="2"] .teum2-hero-foot{margin:34px 0 0!important;font-size:10px!important;font-weight:750;letter-spacing:.24em;color:#a4b0c0!important}
+body[data-home-version="2"] .teum2-device-scene{position:relative;min-height:345px;display:flex;justify-content:center;align-items:center}
+body[data-home-version="2"] .teum2-device{position:relative;background:#fff;border:6px solid #18202d;border-radius:33px;padding:33px 13px 16px;width:210px;min-height:351px;box-shadow:15px 24px 32px rgba(15,32,61,.15),inset 0 0 0 1px #d4dae4;transform:rotate(8deg)}
+body[data-home-version="2"] .teum2-device-island{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:59px;height:14px;background:#18202d;border-radius:20px}
+body[data-home-version="2"] .teum2-device-header{display:flex;justify-content:space-between;color:#347df6;font-weight:950;font-size:13px}
+body[data-home-version="2"] .teum2-device-greeting{font-size:12px;color:#60728b;line-height:1.45;margin:21px 0 12px}
+body[data-home-version="2"] .teum2-device-greeting b{font-size:17px;color:#182b43}
+body[data-home-version="2"] .teum2-device-blue-card{background:#347df6;border-radius:17px;padding:15px;color:#fff;display:flex;flex-direction:column;box-shadow:0 9px 20px rgba(52,125,246,.22)}
+body[data-home-version="2"] .teum2-device-blue-card>span{font-weight:850;letter-spacing:.1em;font-size:8px;color:#dfeaff}
+body[data-home-version="2"] .teum2-device-blue-card strong{font-size:44px;line-height:1.4;letter-spacing:-.07em;color:#fff}
+body[data-home-version="2"] .teum2-device-blue-card small{font-size:12px;padding-left:4px}
+body[data-home-version="2"] .teum2-device-blue-card em{font-size:10px;font-style:normal;color:#e3edff}
+body[data-home-version="2"] .teum2-device-row{display:flex;align-items:center;gap:8px;border:1px solid #edf2fa;border-radius:12px;background:#f8faff;padding:10px;margin-top:8px;color:#142943;font-size:10px}
+body[data-home-version="2"] .teum2-device-row>span{display:grid;place-items:center;width:21px;height:21px;background:#e5eeff;color:#347df6;border-radius:7px;font-weight:900}
+body[data-home-version="2"] .teum2-device-row i{margin-left:auto;font-style:normal;color:#347df6}
+body[data-home-version="2"] .teum2-device-home-indicator{height:4px;width:55px;border-radius:10px;background:#26364a;margin:16px auto 0}
+body[data-home-version="2"] .teum2-float-badge{position:absolute;z-index:2;right:-2px;top:24px;background:#ffc83d;color:#142943;border-radius:15px;padding:13px 14px;font-size:11px;font-weight:850;box-shadow:0 11px 18px rgba(20,40,70,.12);transform:rotate(-5deg)}
+body[data-home-version="2"] .teum2-float-badge b{display:block;font-size:20px;line-height:1.2}
+body[data-home-version="2"] .teum2-float-sparkle{position:absolute;color:#347df6;font-size:36px}
+body[data-home-version="2"] .teum2-float-sparkle-one{left:9%;top:15%}body[data-home-version="2"] .teum2-float-sparkle-two{right:2%;bottom:15%;color:#ffc83d}
+body[data-home-version="2"] .teum2-panel{border:1px solid #e9eef7;background:#fff;box-shadow:0 10px 30px rgba(28,65,115,.03);border-radius:27px;padding:clamp(22px,4vw,34px)}
+body[data-home-version="2"] .teum2-section-head h2{font-size:clamp(23px,3.4vw,31px);font-weight:870;letter-spacing:-.067em;color:#162c47}
+body[data-home-version="2"] .teum2-section-head p:last-child{color:#8793a3;font-size:13px}
+body[data-home-version="2"] .teum2-section-head{margin-bottom:22px}
+body[data-home-version="2"] .teum2-date{background:#f2f6ff;color:#347df6;font-size:11px;font-weight:850}
+body[data-home-version="2"] .teum2-dashboard-grid{display:grid;grid-template-columns:1fr .85fr;gap:13px}
+body[data-home-version="2"] .teum2-weekly-widget{background:#f4f7fd;border:1px solid #edf1fa;border-radius:22px;padding:22px 22px 18px}
+body[data-home-version="2"] .teum2-widget-heading{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14px;color:#243957}
+body[data-home-version="2"] .teum2-widget-sun{display:grid;place-items:center;width:29px;height:29px;background:#fff4cf;color:#f4ae00;border-radius:50%;font-size:21px}
+body[data-home-version="2"] .teum2-weekly-center{display:flex;align-items:center;gap:22px;margin:20px 0}
+body[data-home-version="2"] .teum2-ring{--week-progress:0%;flex:none;display:grid;place-items:center;width:132px;height:132px;border-radius:50%;background:conic-gradient(#347df6 var(--week-progress),#dbe5f4 0);transform:rotate(-90deg)}
+body[data-home-version="2"] .teum2-ring-core{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;width:107px;height:107px;border-radius:50%;background:#fff;transform:rotate(90deg)}
+body[data-home-version="2"] .teum2-ring-core strong{font-size:32px;line-height:1.15;color:#142943;letter-spacing:-.07em}
+body[data-home-version="2"] .teum2-ring-core small{font-size:12px;color:#8a98a9;letter-spacing:-.02em}
+body[data-home-version="2"] .teum2-ring-core span{font-size:10px;color:#7e8b9d;margin-top:6px}
+body[data-home-version="2"] .teum2-weekly-copy{display:flex;flex-direction:column;gap:8px;max-width:135px}
+body[data-home-version="2"] .teum2-weekly-copy b{font-size:16px;line-height:1.38;letter-spacing:-.04em;color:#223a58}
+body[data-home-version="2"] .teum2-weekly-copy p{margin:0;font-size:11px;color:#93a0b2;line-height:1.6}
+body[data-home-version="2"] .teum2-week-dots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+body[data-home-version="2"] .teum2-week-dot{display:flex;align-items:center;flex-direction:column;gap:6px;min-width:0}
+body[data-home-version="2"] .teum2-week-dot>span{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#e4ebf7;color:#8e9db2;font-size:16px;font-weight:900}
+body[data-home-version="2"] .teum2-week-dot.is-done>span{background:#347df6;color:#fff;font-size:12px}
+body[data-home-version="2"] .teum2-week-dot.is-today>span{outline:2px solid #ffc83d;outline-offset:2px}
+body[data-home-version="2"] .teum2-week-dot small{color:#9da9b7;font-size:10px}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid{display:grid;grid-template-columns:1fr;gap:9px}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid>div{position:relative;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:14px 18px;border:1px solid #edf1fa;background:#fbfcff;border-radius:17px}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid span{color:#8492a6;font-weight:750;font-size:12px;max-width:110px}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid strong{font-size:26px;color:#347df6;margin:0;line-height:1}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid small{font-size:12px}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid em{position:absolute;bottom:7px;left:18px;font-style:normal;letter-spacing:.1em;font-size:8px;color:#b1bed1}
+body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid>div{padding-bottom:24px}
+body[data-home-version="2"] .teum2-dashboard .teum2-archive-link{background:#fff8e7;border:1px solid #ffedb8;margin-top:14px;box-shadow:none}
+body[data-home-version="2"] .teum2-mood-grid button{background:#fbfcff;border:1px solid #e8effa;border-radius:18px;box-shadow:none;transition:background .15s,border-color .15s,transform .15s}
+body[data-home-version="2"] .teum2-mood-grid button:hover{transform:translateY(-2px)}
+body[data-home-version="2"] .teum2-mood-grid button[aria-pressed="true"]{background:#f0f6ff;border:2px solid #347df6;box-shadow:none}
+body[data-home-version="2"] .teum2-recommendation{background:#f2f6ff;border:1px solid #e4edff}
+body[data-home-version="2"] .teum2-daily{background:#347df6;box-shadow:none}
+body[data-home-version="2"] .teum2-action-card{background:#f9fbff;border:1px solid #e7eef9}
+body[data-home-version="2"] .teum2-action-primary{background:#fff5d9;border-color:#ffe7a2}
+body[data-home-version="2"] .teum2-action-primary .teum2-action-icon{background:#ffc83d;color:#183b6b}
+body[data-home-version="2"] .teum2-bingo-grid button{background:#fbfcff}
+body[data-home-version="2"] .teum2-bingo-grid button[aria-pressed="true"]{background:#f0f5ff;border-color:#347df6}
+body[data-home-version="2"] .bottom-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px;bottom:calc(11px + env(safe-area-inset-bottom, 0px));max-width:540px;background:rgba(255,255,255,.97);border:1px solid #e9eef6;border-radius:23px;box-shadow:0 12px 34px rgba(26,53,89,.15);padding:7px}
+body[data-home-version="2"] .bottom-nav a{color:#8996a7;padding:9px 2px 8px;border-radius:16px;font-size:10px!important;min-height:51px}
+body[data-home-version="2"] .bottom-nav a.active{background:#eef4ff;color:#347df6}
+body[data-home-version="2"] .bottom-nav a .nav-icon{width:21px;height:21px}
+body[data-home-version="2"] .bottom-nav a:focus-visible{outline:2px solid #347df6;outline-offset:2px}
+@media(max-width:740px){
+ body[data-home-version="2"] .teum2-home{padding:12px 15px 126px;gap:14px}
+ body[data-home-version="2"] .teum2-hero{padding:32px 23px 27px;grid-template-columns:1fr;gap:0;min-height:0;border-radius:25px}
+ body[data-home-version="2"] .teum2-hero h1{font-size:clamp(39px,9vw,56px)}
+ body[data-home-version="2"] .teum2-hero .teum2-eyebrow{margin-bottom:17px}
+ body[data-home-version="2"] .teum2-hero-copy>p:not(.teum2-eyebrow){font-size:14px;margin:16px 0 18px;max-width:100%;line-height:1.7}
+ body[data-home-version="2"] .teum2-hero-foot{margin-top:18px!important}
+ body[data-home-version="2"] .teum2-device-scene{height:215px;min-height:215px;justify-content:flex-end;overflow:hidden;margin-top:-9px;padding-right:23px}
+ body[data-home-version="2"] .teum2-device{width:157px;min-height:250px;padding:25px 10px 10px;border-width:4px;border-radius:25px;transform:translateY(45px) rotate(10deg)}
+ body[data-home-version="2"] .teum2-device-island{width:43px;height:11px;top:5px}
+ body[data-home-version="2"] .teum2-device-header{font-size:10px}
+ body[data-home-version="2"] .teum2-device-greeting{margin:14px 0 9px;font-size:10px}
+ body[data-home-version="2"] .teum2-device-greeting b{font-size:12px}
+ body[data-home-version="2"] .teum2-device-blue-card{padding:10px;border-radius:11px}
+ body[data-home-version="2"] .teum2-device-blue-card strong{font-size:29px}
+ body[data-home-version="2"] .teum2-device-row{padding:7px;font-size:8px}
+ body[data-home-version="2"] .teum2-float-badge{right:auto;left:9%;top:65px;font-size:10px;padding:11px 14px}
+ body[data-home-version="2"] .teum2-float-sparkle-one{left:16%;top:20px}
+ body[data-home-version="2"] .teum2-float-sparkle-two{right:0;bottom:14%}
+ body[data-home-version="2"] .teum2-panel{padding:22px 18px;border-radius:23px}
+ body[data-home-version="2"] .teum2-dashboard-grid{grid-template-columns:1fr;gap:10px}
+ body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid>div{display:block;padding:12px 9px 15px;min-height:99px}
+ body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid span{font-size:10px;line-height:1.4;display:block;min-height:28px}
+ body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid strong{font-size:25px;margin-top:8px;display:block}
+ body[data-home-version="2"] .teum2-dashboard .teum2-stat-grid em{font-size:7px;bottom:6px;left:9px}
+ body[data-home-version="2"] .teum2-weekly-widget{padding:18px 17px 15px}
+ body[data-home-version="2"] .teum2-weekly-center{gap:16px;margin:15px 0}
+ body[data-home-version="2"] .teum2-ring{width:116px;height:116px}
+ body[data-home-version="2"] .teum2-ring-core{width:93px;height:93px}
+ body[data-home-version="2"] .teum2-ring-core strong{font-size:28px}
+ body[data-home-version="2"] .teum2-weekly-copy b{font-size:14px}
+ body[data-home-version="2"] .teum2-hero-actions{gap:12px}
+}
+@media(max-width:350px){
+ body[data-home-version="2"] .teum2-hero h1{font-size:38px}
+ body[data-home-version="2"] .teum2-date{padding:7px 8px}
+ body[data-home-version="2"] .teum2-section-head h2{font-size:21px}
+ body[data-home-version="2"] .bottom-nav a{font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){body[data-home-version="2"] .teum2-mood-grid button{transition:none}body[data-home-version="2"] .teum2-mood-grid button:hover{transform:none}}
