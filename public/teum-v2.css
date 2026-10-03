@@ -116,3 +116,36 @@ html{scroll-behavior:smooth}
 @keyframes teum2ToastOut{to{opacity:0;transform:translate(-50%,10px)}}
 @media(max-width:640px){.teum2-hero-bubble{max-width:210px;margin-bottom:13px!important;padding:8px 10px;font-size:10px!important}.teum2-dashboard{grid-template-columns:100px minmax(0,1fr);padding:14px;gap:12px}.teum2-ring{height:100px;width:100px}.teum2-ring-label strong{font-size:25px}.teum2-ring-label span{font-size:9px}.teum2-dashboard-copy h3{font-size:15px}.teum2-dashboard-copy p,.teum2-dashboard-copy a{font-size:11px}.teum2-dashboard-copy .teum2-chip{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.teum2-sunmark,.teum2-suneye,.teum2-suneye:before,.teum2-sun-twinkle,.teum2-hero[data-mood] .teum2-sunmark,.teum2-mood-grid button[aria-pressed="true"] span,.teum2-recommendation.teum2-reveal,.teum2-daily.teum2-celebrate .teum2-completion-burst,.teum2-stat-grid.teum2-stat-bump strong,.teum2-bingo-grid button.teum2-pop,.teum2-toast.teum2-toast-in,.teum2-toast.teum2-toast-out{animation:none!important}.teum2-suneye:before{transform:scaleY(0)}.teum2-sunmark{transform:rotate(-12deg)}.teum2-toast.teum2-toast-in{opacity:1;transform:translate(-50%,0)}.teum2-ring-fill,.teum2-bingo-grid button,.teum2-mood-grid button,.teum2-progress-track>div{transition:none!important}}
+
+/* TEUM home: explicit check-in and try-it card selection UI */
+.teum-card-intro{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:-2px 0 12px;color:#667891;font-size:11px;font-weight:800}
+.teum-card-step{display:inline-flex;align-items:center;border-radius:999px;background:#eaf1ff;padding:6px 10px;font-size:10px;font-weight:950;letter-spacing:.055em;color:#2563eb;white-space:nowrap}
+.teum2-today .teum2-mood-grid{gap:11px}
+.teum2-today .teum2-mood-grid button{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr) 20px;align-items:center;text-align:left;min-height:100px;gap:9px;padding:14px 12px;border-radius:19px;background:#fff;border:1.5px solid #dbe6fa}
+.teum2-today .teum2-mood-grid .teum-mood-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#edf4ff;font-size:23px}
+.teum2-today .teum2-mood-grid .teum-mood-text{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
+.teum2-today .teum2-mood-grid .teum-mood-text b{font-size:13px;color:#183b6b;line-height:1.25}
+.teum2-today .teum2-mood-grid .teum-mood-text small{color:#718099;font-size:10px;font-weight:650;line-height:1.4}
+.teum2-today .teum2-mood-grid .teum-card-check{display:grid;place-items:center;width:19px;height:19px;border:1.5px solid #bfd0ec;border-radius:50%;color:transparent;font-size:11px}
+.teum2-today .teum2-mood-grid button[aria-pressed="true"]{background:#fff8dd;border-color:#2563eb;box-shadow:0 6px 20px rgba(37,99,235,.11)}
+.teum2-today .teum2-mood-grid button[aria-pressed="true"] .teum-mood-icon{background:#ffc928}
+.teum2-today .teum2-mood-grid button[aria-pressed="true"] .teum-card-check{background:#2563eb;border-color:#2563eb;color:#fff}
+.teum-try-cards .teum-quick-step-head{display:flex;flex-direction:column;align-items:flex-start;gap:7px;margin-bottom:15px}
+.teum-try-cards .teum-quick-step-head b{font-size:18px;letter-spacing:-.045em;color:#183b6b}
+.teum-try-cards .teum-quick-step-head small{color:#708096;font-size:12px}
+.teum2-quick .teum-try-cards .quick-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.teum2-quick .teum-try-cards .quick-options button{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:122px;padding:15px;border-radius:19px;text-align:left;background:#f8fbff;color:#183b6b;border:1.5px solid #e0e9fa;transition:background .2s,transform .2s,border-color .2s,box-shadow .2s}
+.teum-try-cards .teum-option-symbol{display:grid;place-items:center;border-radius:11px;width:32px;height:32px;background:#eaf1ff;color:#2563eb;font-size:19px;line-height:1}
+.teum-try-cards .quick-options button b{font-size:14px;line-height:1.25}
+.teum-try-cards .quick-options button small{font-size:11px;color:#708096;line-height:1.4;font-weight:650}
+.teum-try-cards .teum-option-check{position:absolute;right:12px;top:12px;display:grid;place-items:center;width:19px;height:19px;border:1.5px solid #c5d4eb;border-radius:50%;color:transparent;font-size:10px}
+.teum2-quick .teum-try-cards .quick-options button.active{background:#fff7db;color:#183b6b;border-color:#2563eb;box-shadow:0 6px 18px rgba(37,99,235,.09)}
+.teum-try-cards .quick-options button.active .teum-option-symbol{background:#ffc928;color:#183b6b}
+.teum-try-cards .quick-options button.active .teum-option-check{color:#fff;background:#2563eb;border-color:#2563eb}
+.teum2-quick .teum-try-cards .quick-options button.active small{color:#536783}
+.teum2-quick .teum-try-cards .quick-step[data-step="space"]{border-top:1px solid #e1eaf8;padding-top:22px;margin-top:23px}
+.teum2-quick .teum-try-cards .quick-result{border-radius:20px;border-color:#d9e6fc;background:#f5f9ff;margin-top:18px;animation:teum2CardReveal .35s ease-out}
+@media(min-width:900px){.teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.teum2-today .teum2-mood-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:143px;padding:12px}.teum2-today .teum2-mood-grid .teum-mood-icon{width:37px;height:37px}.teum2-today .teum2-mood-grid .teum-card-check{position:absolute;right:11px;top:12px}.teum2-quick .teum-try-cards .quick-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.teum2-quick .teum-try-cards .quick-options button{min-height:118px;padding:13px}.teum2-quick .teum-try-cards .quick-options button:last-child:nth-child(odd){grid-column:auto}.teum-try-cards .quick-options button b{font-size:13px}.teum-try-cards .quick-options button small{font-size:10px}}
+@media(max-width:360px){.teum2-today .teum2-mood-grid button{min-height:153px}.teum2-quick .teum-try-cards .quick-options button{min-height:127px;padding:11px}}
+@media(prefers-reduced-motion:reduce){.teum2-quick .teum-try-cards .quick-result{animation:none}.teum2-quick .teum-try-cards .quick-options button{transition:none}}
