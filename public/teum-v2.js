@@ -99,6 +99,36 @@
     $('#teum2MonthDays').innerHTML = String(days) + '<small>일</small>';
     $('#teum2MonthBingo').innerHTML = String(count) + '<small>칸</small>';
     $('#teum2QuickCount').innerHTML = String(quick) + '<small>번</small>';
+    var heroCount = $('#teum2HeroCount');
+    if (heroCount) heroCount.innerHTML = String(days) + '<small>일</small>';
+    var ring = $('#teum2WeeklyRing'), weekDays = $('#teum2WeekDays'), weekMessage = $('#teum2WeekMessage'), weekDots = $('#teum2WeekDots');
+    if (ring && weekDays && weekMessage && weekDots) {
+      var recentDays = [];
+      for (var d = 6; d >= 0; d--) {
+        var date = new Date(today + 'T12:00:00+09:00');
+        date.setUTCDate(date.getUTCDate() - d);
+        var iso = new Intl.DateTimeFormat('sv-SE', { timeZone: timezone, year:'numeric',month:'2-digit',day:'2-digit' }).format(date);
+        recentDays.push({iso:iso,done:completedDays[iso] === true});
+      }
+      var weekly = recentDays.filter(function (entry) { return entry.done; }).length;
+      var pct = Math.round(weekly / 7 * 100);
+      ring.style.setProperty('--week-progress', pct + '%');
+      ring.setAttribute('aria-label','최근 7일 중 비움 완료 ' + weekly + '일');
+      weekDays.innerHTML = String(weekly) + '<small>/ 7일</small>';
+      weekMessage.textContent = weekly === 7 ? '한 주를 모두 채웠어요!' : weekly >= 3 ? '작은 틈이 차곡차곡 쌓이는 중!' : '오늘부터 가볍게 시작해요!';
+      weekDots.replaceChildren();
+      var names = ['일','월','화','수','목','금','토'];
+      recentDays.forEach(function (entry) {
+        var mark = document.createElement('div');
+        var weekday = new Date(entry.iso + 'T12:00:00+09:00').getDay();
+        mark.className = 'teum2-week-dot' + (entry.done ? ' is-done' : '') + (entry.iso === today ? ' is-today' : '');
+        var dot = document.createElement('span'); dot.textContent = entry.done ? '✓' : '·'; dot.setAttribute('aria-hidden','true');
+        var label = document.createElement('small'); label.textContent = names[weekday]; 
+        mark.appendChild(dot); mark.appendChild(label);
+        mark.setAttribute('aria-label',entry.iso + (entry.done ? ' 완료' : ' 미완료'));
+        weekDots.appendChild(mark);
+      });
+    }
   }
   var quickApp = $('#quickTeimApp');
   if (quickApp) quickApp.addEventListener('click', function (event) {
