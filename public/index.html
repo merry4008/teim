@@ -7,7 +7,7 @@
 <meta name="description" content="하루에 딱 하나, 마음과 공간에 작은 틈을 만드는 트임. 오늘의 비움, 비움 빙고와 나의 기록을 만나보세요." />
 <title>트임 | 오늘도 조금, 가벼워져 볼까요?</title>
 <link rel="stylesheet" href="styles.css?v=teum2-home-1" />
-<link rel="stylesheet" href="teum-v2.css?v=3" />
+<link rel="stylesheet" href="teum-v2.css?v=4" />
 </head>
 <body data-page="home" data-home-version="2">
 <header class="topbar">
@@ -31,11 +31,12 @@
 
   <section class="teum2-panel teum2-today" id="today" aria-labelledby="todayHeading">
     <div class="teum2-section-head"><div><p class="teum2-eyebrow">01 · CHECK IN</p><h2 id="todayHeading">오늘은 어떤 하루였어요?</h2><p>정답은 없어요. 지금 기분 하나만 골라봐요.</p></div><span class="teum2-date" id="teum2Date"></span></div>
+    <div class="teum-card-intro"><span class="teum-card-step">STEP 01</span><span>오늘의 상태를 선택해 주세요</span></div>
     <div class="teum2-mood-grid" id="teum2Moods" role="group" aria-label="오늘 상태 선택">
-      <button type="button" data-mood="complex" aria-pressed="false"><span aria-hidden="true">😵‍💫</span><b>머리가 복잡해요</b></button>
-      <button type="button" data-mood="rest" aria-pressed="false"><span aria-hidden="true">😮‍💨</span><b>그냥 쉬고 싶어요</b></button>
-      <button type="button" data-mood="active" aria-pressed="false"><span aria-hidden="true">⚡</span><b>뭐라도 하고 싶어요</b></button>
-      <button type="button" data-mood="good" aria-pressed="false"><span aria-hidden="true">😎</span><b>오늘 기분 좋아요</b></button>
+      <button type="button" data-mood="complex" aria-pressed="false"><span class="teum-mood-icon" aria-hidden="true">😵‍💫</span><span class="teum-mood-text"><b>머리가 복잡해요</b><small>생각이 너무 많아요</small></span><span class="teum-card-check" aria-hidden="true">✓</span></button>
+      <button type="button" data-mood="rest" aria-pressed="false"><span class="teum-mood-icon" aria-hidden="true">😮‍💨</span><span class="teum-mood-text"><b>그냥 쉬고 싶어요</b><small>잠깐 쉬어가고 싶어요</small></span><span class="teum-card-check" aria-hidden="true">✓</span></button>
+      <button type="button" data-mood="active" aria-pressed="false"><span class="teum-mood-icon" aria-hidden="true">⚡</span><span class="teum-mood-text"><b>뭐라도 하고 싶어요</b><small>작은 일부터 시작할래요</small></span><span class="teum-card-check" aria-hidden="true">✓</span></button>
+      <button type="button" data-mood="good" aria-pressed="false"><span class="teum-mood-icon" aria-hidden="true">😎</span><span class="teum-mood-text"><b>오늘 기분 좋아요</b><small>이 기분을 남기고 싶어요</small></span><span class="teum-card-check" aria-hidden="true">✓</span></button>
     </div>
     <div class="teum2-recommendation" id="teum2Recommendation" aria-live="polite" hidden>
       <span class="teum2-chip">오늘의 제안</span><h3 id="teum2RecommendationTitle"></h3><p id="teum2RecommendationText"></p><a id="teum2RecommendationLink" class="teum2-button teum2-button-blue" href="#quickTeimExperience">이어서 해보기 →</a>
@@ -70,12 +71,12 @@
 
   <section class="teum2-panel teum2-quick" id="quickTeimExperience" aria-labelledby="quickHeading">
     <div class="teum2-section-head"><div><p class="teum2-eyebrow">03 · TRY TEUM</p><h2 id="quickHeading">지금 딱 하나만 비워볼까요?</h2><p>두 가지만 고르면, 지금 공간에서 할 작은 비움을 알려드려요.</p></div></div>
-    <div class="quick-app" id="quickTeimApp">
-      <div class="quick-step" data-step="concern"><b>요즘 가장 답답한 건?</b><div class="quick-options">
-        <button type="button" data-concern="love">연애</button><button type="button" data-concern="work">직장</button><button type="button" data-concern="family">가족</button><button type="button" data-concern="study">학업</button><button type="button" data-concern="self">나 자신</button>
+    <div class="quick-app teum-try-cards" id="quickTeimApp">
+      <div class="quick-step" data-step="concern"><div class="teum-quick-step-head"><span class="teum-card-step">STEP 01</span><b>요즘 가장 답답한 건?</b><small>지금 마음에 가까운 카드를 골라요.</small></div><div class="quick-options">
+        <button type="button" data-concern="love"><span class="teum-option-symbol" aria-hidden="true">♡</span><b>연애</b><small>관계가 복잡한 날</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-concern="work"><span class="teum-option-symbol" aria-hidden="true">▣</span><b>직장</b><small>할 일이 쌓인 날</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-concern="family"><span class="teum-option-symbol" aria-hidden="true">⌂</span><b>가족</b><small>마음의 거리가 필요할 때</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-concern="study"><span class="teum-option-symbol" aria-hidden="true">✎</span><b>학업</b><small>시작이 막막한 날</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-concern="self"><span class="teum-option-symbol" aria-hidden="true">✳</span><b>나 자신</b><small>내 마음을 돌볼 때</small><span class="teum-option-check" aria-hidden="true">✓</span></button>
       </div></div>
-      <div class="quick-step" data-step="space" hidden><b>지금 어디에 있나요?</b><div class="quick-options">
-        <button type="button" data-space="bed">침대</button><button type="button" data-space="desk">책상</button><button type="button" data-space="living">거실</button><button type="button" data-space="outside">밖</button>
+      <div class="quick-step" data-step="space" hidden><div class="teum-quick-step-head"><span class="teum-card-step">STEP 02</span><b>지금 어디에 있나요?</b><small>선택한 공간에 맞는 10분 비움을 추천해요.</small></div><div class="quick-options">
+        <button type="button" data-space="bed"><span class="teum-option-symbol" aria-hidden="true">☾</span><b>침대</b><small>쉬는 자리</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-space="desk"><span class="teum-option-symbol" aria-hidden="true">▤</span><b>책상</b><small>눈앞의 작은 공간</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-space="living"><span class="teum-option-symbol" aria-hidden="true">⌂</span><b>거실</b><small>함께 쓰는 공간</small><span class="teum-option-check" aria-hidden="true">✓</span></button><button type="button" data-space="outside"><span class="teum-option-symbol" aria-hidden="true">↗</span><b>밖</b><small>지금 있는 곳</small><span class="teum-option-check" aria-hidden="true">✓</span></button>
       </div></div>
       <div class="quick-result" id="quickResult" hidden></div>
     </div>
