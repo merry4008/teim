@@ -153,3 +153,56 @@ html{scroll-behavior:smooth}
 /* Consistent, readable two-column check-in cards on tablet and desktop. */
 .teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(max-width:640px){.teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* TEUM section card system v5: all home sections have one consistent card shell. */
+.teum2-home{max-width:920px;gap:18px}
+.teum2-home .teum2-hero{border:1px solid rgba(24,59,107,.08);box-shadow:0 18px 45px rgba(37,99,235,.17)}
+.teum2-home .teum2-section-card{position:relative;overflow:hidden;background:#fff;border:1px solid #dee8fa;border-radius:27px;padding:0;box-shadow:0 10px 28px rgba(24,59,107,.055)}
+.teum2-section-card::before{content:"";display:block;width:100%;height:5px;background:#2563eb}
+.teum2-section-card.teum2-quick::before,.teum2-section-card.teum2-archive::before{background:#ffc928}
+.teum2-section-card>.teum2-section-head{margin:0;padding:23px 24px 19px;min-width:0;border-bottom:1px solid #edf2fa;align-items:center}
+.teum2-card-heading .teum2-heading-copy{flex:1;min-width:0}
+.teum2-card-heading .teum2-section-symbol{display:grid;place-items:center;flex:none;width:47px;height:47px;border-radius:15px;background:#eaf1ff;color:#2563eb;font-size:24px;font-weight:950}
+.teum2-quick .teum2-section-symbol,.teum2-archive .teum2-section-symbol{background:#fff3c8;color:#183b6b}
+.teum2-section-card>.teum2-section-head h2{font-size:clamp(21px,3.5vw,27px);margin:0 0 6px}
+.teum2-section-card>.teum2-section-head p:last-child{color:#65748b}
+.teum2-section-card .teum2-inner-card{margin:17px 20px 20px;padding:19px;border:1px solid #e4ecf9;border-radius:20px;background:#f8fbff}
+.teum2-section-card .teum2-checkin-inner{background:#fafcff}
+.teum2-section-card .teum2-recommendation{margin:0 20px 17px}
+.teum2-section-card .teum2-daily{margin:0 20px 20px}
+.teum2-section-card .teum2-actions-inner{background:#fff}
+.teum2-section-card .teum2-try-inner{background:#fff}
+.teum2-section-card .teum2-bingo-inner{background:#f8fbff}
+.teum2-section-card .teum2-archive-inner{background:#fff}
+.teum2-section-card .teum2-discover-inner{background:#fff;padding:5px 19px}
+.teum2-actions .teum2-action-card{border-width:1.5px;border-radius:18px;box-shadow:0 5px 14px rgba(24,59,107,.035);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.teum2-actions .teum2-action-card:hover{transform:translateY(-3px);border-color:#2563eb;box-shadow:0 9px 22px rgba(37,99,235,.1)}
+.teum2-actions .teum2-action-card:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+.teum2-bingo .teum2-bingo-grid button{border-radius:16px;background:#fff}
+.teum2-bingo .teum2-bingo-grid button[aria-pressed="true"]{background:#fff6d6}
+.teum2-section-card .teum2-stat-grid>div{background:#f5f9ff;border:1px solid #e5eefa}
+.teum2-section-card .teum2-dashboard{margin-bottom:12px}
+.teum2-section-card .teum2-archive-link{margin-top:13px}
+.teum2-section-card .teum2-discover-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:14px 0}
+.teum2-section-card .teum2-discover-links a{display:flex;flex-direction:column;align-items:flex-start;gap:7px;justify-content:space-between;min-height:106px;padding:15px;background:#f7faff;border:1px solid #e3ebfa;border-radius:16px;font-weight:800;transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.teum2-section-card .teum2-discover-links a:hover{background:#fff8df;border-color:#2563eb;transform:translateY(-2px)}
+.teum2-section-card .teum2-discover-links a span{white-space:normal;font-size:12px}
+@media(max-width:640px){
+.teum2-home{gap:13px}
+.teum2-home .teum2-section-card{border-radius:23px}
+.teum2-section-card>.teum2-section-head{padding:17px 15px;gap:10px}
+.teum2-card-heading .teum2-section-symbol{height:39px;width:39px;border-radius:13px;font-size:21px}
+.teum2-section-card>.teum2-section-head h2{font-size:20px}
+.teum2-section-card>.teum2-section-head p:last-child{font-size:11px}
+.teum2-section-card .teum2-inner-card{margin:12px 12px 14px;padding:12px;border-radius:16px}
+.teum2-section-card .teum2-recommendation{margin:0 12px 12px}
+.teum2-section-card .teum2-daily{margin:0 12px 14px}
+.teum2-section-card .teum2-discover-inner{padding:2px 10px}
+.teum2-section-card .teum2-discover-links{gap:7px;padding:11px 0}
+.teum2-section-card .teum2-discover-links a{padding:11px;min-height:108px;font-size:12px}
+.teum2-section-card .teum2-discover-links a span{font-size:10px}
+.teum2-section-card .teum2-date{padding:7px 8px;font-size:10px}
+.teum2-section-card .teum2-archive-inner{padding:10px}
+}
+@media(max-width:350px){.teum2-section-card .teum2-discover-links{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.teum2-actions .teum2-action-card,.teum2-section-card .teum2-discover-links a{transition:none;transform:none!important}}
