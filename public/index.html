@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#ffffff" />
 <meta name="description" content="하루에 딱 하나, 마음과 공간에 작은 틈을 만드는 트임. 오늘의 비움, 비움 빙고와 나의 기록을 만나보세요." />
-<title>트임 | 오늘도 조금, 가벼워져 볼까요?</title>
-<link rel="stylesheet" href="styles.css?v=teum2-home-1" />
-<link rel="stylesheet" href="teum-v2.css?v=1" />
+<title>트임 | 비우는 만큼, 더 넓은 오늘</title>
+<link rel="stylesheet" href="styles.css?v=teum2-home-2" />
+<link rel="stylesheet" href="teum-v2.css?v=2" />
 </head>
 <body data-page="home" data-home-version="2">
 <header class="topbar">
@@ -16,17 +16,50 @@
 </header>
 <main class="screen teum2-home" id="main">
   <section class="teum2-hero" aria-labelledby="heroHeading">
-    <div class="teum2-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
     <div class="teum2-hero-copy">
-      <p class="teum2-eyebrow">TODAY'S TEUM</p>
-      <h1 id="heroHeading">오늘도 조금,<br />가벼워져 볼까요?</h1>
-      <p>마음도 공간도. 나에게 필요한 작은 틈을 찾아요.</p>
+      <p class="teum2-eyebrow"><span class="teum2-live-dot" aria-hidden="true"></span> A LITTLE SPACE, EVERY DAY</p>
+      <h1 id="heroHeading">비우는 만큼,<br /><span>더 넓은 오늘.</span></h1>
+      <p>복잡했던 마음에도, 꽉 찬 공간에도.<br />하루에 딱 하나씩 작은 틈을 만들어요.</p>
       <div class="teum2-hero-actions">
-        <a class="teum2-button teum2-button-light" href="#today">오늘의 트임 시작 <span aria-hidden="true">↗</span></a>
-        <a class="teum2-text-link" href="#quickTeimExperience">딱 하나 바로 비우기 →</a>
+        <a class="teum2-button teum2-button-blue" href="#today">오늘의 트임 시작 <span aria-hidden="true">↗</span></a>
+        <a class="teum2-text-link" href="#quickTeimExperience">30초 만에 바로 비우기 →</a>
+      </div>
+      <p class="teum2-hero-foot">TEST · ACTION · RECORD</p>
+    </div>
+    <div class="teum2-device-scene" aria-hidden="true">
+      <div class="teum2-float-badge">오늘의 작은 틈 <b>+1</b></div>
+      <div class="teum2-device">
+        <div class="teum2-device-island"></div>
+        <div class="teum2-device-header"><span>TEUM</span><span>✳</span></div>
+        <div class="teum2-device-greeting">오늘도 가볍게,<br /><b>나를 위한 1분</b></div>
+        <div class="teum2-device-blue-card"><span>MY DAILY TEUM</span><strong id="teum2HeroCount">0<small>일</small></strong><em>이번 달의 작은 기록</em></div>
+        <div class="teum2-device-row"><span>☀</span><b>오늘의 비움</b><i>→</i></div>
+        <div class="teum2-device-row"><span>✓</span><b>내 기록 보기</b><i>→</i></div>
+        <div class="teum2-device-home-indicator"></div>
+      </div>
+      <div class="teum2-float-sparkle teum2-float-sparkle-one">✳</div><div class="teum2-float-sparkle teum2-float-sparkle-two">✦</div>
+    </div>
+  </section>
+
+  <section class="teum2-panel teum2-dashboard" id="my-teum" aria-labelledby="archiveHeading">
+    <div class="teum2-section-head"><div><p class="teum2-eyebrow">MY TEUM · DASHBOARD</p><h2 id="archiveHeading">작은 변화가 모이고 있어요.</h2><p>지금까지 해낸 만큼만 기록에 남겨요.</p></div><span class="teum2-date" id="teum2DashboardPeriod">이번 달</span></div>
+    <div class="teum2-dashboard-grid">
+      <div class="teum2-weekly-widget">
+        <div class="teum2-widget-heading"><span>최근 7일의 비움</span><span class="teum2-widget-sun" aria-hidden="true">✳</span></div>
+        <div class="teum2-weekly-center">
+          <div class="teum2-ring" id="teum2WeeklyRing" role="img" aria-label="최근 7일 중 비움 완료 0일"><div class="teum2-ring-core"><strong id="teum2WeekDays">0<small>/ 7일</small></strong><span>오늘의 비움</span></div></div>
+          <div class="teum2-weekly-copy"><b id="teum2WeekMessage">오늘부터 가볍게 시작해요!</b><p>오늘의 비움 완료 기준으로 집계해요.</p></div>
+        </div>
+        <div class="teum2-week-dots" id="teum2WeekDots" aria-label="최근 7일 기록"></div>
+      </div>
+      <div class="teum2-stat-grid">
+        <div><span>이번 달 오늘의 비움</span><strong id="teum2MonthDays">0<small>일</small></strong><em>DAILY RECORD</em></div>
+        <div><span>이번 달 빙고 완료</span><strong id="teum2MonthBingo">0<small>칸</small></strong><em>MONTHLY BINGO</em></div>
+        <div><span>즉시 비움 누적</span><strong id="teum2QuickCount">0<small>번</small></strong><em>QUICK TEUM</em></div>
       </div>
     </div>
-    <div class="teum2-sunmark" aria-hidden="true"><span class="teum2-suneye"></span><span class="teum2-sunsmile"></span></div>
+    <a class="teum2-archive-link" href="challenge.html"><span><b>사진으로 남기는 트임기록</b><small>기존 14일 기록도 이곳에서 확인해요.</small></span><span aria-hidden="true">↗</span></a>
+    <p class="teum2-help">기록은 현재 이용 중인 브라우저에 저장됩니다. 다른 기기와 동기화되지는 않아요.</p>
   </section>
 
   <section class="teum2-panel teum2-today" id="today" aria-labelledby="todayHeading">
@@ -47,15 +80,7 @@
     </div>
   </section>
 
-  <section class="teum2-panel" aria-labelledby="actionsHeading">
-    <div class="teum2-section-head"><div><p class="teum2-eyebrow">02 · PICK YOUR TEUM</p><h2 id="actionsHeading">오늘은 뭘 해볼까?</h2><p>보고, 듣고, 비우고. 마음 가는 대로 골라요.</p></div></div>
-    <div class="teum2-action-grid">
-      <a href="#quickTeimExperience" class="teum2-action-card teum2-action-primary"><span class="teum2-action-icon" aria-hidden="true">↗</span><b>지금 딱 하나 비우기</b><span>지금 있는 곳에서 바로 시작해요</span><i aria-hidden="true">→</i></a>
-      <a href="action.html#musicSection" class="teum2-action-card"><span class="teum2-action-icon" aria-hidden="true">♫</span><b>트임 플레이</b><span>기분에 맞는 음악 골라 듣기</span><i aria-hidden="true">→</i></a>
-      <a href="test.html" class="teum2-action-card"><span class="teum2-action-icon" aria-hidden="true">♡</span><b>마음 비움</b><span>나를 알아보는 성향테스트</span><i aria-hidden="true">→</i></a>
-      <a href="program.html" class="teum2-action-card"><span class="teum2-action-icon" aria-hidden="true">✳</span><b>트임 AI</b><span>오늘 상태에 맞는 미션 추천</span><i aria-hidden="true">→</i></a>
-    </div>
-  </section>
+  
 
   <section class="teum2-panel teum2-quick" id="quickTeimExperience" aria-labelledby="quickHeading">
     <div class="teum2-section-head"><div><p class="teum2-eyebrow">03 · TRY TEUM</p><h2 id="quickHeading">지금 딱 하나만 비워볼까요?</h2><p>두 가지만 고르면, 지금 공간에서 할 작은 비움을 알려드려요.</p></div></div>
@@ -70,24 +95,25 @@
     </div>
   </section>
 
+  <section class="teum2-panel" aria-labelledby="actionsHeading">
+    <div class="teum2-section-head"><div><p class="teum2-eyebrow">02 · PICK YOUR TEUM</p><h2 id="actionsHeading">오늘은 뭘 해볼까?</h2><p>보고, 듣고, 비우고. 마음 가는 대로 골라요.</p></div></div>
+    <div class="teum2-action-grid">
+      <a href="#quickTeimExperience" class="teum2-action-card teum2-action-primary"><span class="teum2-action-icon" aria-hidden="true">↗</span><b>지금 딱 하나 비우기</b><span>지금 있는 곳에서 바로 시작해요</span><i aria-hidden="true">→</i></a>
+      <a href="action.html#musicSection" class="teum2-action-card"><span class="teum2-action-icon" aria-hidden="true">♫</span><b>트임 플레이</b><span>기분에 맞는 음악 골라 듣기</span><i aria-hidden="true">→</i></a>
+      <a href="test.html" class="teum2-action-card"><span class="teum2-action-icon" aria-hidden="true">♡</span><b>마음 비움</b><span>나를 알아보는 성향테스트</span><i aria-hidden="true">→</i></a>
+      <a href="program.html" class="teum2-action-card"><span class="teum2-action-icon" aria-hidden="true">✳</span><b>트임 AI</b><span>오늘 상태에 맞는 미션 추천</span><i aria-hidden="true">→</i></a>
+    </div>
+  </section>
+
   <section class="teum2-panel" id="bingo" aria-labelledby="bingoHeading">
     <div class="teum2-section-head teum2-heading-split"><div><p class="teum2-eyebrow">04 · LITTLE GAME</p><h2 id="bingoHeading">비움 빙고</h2><p>내가 직접 해낸 칸을 눌러 채워봐요.</p></div><span id="teum2BingoPeriod" class="teum2-date"></span></div>
     <div class="teum2-bingo-progress"><b id="teum2BingoCount">0 / 9 칸</b><span id="teum2BingoLines">빙고 0줄</span></div>
     <div class="teum2-progress-track" aria-hidden="true"><div id="teum2BingoFill"></div></div>
     <div class="teum2-bingo-grid" id="teum2BingoGrid" aria-label="이번 달 비움 빙고"></div>
-    <p class="teum2-help">완료한 칸은 다시 눌러 취소할 수 있어요. 진행 상태는 이 브라우저에만 저장돼요.</p>
+    <p class="teum2-help">완료한 칸을 눌러 체크해요. 다시 누르면 취소할 수 있어요.</p>
   </section>
 
-  <section class="teum2-panel teum2-archive" id="my-teum" aria-labelledby="archiveHeading">
-    <div class="teum2-section-head"><div><p class="teum2-eyebrow">05 · MY TEUM</p><h2 id="archiveHeading">나의 작은 틈 모아보기</h2><p>작은 행동도 모이면 나만의 기록이 돼요.</p></div></div>
-    <div class="teum2-stat-grid">
-      <div><span>이번 달 오늘의 비움</span><strong id="teum2MonthDays">0<small>일</small></strong></div>
-      <div><span>이번 달 빙고 완료</span><strong id="teum2MonthBingo">0<small>칸</small></strong></div>
-      <div><span>즉시 비움 누적</span><strong id="teum2QuickCount">0<small>번</small></strong></div>
-    </div>
-    <a class="teum2-archive-link" href="challenge.html"><span><b>사진으로 남기는 트임기록</b><small>기존 14일 기록 페이지에서 확인해요.</small></span><span aria-hidden="true">→</span></a>
-    <p class="teum2-help">현재 기록은 로그인 계정이 아닌 이 브라우저의 저장 공간을 사용해요. 브라우저 데이터를 지우면 사라질 수 있습니다.</p>
-  </section>
+  
 
   <section class="teum2-panel teum2-discover" aria-labelledby="discoverHeading">
     <div class="teum2-section-head"><div><p class="teum2-eyebrow">MORE TO EXPLORE</p><h2 id="discoverHeading">조금 더 둘러볼까요?</h2></div></div>
@@ -100,6 +126,6 @@
 </main>
 <nav class="bottom-nav" aria-label="하단 메뉴"><a data-nav="home" href="index.html">홈</a><a data-nav="action" href="index.html#today">오늘의 트임</a><a data-nav="space" href="index.html#quickTeimExperience">바로 비우기</a><a data-nav="test" href="test.html">마음 비움</a><a data-nav="challenge" href="challenge.html">MY</a></nav>
 <script src="script.js?v=teum2-home-1"></script>
-<script defer src="teum-v2.js?v=1"></script>
+<script defer src="teum-v2.js?v=2"></script>
 </body>
 </html>
