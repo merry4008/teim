@@ -149,3 +149,7 @@ html{scroll-behavior:smooth}
 @media(max-width:640px){.teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.teum2-today .teum2-mood-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:143px;padding:12px}.teum2-today .teum2-mood-grid .teum-mood-icon{width:37px;height:37px}.teum2-today .teum2-mood-grid .teum-card-check{position:absolute;right:11px;top:12px}.teum2-quick .teum-try-cards .quick-options{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.teum2-quick .teum-try-cards .quick-options button{min-height:118px;padding:13px}.teum2-quick .teum-try-cards .quick-options button:last-child:nth-child(odd){grid-column:auto}.teum-try-cards .quick-options button b{font-size:13px}.teum-try-cards .quick-options button small{font-size:10px}}
 @media(max-width:360px){.teum2-today .teum2-mood-grid button{min-height:153px}.teum2-quick .teum-try-cards .quick-options button{min-height:127px;padding:11px}}
 @media(prefers-reduced-motion:reduce){.teum2-quick .teum-try-cards .quick-result{animation:none}.teum2-quick .teum-try-cards .quick-options button{transition:none}}
+
+/* Consistent, readable two-column check-in cards on tablet and desktop. */
+.teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:640px){.teum2-today .teum2-mood-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
