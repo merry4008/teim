@@ -113,6 +113,34 @@
     setValueWithUnit('#teum2MonthDays',days,'일');
     setValueWithUnit('#teum2MonthBingo',count,'칸');
     setValueWithUnit('#teum2QuickCount',quick,'번');
+    var heroCount = $('#teum2HeroCount');
+    if (heroCount) {
+      heroCount.replaceChildren(document.createTextNode(String(days)));
+      var unit = document.createElement('small'); unit.textContent = '일'; heroCount.appendChild(unit);
+    }
+    var weekDots = $('#teum2WeekDots'), weekMessage = $('#teum2WeekMessage');
+    if (weekDots && weekMessage) {
+      var recent = [];
+      for (var d=6; d>=0; d--) {
+        var date = new Date(today+'T12:00:00+09:00');
+        date.setUTCDate(date.getUTCDate()-d);
+        var iso = new Intl.DateTimeFormat('sv-SE',{timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
+        var label = new Intl.DateTimeFormat('ko-KR',{timeZone:timezone,weekday:'short'}).format(date);
+        recent.push({date:iso,label:label,done:completedDays[iso]===true});
+      }
+      var weekCount=recent.filter(function(item){return item.done;}).length;
+      weekMessage.textContent=weekCount===7?'7일 모두 완료!':weekCount>0?weekCount+'일의 작은 틈을 만들었어요.':'오늘부터 한 칸씩 시작해요.';
+      weekDots.replaceChildren();
+      recent.forEach(function(item){
+        var cell=document.createElement('div');
+        cell.className='teum2-week-dot'+(item.done?' is-done':'')+(item.date===today?' is-today':'');
+        cell.setAttribute('role','listitem');
+        cell.setAttribute('aria-label',item.date+(item.done?' 완료':' 미완료'));
+        var dot=document.createElement('span');dot.textContent=item.done?'✓':'·';dot.setAttribute('aria-hidden','true');
+        var weekday=document.createElement('small');weekday.textContent=item.label;
+        cell.appendChild(dot);cell.appendChild(weekday);weekDots.appendChild(cell);
+      });
+    }
     var elapsed = Number(today.slice(-2));
     var percentage = Math.min(100,Math.round(100*days/elapsed));
     $('#teum2RingPercent').textContent=percentage+'%';
