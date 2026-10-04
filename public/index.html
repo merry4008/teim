@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="styles.css?v=teum2-home-1" />
 <link rel="stylesheet" href="teum-v2.css?v=5" />
 <link rel="stylesheet" href="teum-design.css?v=20261004-1" />
+<link rel="stylesheet" href="teum-banner.css?v=20261005-1" />
 </head>
 <body data-page="home" data-home-version="2">
 <header class="topbar">
@@ -17,38 +18,29 @@
   <a class="top-action" href="program.html">트임 AI <span aria-hidden="true">↗</span></a>
 </header>
 <main class="screen teum2-home" id="main">
-<section class="teum2-hero" aria-labelledby="heroHeading">
-    <div class="teum2-hero-copy">
-      <p class="teum2-eyebrow"><span aria-hidden="true">✳</span> A LITTLE SPACE FOR YOU</p>
-      <h1 id="heroHeading">지금 딱 하나<br />비워볼까요?</h1>
-      <p>책상 위 컵 하나, 현관의 신발 한 켤레.<br />작은 비움으로 오늘을 조금 가볍게.</p>
-      <div class="teum2-hero-actions"><a class="teum2-button teum2-button-yellow" href="#quickTeimExperience">나에게 맞는 비움 시작하기 <span aria-hidden="true">↗</span></a></div>
-      <p class="teum-hero-note">10분 이내 · 작은 행동 하나부터</p>
-      <p class="teum2-hero-bubble" id="teum2HeroMood" aria-live="polite">오늘은 작은 공간 하나면 충분해요.</p>
-    </div>
-    <div class="teum-hero-art" aria-hidden="true">
-      <span class="teum-art-caption">MAKE A LITTLE ROOM.</span>
-      <svg viewBox="0 0 440 350" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="90" y="34" width="252" height="247" rx="126" fill="#E6EEFF"/>
-        <path d="M217 38v206M93 157h247" stroke="#FFF" stroke-width="8"/>
-        <circle cx="289" cy="91" r="35" fill="#FFC928"/>
-        <path d="M272 89v5m20-5v5m-19 11q10 9 20 0" stroke="#183B6B" stroke-width="4" stroke-linecap="round"/>
-        <ellipse cx="225" cy="305" rx="183" ry="15" fill="#CAD8F1"/>
-        <path d="M67 227h312M86 232v70m273-70v70" stroke="#183B6B" stroke-width="12" stroke-linecap="round"/>
-        <rect x="122" y="164" width="140" height="58" rx="9" fill="#2563EB"/>
-        <path d="M120 164h144" stroke="#183B6B" stroke-width="5" stroke-linecap="round"/>
-        <rect x="169" y="181" width="45" height="16" rx="5" fill="#FFFFFF"/>
-        <path d="M282 187h36v22a14 14 0 0 1-14 14h-8a14 14 0 0 1-14-14v-22Z" fill="#FFC928"/>
-        <path d="M318 191h7a9 9 0 0 1 0 18h-7" stroke="#FFC928" stroke-width="6"/>
-        <path d="M303 174c-8-8 7-10 0-19" stroke="#8095BA" stroke-width="3" stroke-linecap="round"/>
-        <path d="M73 204h34l-6 20H79l-6-20Z" fill="#F5AC83"/>
-        <path d="M90 202v-35m0 25c-22 0-25-21-25-21 24 0 25 21 25 21Zm0-9c19-1 20-24 20-24-20 3-20 24-20 24Z" fill="#89A995" stroke="#527F69" stroke-width="2"/>
-        <path d="m370 118 3 10 10 3-10 3-3 10-3-10-10-3 10-3 3-10Z" fill="#2563EB"/>
-        <path d="m62 102 2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7Z" fill="#FFC928"/>
-      </svg>
-      <div class="teum-art-tag"><span>✓</span> 나를 위한 자리가 생겼어요</div>
-    </div>
-  </section>
+<section class="teum2-hero teum-space-hero" aria-labelledby="heroHeading">
+ <div class="teum2-hero-copy">
+  <p class="teum2-eyebrow"><span aria-hidden="true">✳</span> A LITTLE SPACE FOR YOU</p>
+  <h1 id="heroHeading">지금 어디를<br />비우고 싶어요?</h1>
+  <p>공간을 고르면, 할 일 하나를 알려드려요.<br />오늘은 작은 비움 하나면 충분해요.</p>
+  <div class="teum-banner-steps" aria-label="이용 순서"><span>01 공간 선택</span><span>02 하나 비우기</span><span>03 기록 남기기</span></div>
+  <p class="teum2-hero-bubble" id="teum2HeroMood" aria-live="polite">나를 위한 틈, 여기서 시작해요.</p>
+ </div>
+ <div class="teum-banner-app" id="teumBannerApp">
+  <div id="teumBannerChoices"><p class="teum-banner-label">어디부터 시작할까요?</p><div class="teum-space-grid" role="group" aria-label="비울 공간 선택"><button type="button" class="teum-space-card" data-banner-space="desk" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 29h48M12 29v24m40-24v24M19 28V15h23v13M25 21h11"/><path d="M46 20h7v9"/></svg><span><b>책상</b><small>눈앞부터 가볍게</small></span><i aria-hidden="true">↗</i></button><button type="button" class="teum-space-card" data-banner-space="bed" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M9 26v27m46-27v27M9 46h46M12 27h40a3 3 0 0 1 3 3v16H9V30a3 3 0 0 1 3-3Z"/><path d="M15 27v-8h34v8M18 27v-5h10v5m8 0v-5h10v5"/></svg><span><b>침대</b><small>편히 쉴 자리</small></span><i aria-hidden="true">↗</i></button><button type="button" class="teum-space-card" data-banner-space="living" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 31v-9a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v9M14 45h36M16 45v7m32-7v7"/><path d="M9 29h9v10h28V29h9v16H9V29Zm23-11v20"/></svg><span><b>거실</b><small>함께 쓰는 공간</small></span><i aria-hidden="true">↗</i></button><button type="button" class="teum-space-card" data-banner-space="entry" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 36h36M14 48h36M16 36v17m32-17v17"/><path d="M18 24v7h12c1-5-4-6-6-7v-5h-6v5Zm19 0v7h12c1-5-4-6-6-7v-5h-6v5Z"/></svg><span><b>현관</b><small>기분 좋은 첫걸음</small></span><i aria-hidden="true">↗</i></button></div></div>
+  <div class="teum-banner-result" id="teumBannerResult" hidden>
+   <div class="teum-banner-result-top"><span id="teumBannerSpace"></span><button type="button" id="teumBannerBack">다른 공간 고르기</button></div>
+   <p class="teum-banner-time" id="teumBannerTime"></p>
+   <h2 id="teumBannerMission" tabindex="-1"></h2>
+   <p id="teumBannerDescription"></p>
+   <button type="button" class="teum-banner-done" id="teumBannerDone">비웠어요 ✓</button>
+   <p id="teumBannerStatus" role="status" aria-live="polite"></p>
+   <a href="#my-teum" id="teumBannerRecord" hidden>내 트임기록 보기 →</a>
+  </div>
+  <p class="teum-banner-help">완료 기록은 이 브라우저에 저장돼요.</p>
+  <noscript><p>공간별 추천은 JavaScript를 켜면 사용할 수 있어요.</p><a href="space.html">공간비움 알아보기 →</a></noscript>
+ </div>
+</section>
 
 <section class="teum2-panel teum2-section-card teum2-quick" id="quickTeimExperience" aria-labelledby="quickHeading">
     <div class="teum2-section-head teum2-card-heading"><span class="teum2-section-symbol" aria-hidden="true">☀</span><div class="teum2-heading-copy"><p class="teum2-eyebrow">01 · START SMALL</p><h2 id="quickHeading">나에게 맞는 작은 비움</h2><p>지금 마음과 공간을 고르면, 할 일 하나를 추천해요.</p></div></div>
@@ -126,6 +118,7 @@
 </main>
 <nav class="bottom-nav" aria-label="하단 메뉴"><a class="active" data-nav="home" href="index.html"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8"/><path d="M5.5 9.8V21h13V9.8"/><path d="M9.5 21v-6h5v6"/></svg><span class="nav-label">홈</span></a><a data-nav="space" href="index.html#quickTeimExperience"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4"/><path d="M4 7v10l8 4 8-4V7"/><path d="M9 15h6"/></svg><span class="nav-label">비움하기</span></a><a data-nav="test" href="test.html"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg><span class="nav-label">마음 비움</span></a><a data-nav="challenge" href="challenge.html"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h6"/><path d="M9 3h6v4H9z"/><path d="M7 5H5.8A1.8 1.8 0 0 0 4 6.8v13.4h16V6.8A1.8 1.8 0 0 0 18.2 5H17"/><path d="m8 14 2.3 2.3L16 10.6"/></svg><span class="nav-label">트임기록</span></a></nav>
 <script src="script.js?v=design-20261004"></script>
-<script defer src="teum-v2.js?v=design-20261004"></script>
+<script defer src="teum-v2.js?v=banner-20261005"></script>
+<script defer src="teum-banner.js?v=20261005-1"></script>
 </body>
 </html>
