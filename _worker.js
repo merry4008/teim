@@ -59,14 +59,17 @@ function rewriteHtml(response, pathname) {
       action: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.3 2"/></svg>',
       program: '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.2 3.3L16.5 7.5l-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18.5 13 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/><path d="M5 13.5v6h9"/></svg>'
     })[key] || '';
-    const item = (key, href, label) => `<a${active === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${navIcon(key)}<span class="nav-label">${label}</span></a>`;
-    const nav = `<nav class="bottom-nav" aria-label="하단 메뉴">${item("home", "index.html", "홈")}${item("action", "index.html#today", "오늘의 트임")}${item("space", "index.html#quickTeimExperience", "바로 비우기")}${item("test", "test.html", "마음 비움")}${item("challenge", "challenge.html", "MY")}</nav>`;
+    const navActive = ["action", "program"].includes(active) ? "space" : active;
+    const item = (key, href, label) => `<a${navActive === key ? ' class="active"' : ""} data-nav="${key}" href="${href}">${navIcon(key)}<span class="nav-label">${label}</span></a>`;
+    const nav = `<nav class="bottom-nav" aria-label="하단 메뉴">${item("home", "index.html", "홈")}${item("space", "index.html#quickTeimExperience", "비움하기")}${item("test", "test.html", "마음 비움")}${item("challenge", "challenge.html", "트임기록")}</nav>`;
 
     if (!pageHtml.includes("mission-record-link-style")) {
       pageHtml = pageHtml.replace("</head>", `<style id="mission-record-link-style">.mission-record-link{background:#FFC928!important;color:#183B6B!important;text-decoration:none}.mission-record-link span{background:#fff!important;color:#183B6B!important}.mission-record-link strong{color:#183B6B!important}</style></head>`);
     }
 
-    if (!pageHtml.includes("teum2-nav-style")) pageHtml = pageHtml.replace("</head>", '<style id="teum2-nav-style">.bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important}.bottom-nav .nav-label{white-space:normal!important;line-height:1.2}.bottom-nav a{font-size:10px!important}</style></head>');
+    if (!pageHtml.includes("teum2-nav-style")) pageHtml = pageHtml.replace("</head>", '<style id="teum2-nav-style">.bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}.bottom-nav .nav-label{white-space:normal!important;line-height:1.2}.bottom-nav a{font-size:12px!important}</style></head>');
+
+    if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
 
     const rewritten = pageHtml.includes('class="bottom-nav"') ? pageHtml.replace(/<nav class="bottom-nav"(?:\s[^>]*)?>[\s\S]*?<\/nav>/, nav) : pageHtml.replace("</body>", `${nav}</body>`);
     const headers = new Headers(response.headers);
@@ -495,3 +498,4 @@ async function handleClothingBinsGeocode(request,env) {
     return teumBinsResponse({ok:true,lat,lng,label:item.address_name || item.place_name || query});
   } catch (_) { return teumBinsResponse({ok:false,code:"GEOCODE_ERROR",message:"주소를 확인하지 못했습니다. 지역명을 조금 더 구체적으로 입력해주세요."},502); }
 }
+
