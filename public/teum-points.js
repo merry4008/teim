@@ -9,8 +9,8 @@
       return item && typeof item==="object" && !Array.isArray(item) ? item : {};
     } catch (_) { return {}; }
   }
-  function validDate(key) { return /^\\d{4}-\\d{2}-\\d{2}$/.test(key); }
-  function validMonth(key) { return /^\\d{4}-\\d{2}$/.test(key); }
+  function validDate(key) { return /^\d{4}-\d{2}-\d{2}$/.test(key); }
+  function validMonth(key) { return /^\d{4}-\d{2}$/.test(key); }
   function counts() {
     var today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
     var days=object("teumV2Daily"), bingo=object("teumV2Bingo"), quick=object("teumQuickRewardDates"), photos=object("teimChallenge14");
