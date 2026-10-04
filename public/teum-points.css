@@ -1,0 +1,35 @@
+/* TEUM points preview: blue/yellow only, additive and isolated. */
+.teum-points-preview,.teum-points-shop{box-sizing:border-box}
+.teum-points-preview *,.teum-points-shop *{box-sizing:border-box}
+.teum-points-preview .tp-preview-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#eaf3ff!important}
+.tp-preview-eyebrow{font-size:10px;font-weight:900;letter-spacing:.09em;color:#2563eb;margin:0 0 6px}
+.tp-preview-inner strong{display:block;color:#183b6b;font-size:clamp(30px,6vw,44px);letter-spacing:-.065em;line-height:1.1;font-variant-numeric:tabular-nums}
+.tp-preview-inner strong span{font-size:16px;color:#2563eb}
+.tp-preview-inner p:last-of-type{margin:6px 0 0;color:#546985;font-size:12px}
+.tp-preview-inner a,.tp-shop-link{display:inline-flex;align-items:center;justify-content:center;min-height:43px;border-radius:13px;background:#2563eb;color:#fff;padding:11px 15px;text-decoration:none;font-size:12px;font-weight:900}
+.teum-points-shop{border:1px solid #dce8fa;border-radius:25px;padding:22px;background:#fff;box-shadow:0 10px 30px rgba(37,99,235,.05);scroll-margin-top:75px}
+.tp-shop-head h3{margin:0 0 6px;color:#183b6b;font-size:24px;letter-spacing:-.055em}
+.tp-shop-head>p:last-child{margin:0;color:#586e8c;font-size:13px;line-height:1.6}
+.tp-wallet{margin:17px 0;background:#2563eb;color:#fff;border-radius:22px;padding:22px}
+.tp-wallet>span{font-size:12px;font-weight:900;color:#ffc928}
+.tp-wallet strong{display:block;margin:8px 0;font-size:clamp(42px,8vw,58px);font-variant-numeric:tabular-nums;line-height:1.04;letter-spacing:-.06em}
+.tp-wallet strong small{font-size:18px;letter-spacing:0}
+.tp-wallet p{margin:0;font-size:12px;color:#eef4ff;line-height:1.6}
+.tp-point-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tp-point-row{padding:13px;background:#f3f7ff;border:1px solid #e0eafb;border-radius:14px;display:flex;flex-direction:column;gap:7px}
+.tp-point-row span{font-size:12px;color:#536b87;font-weight:800}
+.tp-point-row b{font-size:19px;color:#2563eb;font-variant-numeric:tabular-nums}
+.tp-disclaimer{font-size:11px;color:#687990;line-height:1.6;margin:12px 0 0}
+.tp-shop-head-secondary{margin-top:23px}
+.tp-shop-head-secondary h4{font-size:19px;margin:0 0 6px;letter-spacing:-.045em;color:#183b6b}
+.tp-shop-head-secondary p{font-size:12px;color:#607590;line-height:1.6;margin:0 0 12px}
+.tp-shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tp-shop-card{border:1px solid #e0eafb;border-radius:17px;padding:15px;background:#f9fbff;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tp-shop-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#ffc928;color:#183b6b;font-size:21px}
+.tp-shop-card b{font-size:15px;color:#183b6b}
+.tp-shop-card p{font-size:12px;line-height:1.5;color:#627691;margin:0;flex:1}
+.tp-shop-card button{width:100%;border:1px solid #d1ddf0;border-radius:12px;background:#eaf0fa;color:#5b6f8a;padding:10px;font-weight:850;font-size:11px;cursor:not-allowed}
+.tp-purchase-note{font-size:11px;color:#607590;line-height:1.7;margin:13px 0 0}
+.teum2-points::before{background:#ffc928}
+@media(max-width:640px){.tp-preview-inner a{width:100%}.teum-points-shop{padding:17px 14px;border-radius:22px}.tp-wallet{padding:18px}.tp-shop-card{padding:11px}.tp-shop-card b{font-size:13px}.tp-shop-card p{font-size:11px}}
+@media(max-width:355px){.tp-shop-grid,.tp-point-rows{grid-template-columns:1fr}}
