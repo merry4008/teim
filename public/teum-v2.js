@@ -130,5 +130,6 @@
     document.querySelectorAll('.bottom-nav a').forEach(function (a) { a.classList.toggle('active', a.dataset.nav === key); if(a.dataset.nav === key) a.setAttribute('aria-current','location'); else a.removeAttribute('aria-current'); });
   }
   window.addEventListener('hashchange', highlightNav);
+  window.addEventListener('teum:records-updated', updateArchive);
   updateDaily(); updateBingo(); updateArchive(); highlightNav();
 })();
