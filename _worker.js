@@ -32,6 +32,11 @@ function rewriteHtml(response, pathname) {
   const type = response.headers.get("content-type") || "";
   if (!type.includes("text/html")) return response;
   return response.text().then((html) => {
+    if (html.includes('data-teum-shell="ai"')) {
+      const headers = new Headers(response.headers);
+      headers.set("content-type", "text/html; charset=utf-8");
+      return new Response(html, { status: response.status, statusText: response.statusText, headers });
+    }
     let pageHtml = html
       .replace(/<title>트임 \| 지금해냄<\/title>/g, "<title>트임 | 공간비움</title>")
       .replace(/<title>트임 \| 바로시작<\/title>/g, "<title>트임 | 트임타임</title>")
@@ -107,7 +112,7 @@ async function handleTeimAi(request, env) {
   let body = {};
   try { body = await request.json(); } catch (e) { return privateJsonResponse({ ok: false, message: "요청 형식이 올바르지 않습니다." }, 400); }
 
-  const state = String(body.state || "").slice(0, 40);
+  const state = String(body.state || "").slice(0, 160);
   const minutes = [3, 10, 20].includes(Number(body.minutes)) ? Number(body.minutes) : 3;
   const history = Array.isArray(body.history) ? body.history.slice(-5).map((x) => ({
     title: String((x && x.title) || "").slice(0, 80),
