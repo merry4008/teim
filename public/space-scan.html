@@ -139,35 +139,43 @@ button{cursor:pointer}
 .results-head span{font-size:11px;color:var(--m)}
 .summary{margin:0 0 13px;color:#677386;font-size:13px;line-height:1.6}
 
-.point-list{display:grid;gap:10px}
+.point-list{display:grid;gap:12px}
 .point{
-  background:#fff;border:1px solid var(--l);border-radius:21px;padding:16px;
-  display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:start;
-  box-shadow:0 8px 22px rgba(31,59,113,.035);transition:.18s
+  background:#fff;border:1.5px solid var(--l);border-radius:23px;padding:17px;
+  box-shadow:0 9px 24px rgba(31,59,113,.04);transition:border-color .18s,box-shadow .18s,transform .18s;
+  cursor:pointer
 }
-.point:active{transform:scale(.99)}
+.point:active{transform:scale(.995)}
+.point.active{border-color:var(--b);box-shadow:0 12px 28px rgba(35,103,232,.10)}
+.point-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.point-id{display:flex;align-items:center;gap:9px;min-width:0}
 .point-num{
-  width:34px;height:34px;border-radius:12px;background:var(--pb);color:var(--b);
-  display:grid;place-items:center;font-weight:950
+  width:38px;height:38px;border-radius:13px;background:var(--pb);color:var(--b);
+  display:grid;place-items:center;font-weight:950;font-size:14px;flex:0 0 auto
 }
-.point h4{margin:0 0 5px;font-size:16px;letter-spacing:-.035em}
-.point p{margin:0;color:#697487;font-size:12px;line-height:1.5}
-.point small{display:block;margin-top:7px;color:#8c94a1;line-height:1.45}
+.point.active .point-num{background:var(--b);color:#fff}
+.point-location{font-size:11px;color:var(--m);font-weight:800}
 .time{
-  background:var(--py);color:#795d00;border-radius:999px;padding:6px 8px;font-size:10px;font-weight:900;white-space:nowrap
+  background:var(--py);color:#795d00;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:900;white-space:nowrap
 }
-
-.start-card{
-  margin-top:13px;background:var(--n);color:#fff;border-radius:23px;padding:19px;
-  box-shadow:0 14px 30px rgba(21,38,75,.13)
+.point h4{margin:0 0 8px;font-size:18px;line-height:1.35;letter-spacing:-.04em;color:var(--n)}
+.point-action{
+  margin:0;padding:13px 14px;border-radius:15px;background:#f7f8fb;color:#56657b;
+  font-size:12.5px;line-height:1.55
 }
-.start-card small{color:var(--y);font-weight:900;letter-spacing:.08em}
-.start-card h4{margin:7px 0 5px;font-size:18px;letter-spacing:-.035em}
-.start-card p{margin:0;color:rgba(255,255,255,.72);font-size:12px;line-height:1.55}
-.start-card a{
-  margin-top:14px;display:flex;justify-content:center;align-items:center;min-height:49px;border-radius:15px;
-  background:var(--y);color:var(--n);font-weight:950
+.point-reason{margin:10px 2px 0;color:#8993a1;font-size:11px;line-height:1.5}
+.point-reason b{color:#68758a}
+.point-start{
+  margin-top:14px;min-height:47px;border-radius:15px;background:var(--n);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950
 }
+.point.active .point-start{background:var(--b)}
+.marker.active{background:var(--y);color:var(--n);border-color:#fff;box-shadow:0 0 0 5px rgba(255,218,82,.28),0 8px 20px rgba(21,38,75,.22)}
+.result-guide{
+  display:flex;align-items:flex-start;gap:9px;margin:0 0 13px;padding:12px 13px;border-radius:15px;
+  background:var(--pb);color:#65738a;font-size:11px;line-height:1.5
+}
+.result-guide b{color:var(--b);flex:0 0 auto}
 
 /* unified full menu */
 .menu{
@@ -328,12 +336,8 @@ button{cursor:pointer}
   <section class="results" id="results">
     <div class="results-head"><h3>여기부터 비워볼까요?</h3><span>정리 포인트 3개</span></div>
     <p class="summary" id="summary"></p>
+    <div class="result-guide"><b>TIP</b><span>사진의 1·2·3 번호와 아래 카드 번호가 정확히 연결돼요. 번호를 누르면 해당 카드가 강조됩니다.</span></div>
     <div class="point-list" id="pointList"></div>
-    <div class="start-card" id="startCard">
-      <small>TEUM MISSION</small><h4 id="selectedTitle">1번부터 시작해볼까요?</h4>
-      <p id="selectedAction">사진 위 숫자를 누르면 해당 정리 미션을 볼 수 있어요.</p>
-      <a id="startLink" href="action.html">트임미션으로 시작하기 →</a>
-    </div>
   </section>
 </main>
 
@@ -347,7 +351,7 @@ button{cursor:pointer}
 <script>
 const video=document.getElementById('video'),photo=document.getElementById('photo'),stage=document.getElementById('stage'),placeholder=document.getElementById('placeholder'),canvas=document.getElementById('canvas');
 const cameraBtn=document.getElementById('cameraBtn'),uploadBtn=document.getElementById('uploadBtn'),captureBtn=document.getElementById('captureBtn'),scanBtn=document.getElementById('scanBtn'),retryBtn=document.getElementById('retryBtn'),fileInput=document.getElementById('fileInput');
-const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList'),selectedTitle=document.getElementById('selectedTitle'),selectedAction=document.getElementById('selectedAction'),startLink=document.getElementById('startLink');
+const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList');
 const markers=[document.getElementById('m1'),document.getElementById('m2'),document.getElementById('m3')];
 let stream=null,imageData='',points=[];
 
@@ -374,9 +378,18 @@ captureBtn.onclick=()=>{if(!video.videoWidth)return;setPhoto(resizeToDataURL(vid
 uploadBtn.onclick=()=>fileInput.click();
 fileInput.onchange=()=>{const file=fileInput.files&&fileInput.files[0];if(!file)return;const img=new Image();img.onload=()=>setPhoto(resizeToDataURL(img,img.naturalWidth,img.naturalHeight));img.src=URL.createObjectURL(file)};
 retryBtn.onclick=()=>{imageData='';photo.classList.remove('show');photo.removeAttribute('src');placeholder.style.display='block';cameraBtn.hidden=false;uploadBtn.hidden=false;captureBtn.hidden=true;scanBtn.hidden=true;retryBtn.hidden=true;clearResult()};
-function clearResult(){points=[];stage.classList.remove('has-result','scanning');results.classList.remove('show');markers.forEach(m=>{m.style.left='';m.style.top=''})}
-function selectPoint(i){const p=points[i];if(!p)return;selectedTitle.textContent=(i+1)+'. '+p.title;selectedAction.textContent=p.action+' · 약 '+p.duration+'분';startLink.onclick=()=>{localStorage.setItem('teimInitialConcern',p.action);localStorage.setItem('teimSpaceMission',JSON.stringify(p))};document.querySelectorAll('.point').forEach((el,n)=>el.style.borderColor=n===i?'#2367e8':'#e7e2d9')}
-markers.forEach((m,i)=>m.onclick=()=>selectPoint(i));
+function clearResult(){
+  points=[];stage.classList.remove('has-result','scanning');results.classList.remove('show');
+  markers.forEach(m=>{m.style.left='';m.style.top='';m.classList.remove('active');m.removeAttribute('title');m.removeAttribute('aria-label')})
+}
+function selectPoint(i,scrollCard=false){
+  const p=points[i];if(!p)return;
+  const cards=[...document.querySelectorAll('.point')];
+  cards.forEach((el,n)=>el.classList.toggle('active',n===i));
+  markers.forEach((m,n)=>m.classList.toggle('active',n===i));
+  if(scrollCard&&cards[i])cards[i].scrollIntoView({behavior:'smooth',block:'center'});
+}
+markers.forEach((m,i)=>m.onclick=()=>selectPoint(i,true));
 scanBtn.onclick=async()=>{
   if(!imageData)return;
   stage.classList.add('scanning');scanBtn.disabled=true;scanBtn.textContent='분석 중…';
@@ -384,9 +397,35 @@ scanBtn.onclick=async()=>{
     const r=await fetch('/api/space-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData})});
     const data=await r.json();if(!data.ok)throw new Error(data.message||'분석 실패');
     points=data.result.points||[];summary.textContent=data.result.summary||'지금 바로 할 수 있는 작은 정리부터 시작해보세요.';
-    pointList.innerHTML=points.map((p,i)=>'<article class="point" data-i="'+i+'"><div class="point-num">'+(i+1)+'</div><div><h4>'+escapeHtml(p.title)+'</h4><p>'+escapeHtml(p.action)+'</p><small>'+escapeHtml(p.reason)+'</small></div><span class="time">'+p.duration+'분</span></article>').join('');
-    [...pointList.children].forEach((el,i)=>el.onclick=()=>selectPoint(i));
-    points.forEach((p,i)=>{if(markers[i]){markers[i].style.left=p.x+'%';markers[i].style.top=p.y+'%'}});
+    pointList.innerHTML=points.map((p,i)=>
+      '<article class="point" data-i="'+i+'">'+
+        '<div class="point-top">'+
+          '<div class="point-id"><div class="point-num">'+(i+1)+'</div><span class="point-location">사진 속 '+(i+1)+'번 위치</span></div>'+
+          '<span class="time">약 '+p.duration+'분</span>'+
+        '</div>'+
+        '<h4>'+escapeHtml(p.title)+'</h4>'+
+        '<p class="point-action">'+escapeHtml(p.action)+'</p>'+
+        '<p class="point-reason"><b>추천 이유</b> · '+escapeHtml(p.reason)+'</p>'+
+        '<a class="point-start" href="action.html" data-start="'+i+'">이것부터 시작하기 →</a>'+
+      '</article>'
+    ).join('');
+    [...pointList.children].forEach((el,i)=>{
+      el.onclick=()=>selectPoint(i);
+      const start=el.querySelector('[data-start]');
+      start.onclick=(e)=>{
+        e.stopPropagation();
+        const p=points[i];
+        localStorage.setItem('teimInitialConcern',p.action);
+        localStorage.setItem('teimSpaceMission',JSON.stringify(p));
+      };
+    });
+    points.forEach((p,i)=>{
+      if(markers[i]){
+        markers[i].style.left=p.x+'%';markers[i].style.top=p.y+'%';
+        markers[i].title=(i+1)+'번 · '+p.title;
+        markers[i].setAttribute('aria-label',(i+1)+'번 '+p.title);
+      }
+    });
     stage.classList.add('has-result');results.classList.add('show');selectPoint(0);results.scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){alert(e.message||'공간 분석 중 문제가 생겼어요. 다시 시도해주세요.')}
   finally{stage.classList.remove('scanning');scanBtn.disabled=false;scanBtn.textContent='AI로 정리 포인트 찾기'}
