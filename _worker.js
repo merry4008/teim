@@ -127,171 +127,151 @@ async function handleSpaceScan(request, env) {
     });
   }
 
-  function parseJsonLike(value) {
-    if (value && typeof value === "object" && !Array.isArray(value)) return value;
-    let text = String(value || "").trim();
-    if (!text) throw new Error("empty");
-    text = text.replace(/^\`\`\`(?:json)?\s*/i,"").replace(/\s*\`\`\`$/,"").trim();
-    const first = text.indexOf("{"), last = text.lastIndexOf("}");
-    if (first >= 0 && last > first) text = text.slice(first,last+1);
-    return JSON.parse(text);
-  }
+  const schema = {
+    type:"object",
+    additionalProperties:false,
+    properties:{
+      validPhoto:{type:"boolean"},
+      shotType:{type:"string",enum:["wide","closeup","unknown"]},
+      summary:{type:"string"},
+      points:{
+        type:"array",
+        minItems:0,
+        maxItems:3,
+        items:{
+          type:"object",
+          additionalProperties:false,
+          properties:{
+            anchor:{type:"string"},
+            evidence:{type:"string"},
+            confidence:{type:"integer",minimum:0,maximum:100},
+            method:{type:"string",enum:["비우기","제자리","같은종류","접기·세우기","구역나누기"]},
+            criteria:{
+              type:"array",
+              minItems:1,
+              maxItems:3,
+              items:{type:"string",enum:["동선","사용빈도","종류분류","공간목적","계절","가시성","유지용이성","위생·안전"]}
+            },
+            title:{type:"string"},
+            action:{type:"string"},
+            reason:{type:"string"},
+            duration:{type:"integer",minimum:2,maximum:10},
+            x:{type:"number",minimum:0,maximum:100},
+            y:{type:"number",minimum:0,maximum:100},
+            w:{type:"number",minimum:3,maximum:95},
+            h:{type:"number",minimum:3,maximum:95}
+          },
+          required:["anchor","evidence","confidence","method","criteria","title","action","reason","duration","x","y","w","h"]
+        }
+      }
+    },
+    required:["validPhoto","shotType","summary","points"]
+  };
 
-  function pct(value, fallback) {
-    let n = Number(value);
-    if (!Number.isFinite(n)) return fallback;
-    if (n >= 0 && n <= 1) n *= 100;
-    return Math.max(0, Math.min(100, n));
-  }
-
-  function rawPoints(result) {
-    const source = result && Array.isArray(result.points) ? result.points : [];
-    return source.slice(0,3).map((p)=>({
-      anchor:String((p && (p.anchor_ko || p.anchor || p.label)) || "사진 속 정리 대상").slice(0,60),
-      evidence:String((p && (p.evidence_ko || p.evidence)) || "사진에서 실제로 확인되는 대상이에요.").slice(0,180),
-      confidence:Math.max(0,Math.min(100,Number(p && p.confidence) || 60)),
-      x:pct(p && p.x,50),
-      y:pct(p && p.y,50),
-      w:Math.max(5,Math.min(90,pct(p && p.w,22))),
-      h:Math.max(5,Math.min(90,pct(p && p.h,22)))
-    }));
-  }
-
-  function organizePoint(p) {
-    const key=(p.anchor+" "+p.evidence).toLowerCase();
-    let method="제자리", criteria=["가시성","유지용이성"], duration=3;
-    if (/(쓰레기|포장|포장지|비닐|휴지|빈병|빈 병|trash|wrapper|packaging)/i.test(key)) {
-      method="비우기"; criteria=["가시성","위생·안전"]; duration=2;
-    } else if (/(옷|의류|수건|침구|양말|clothes|shirt|towel|sock)/i.test(key)) {
-      method="접기·세우기"; criteria=["종류분류","유지용이성"]; duration=5;
-    } else if (/(책|서류|종이|문구|화장품|케이블|충전|선|book|paper|stationery|cable|cosmetic)/i.test(key)) {
-      method="같은종류"; criteria=["종류분류","사용빈도"]; duration=4;
-    } else if (/(책상|테이블|선반|서랍|바닥|침대 옆|구역|desk|table|shelf|drawer|floor|area|surface)/i.test(key)) {
-      method="구역나누기"; criteria=["공간목적","가시성"]; duration=5;
-    }
-
-    let title="", action="", reason="";
-    if (method==="비우기") {
-      title=p.anchor+"부터 비우기";
-      action="사진 속 ‘"+p.anchor+"’부터 확인해서 버려도 되는 것만 먼저 비워주세요.";
-      reason="바로 비울 수 있는 항목을 먼저 줄이면 공간 변화가 가장 빨리 보여요.";
-    } else if (method==="접기·세우기") {
-      title=p.anchor+" 정돈하기";
-      action="사진 속 ‘"+p.anchor+"’을 같은 종류끼리 모아 접거나 세워서 한 구역에 정리해보세요.";
-      reason="형태와 방향을 맞추면 공간을 덜 차지하고 다시 흐트러지기도 어려워요.";
-    } else if (method==="같은종류") {
-      title=p.anchor+" 한곳에 모으기";
-      action="사진 속 ‘"+p.anchor+"’과 같은 종류를 한곳에 모은 뒤 자주 쓰는 것만 가까운 위치에 남겨주세요.";
-      reason="같은 종류가 흩어져 있으면 찾고 되돌려놓는 시간이 늘어나기 때문에 먼저 묶어주는 게 좋아요.";
-    } else if (method==="구역나누기") {
-      title=p.anchor+" 범위부터 정리하기";
-      action="사진 속 ‘"+p.anchor+"’ 범위만 정해서 필요한 것과 다른 곳으로 옮길 것을 나눠보세요.";
-      reason="공간 전체가 아니라 작은 구역 하나만 끝내면 정리 부담이 줄고 유지하기도 쉬워요.";
-    } else {
-      title=p.anchor+" 제자리 정하기";
-      action="사진 속 ‘"+p.anchor+"’이 자주 쓰는 물건인지 확인하고, 사용 후 바로 돌아갈 한 자리를 정해주세요.";
-      reason="제자리가 정해진 물건은 다시 쌓이거나 흩어질 가능성이 줄어들어요.";
-    }
-
-    return {
-      ...p,
-      method,
-      criteria,
-      title,
-      action,
-      reason,
-      duration
-    };
-  }
-
-  async function askVision(rescue=false) {
-    const question = rescue ? [
-      "Look carefully at this photo.",
-      "Return EXACTLY ONE clearly visible movable object or small surface/area that a person could organize.",
-      "Do not say there is nothing to organize if any object, desk, shelf, floor area, bed area, or container is visible.",
-      "Return ONLY JSON, no markdown.",
-      '{"shotType":"wide|closeup|unknown","summary_ko":"한국어 한 문장","points":[{"anchor_ko":"사진에서 실제로 보이는 대상 또는 구역","evidence_ko":"사진에서 보이는 근거","confidence":70,"x":50,"y":50,"w":25,"h":25}]}'
-    ].join("\n") : [
-      "Inspect this room/desk photo and select 1 to 3 clearly visible objects or small areas that could be organized.",
-      "Both wide room photos and close-up photos are valid.",
-      "If at least one object or usable surface is visible, points MUST NOT be empty.",
-      "Only choose things actually visible in the photo. Do not invent hidden objects.",
-      "Use Korean for summary_ko, anchor_ko and evidence_ko.",
-      "x,y are the center position in percent of the full photo. w,h are the visible target area size in percent.",
-      "Return ONLY JSON, no markdown and no explanation.",
-      '{"shotType":"wide|closeup|unknown","summary_ko":"한국어 한 문장","points":[{"anchor_ko":"대상명","evidence_ko":"사진에서 보이는 근거","confidence":80,"x":50,"y":50,"w":20,"h":20}]}'
-    ].join("\n");
-
-    const response = await env.AI.run("@cf/moondream/moondream3.1-9B-A2B", {
-      task:"query",
-      image,
-      question,
-      reasoning:false,
-      temperature:0,
-      max_tokens:420,
-      stream:false
-    });
-    const raw = response && (
-      response.answer ??
-      response.response ??
-      response.description ??
-      response.text ??
-      response.result ??
-      response
-    );
-    const parsed=parseJsonLike(raw);
-    return {
-      shotType:["wide","closeup","unknown"].includes(parsed.shotType) ? parsed.shotType : "unknown",
-      summary:String(parsed.summary_ko || parsed.summary || "사진에서 정리 포인트를 찾았어요.").slice(0,220),
-      points:rawPoints(parsed),
-      metrics:response && response.metrics ? response.metrics : null
-    };
-  }
+  const prompt = [
+    "너는 트임(TEUM)의 공간 정리 분석가다.",
+    "첨부된 사진 자체를 보고 실제로 보이는 물건과 구역만 분석한다.",
+    "방 전체 사진뿐 아니라 책상, 화장대, 선반, 서랍, 침대 옆, 바닥 한 구역처럼 가까이 찍은 사진도 정상 입력이다.",
+    "사진에 물건이나 정리 가능한 표면/구역이 하나라도 보이면 validPhoto=true이고 points는 반드시 1개 이상이어야 한다.",
+    "책상 위 물병, 휴대폰, 이어버드, 화장품, 파우치, 책, 케이블처럼 눈에 보이는 작은 물건도 충분한 정리 포인트다.",
+    "사진이 거의 검거나 심하게 흐리거나 화면 대부분이 가려져 아무 대상도 식별할 수 없을 때만 validPhoto=false와 points=[]를 반환한다.",
+    "",
+    "정리 기준:",
+    "1. 동선이나 작업면을 방해하는 것",
+    "2. 같은 종류가 흩어진 것",
+    "3. 자주 쓰는 물건인데 제자리가 불분명한 것",
+    "4. 2~10분 안에 체감 변화가 큰 것",
+    "5. 정리 후 유지하기 쉬운 것",
+    "",
+    "method는 비우기/제자리/같은종류/접기·세우기/구역나누기 중 하나를 선택한다.",
+    "anchor는 사진에서 사용자가 바로 찾을 수 있는 실제 대상명 또는 실제 구역명으로 쓴다.",
+    "evidence는 사진에서 실제로 무엇이 보여서 선택했는지 관찰 사실만 쓴다.",
+    "x,y는 사진 전체 기준 대상 중심점의 백분율, w,h는 대상 또는 구역의 폭과 높이 백분율이다.",
+    "좌표는 실제 사진 위치와 최대한 맞춘다.",
+    "사진에 없는 물건이나 상태는 절대 만들지 않는다.",
+    "약, 신분증, 중요문서, 금융자료, 위험물, 타인의 물건은 임의 폐기를 권하지 않는다.",
+    "결과는 한국어로 짧고 구체적으로 작성한다."
+  ].join("\n");
 
   try {
-    let detected=await askVision(false);
-    let mode="cf_free";
-    if (!detected.points.length) {
-      detected=await askVision(true);
-      mode="cf_free_retry";
-    }
-
-    if (!detected.points.length) {
-      return privateJsonResponse({
-        ok:true,
-        mode:"no_vision",
-        result:{
-          shotType:detected.shotType,
-          summary:"사진은 정상적으로 받았지만 정리 대상을 특정하지 못했어요. 같은 사진으로 다시 체크해주세요.",
-          points:[]
+    const aiResponse = await env.AI.run("@cf/qwen/qwen3.8-27b", {
+      messages:[
+        {
+          role:"user",
+          content:[
+            { type:"image_url", image_url:{ url:image } },
+            { type:"text", text:prompt }
+          ]
         }
-      });
-    }
-
-    const points=detected.points.map(organizePoint);
-    return privateJsonResponse({
-      ok:true,
-      mode,
-      result:{
-        shotType:detected.shotType,
-        summary:detected.summary,
-        points
+      ],
+      reasoning_effort:"low",
+      temperature:0,
+      max_completion_tokens:900,
+      stream:false,
+      response_format:{
+        type:"json_schema",
+        json_schema:{
+          name:"teum_space_scan",
+          strict:true,
+          schema
+        }
       }
     });
+
+    let parsed = aiResponse && aiResponse.choices && aiResponse.choices[0] && aiResponse.choices[0].message
+      ? (aiResponse.choices[0].message.parsed ?? aiResponse.choices[0].message.content)
+      : (aiResponse && (aiResponse.parsed ?? aiResponse.response ?? aiResponse.result));
+
+    if (typeof parsed === "string") parsed = JSON.parse(parsed);
+    if (!parsed || typeof parsed !== "object") throw new Error("structured_output_missing");
+
+    const result = {
+      shotType:["wide","closeup","unknown"].includes(parsed.shotType) ? parsed.shotType : "unknown",
+      summary:String(parsed.summary || "사진에서 정리 포인트를 찾았어요.").slice(0,220),
+      points:Array.isArray(parsed.points) ? parsed.points.slice(0,3).map((p)=>({
+        anchor:String(p.anchor || "정리 대상").slice(0,60),
+        evidence:String(p.evidence || "사진에서 확인되는 대상이에요.").slice(0,180),
+        confidence:Math.max(0,Math.min(100,Number(p.confidence)||0)),
+        method:["비우기","제자리","같은종류","접기·세우기","구역나누기"].includes(p.method) ? p.method : "제자리",
+        criteria:Array.isArray(p.criteria) && p.criteria.length ? p.criteria.slice(0,3) : ["가시성"],
+        title:String(p.title || "이 구역부터 정리하기").slice(0,90),
+        action:String(p.action || "눈에 보이는 물건부터 제자리를 정해주세요.").slice(0,220),
+        reason:String(p.reason || "작은 범위부터 시작하면 바로 변화를 확인할 수 있어요.").slice(0,220),
+        duration:Math.max(2,Math.min(10,Number(p.duration)||3)),
+        x:Math.max(0,Math.min(100,Number(p.x)||50)),
+        y:Math.max(0,Math.min(100,Number(p.y)||50)),
+        w:Math.max(3,Math.min(95,Number(p.w)||20)),
+        h:Math.max(3,Math.min(95,Number(p.h)||20))
+      })) : []
+    };
+
+    if (parsed.validPhoto && !result.points.length) {
+      throw new Error("visible_photo_but_no_points");
+    }
+
+    return privateJsonResponse({
+      ok:true,
+      mode:result.points.length ? "qwen_structured" : "no_vision",
+      result
+    });
   } catch (error) {
-    const reason = String(error && error.message || "");
-    const diagnostic = /3036|429/.test(reason) ? "free_limit" :
+    const reason=String(error && error.message || "");
+    const diagnostic=/3036|429/.test(reason) ? "free_limit" :
       /3040/.test(reason) ? "capacity" :
       /403|5035/.test(reason) ? "plan" :
-      /binding/i.test(reason) ? "binding" : "upstream";
-    const summary = diagnostic === "free_limit"
-      ? "오늘 무료 AI 사용량을 모두 사용했어요. 다음 무료 한도 리셋 후 다시 사용할 수 있어요."
-      : diagnostic === "capacity"
-        ? "무료 AI 서버가 잠깐 붐비고 있어요. 사진은 그대로 두고 잠시 후 다시 체크해주세요."
-        : "사진은 그대로 두고 같은 사진으로 다시 체크해주세요.";
+      reason.includes("structured") || reason.includes("JSON") ? "structured_output" : "upstream";
+
     return privateJsonResponse({
-      ok:true, mode:"unavailable", diagnostic,
-      result:{ shotType:"unknown", summary, points:[] }
+      ok:true,
+      mode:"unavailable",
+      diagnostic,
+      result:{
+        shotType:"unknown",
+        summary:diagnostic==="free_limit"
+          ? "오늘 무료 AI 사용량을 모두 사용했어요."
+          : "사진은 정상적으로 받았지만 구조화 분석에 실패했어요. 같은 사진으로 다시 체크해주세요.",
+        points:[]
+      }
     });
   }
 }
