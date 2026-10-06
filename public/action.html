@@ -17,8 +17,9 @@
     .menu-btn i,.menu-btn i:before,.menu-btn i:after{display:block;width:20px;height:2px;border-radius:999px;background:#183B6B;content:"";position:relative}.menu-btn i:before{position:absolute;top:-6px;left:0}.menu-btn i:after{position:absolute;top:6px;left:0}
     .menu-overlay{position:fixed;inset:0;z-index:120;background:#fff;transform:translateX(100%);transition:transform .28s ease;overflow:auto}.menu-overlay.open{transform:none}
     .menu-top{height:70px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 18px;border-bottom:1px solid #eef1f5;position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);z-index:2}.menu-top h2{margin:0;text-align:center;font-size:20px;letter-spacing:-.05em}.menu-close{width:44px;height:44px;border:0;background:#f6f7f9;border-radius:14px;font-size:25px;color:#183B6B}
-    .menu-body{width:min(760px,100%);margin:0 auto;padding:22px 18px 34px}.menu-intro{background:#f4ecdf;border-radius:24px;padding:20px;margin-bottom:24px}.menu-intro small{font-size:10px;color:#2367E8;font-weight:950;letter-spacing:.1em}.menu-intro h3{margin:7px 0 4px;font-size:22px;letter-spacing:-.05em;color:#183B6B}.menu-intro p{margin:0;color:#7b7c79;font-size:12px;line-height:1.6}
-    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px}.menu-item{text-align:center;font-size:11px;font-weight:850;color:#183B6B;text-decoration:none}.menu-icon{width:58px;height:58px;margin:0 auto 8px;border-radius:19px;background:#f4f6f8;display:grid;place-items:center;font-size:22px;font-style:normal}.menu-item:nth-child(2n) .menu-icon{background:#edf4ff}.menu-item:nth-child(3n) .menu-icon{background:#fff4bd}
+    .menu-body{width:min(760px,100%);margin:0 auto;padding:22px 18px 34px}.menu-intro{background:#2367e8;border-radius:26px;padding:21px;color:#fff;margin-bottom:26px}.menu-intro small{color:#ffda52;font-weight:950;letter-spacing:.08em}.menu-intro h3{margin:7px 0 5px;font-size:23px;letter-spacing:-.05em;color:#fff}.menu-intro p{margin:0;color:rgba(255,255,255,.78);font-size:12px}
+    .menu-group{padding:4px 0 25px;border-bottom:8px solid #f7f8fb;margin-bottom:22px}.menu-group:last-child{border-bottom:0}.menu-group-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.menu-group-head h3{margin:0;font-size:20px;letter-spacing:-.05em;color:#183B6B}.menu-group-head span{font-size:11px;color:#748198}
+    .menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 8px}.menu-item{text-align:center;font-size:11px;font-weight:850;color:#183B6B;text-decoration:none}.menu-icon{width:58px;height:58px;border-radius:19px;background:#f5f6f8;display:grid;place-items:center;margin:0 auto 8px;font-size:23px;font-style:normal}.menu-item:nth-child(2n) .menu-icon{background:#edf4ff}.menu-item:nth-child(3n) .menu-icon{background:#fff4bd}.menu-item span{display:block;white-space:nowrap}.menu-note{display:block;margin-top:4px;font-size:9px!important;font-weight:700;color:#748198;white-space:normal!important;line-height:1.3}@media(max-width:390px){.menu-grid{grid-template-columns:repeat(3,1fr)}}
     .menu-lock{overflow:hidden}
     #teumActionNav{position:fixed;z-index:80;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));width:min(430px,calc(100% - 24px));height:72px;border-radius:25px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);box-shadow:0 15px 40px rgba(21,38,75,.14);border:1px solid #e8edf5;display:grid;grid-template-columns:repeat(4,1fr);padding:6px}
     #teumActionNav a{border-radius:19px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8791a1;font-size:10px;font-weight:800;text-decoration:none}#teumActionNav a b{font-size:19px;line-height:1}#teumActionNav a.active{background:#edf4ff;color:#2367E8}
@@ -36,14 +37,30 @@
       <h3>오늘은 어디부터 트여볼까요?</h3>
       <p>AI 추천부터 작은 실행, 기록까지 한곳에서 이어가요.</p>
     </section>
-    <div class="menu-grid">
-      <a class="menu-item" href="test.html"><i class="menu-icon">✦</i>트임AI</a>
-      <a class="menu-item" href="test.html#profile"><i class="menu-icon">✓</i>트임체크</a>
-      <a class="menu-item" href="action.html"><i class="menu-icon">⚡</i>트임미션</a>
-      <a class="menu-item" href="space.html"><i class="menu-icon">⌂</i>트임공간</a>
-      <a class="menu-item" href="test.html?q=%EB%A7%88%EC%9D%8C%EC%9D%B4%20%EB%8B%B5%EB%8B%B5%ED%95%B4%EC%9A%94"><i class="menu-icon">♡</i>트임마음</a>
-      <a class="menu-item" href="challenge.html"><i class="menu-icon">▤</i>트임기록</a>
-    </div>
+    <section class="menu-group">
+      <div class="menu-group-head"><h3>시작하기</h3><span>나에게 맞는 비움 찾기</span></div>
+      <div class="menu-grid">
+        <a class="menu-item" href="test.html"><i class="menu-icon">✦</i><span>트임AI</span><small class="menu-note">맞춤 비움 추천</small></a>
+        <a class="menu-item" href="test.html#profile"><i class="menu-icon">✓</i><span>트임체크</span><small class="menu-note">내 상태 설정</small></a>
+        <a class="menu-item" href="action.html"><i class="menu-icon">⚡</i><span>트임미션</span><small class="menu-note">바로 실행</small></a>
+        <a class="menu-item" href="space.html"><i class="menu-icon">⌂</i><span>트임공간</span><small class="menu-note">공간별 비움</small></a>
+      </div>
+    </section>
+    <section class="menu-group">
+      <div class="menu-group-head"><h3>나를 위한 트임</h3><span>마음부터 기록까지</span></div>
+      <div class="menu-grid">
+        <a class="menu-item" href="test.html?q=%EB%A7%88%EC%9D%8C%EC%9D%B4%20%EB%8B%B5%EB%8B%B5%ED%95%B4%EC%9A%94"><i class="menu-icon">♡</i><span>트임마음</span><small class="menu-note">마음 비움</small></a>
+        <a class="menu-item" href="challenge.html"><i class="menu-icon">▤</i><span>트임기록</span><small class="menu-note">완료 기록</small></a>
+        <a class="menu-item" href="clothing-bins.html"><i class="menu-icon">♻</i><span>헌옷수거함</span><small class="menu-note">주변 수거함 찾기</small></a>
+      </div>
+    </section>
+    <section class="menu-group">
+      <div class="menu-group-head"><h3>트임 이용하기</h3><span>서비스 안내</span></div>
+      <div class="menu-grid">
+        <a class="menu-item" href="index.html"><i class="menu-icon">⌂</i><span>홈</span><small class="menu-note">트임 메인</small></a>
+        <a class="menu-item" href="program.html"><i class="menu-icon">?</i><span>트임 안내</span><small class="menu-note">서비스 알아보기</small></a>
+      </div>
+    </section>
   </div>
 </aside>
 <header class="topbar"><a href="index.html" aria-label="트임 홈" style="display:flex;align-items:center"><img src="/tuim_logo.png" alt="TEUM" style="display:block;width:auto" /></a><button class="menu-btn" id="openMenu" type="button" aria-label="전체메뉴 열기"><i aria-hidden="true"></i></button></header>
