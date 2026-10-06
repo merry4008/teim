@@ -77,6 +77,14 @@ button{cursor:pointer}
 .section-title{display:flex;align-items:flex-end;justify-content:space-between;margin:26px 2px 12px}
 .section-title h3{margin:0;font-size:23px;letter-spacing:-.055em}
 .section-title span{font-size:11px;color:var(--m)}
+.test-meter{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 2px 10px;
+  padding:10px 12px;border-radius:14px;background:#eef4ff;color:#65738a;font-size:10px
+}
+.test-meter strong{color:var(--b);font-size:11px}
+.test-meter em{font-style:normal;font-weight:900;color:var(--n)}
+.test-meter.limit{background:#fff4bd;color:#725d00}
+.test-meter.limit strong{color:#725d00}
 
 .scan-card{
   background:#fff;border:1px solid var(--l);border-radius:28px;padding:14px;
@@ -423,6 +431,7 @@ button{cursor:pointer}
   </section>
 
   <div class="section-title"><h3>지금 공간을 보여주세요</h3><span>전체 · 근접 촬영 모두 가능</span></div>
+  <div class="test-meter" id="testMeter"><strong>FREE TEST</strong><span>오늘 이 기기에서 <em id="testCount">0/10</em></span></div>
   <section class="scan-card">
     <div class="camera-stage" id="stage">
       <video id="video" autoplay playsinline muted></video>
@@ -497,12 +506,44 @@ const cameraBtn=document.getElementById('cameraBtn'),uploadBtn=document.getEleme
 const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList');
 const focusCard=document.getElementById('focusCard'),focusNumber=document.getElementById('focusNumber'),focusPriority=document.getElementById('focusPriority'),focusLocation=document.getElementById('focusLocation'),focusTime=document.getElementById('focusTime'),focusTitle=document.getElementById('focusTitle'),focusMeta=document.getElementById('focusMeta'),focusAction=document.getElementById('focusAction'),focusEvidence=document.getElementById('focusEvidence'),focusReason=document.getElementById('focusReason'),focusStart=document.getElementById('focusStart'),showAllBtn=document.getElementById('showAllBtn');
 const thumbStrip=document.getElementById('thumbStrip'),shotTypeLabel=document.getElementById('shotTypeLabel'),scanNotice=document.getElementById('scanNotice');
+const testMeter=document.getElementById('testMeter'),testCount=document.getElementById('testCount');
 const scanCompleteTitle=document.getElementById('scanCompleteTitle'),scanCompleteSub=document.getElementById('scanCompleteSub'),resultCount=document.getElementById('resultCount');
 const markers=[document.getElementById('m1'),document.getElementById('m2'),document.getElementById('m3')];
 const boxes=[document.getElementById('box1'),document.getElementById('box2'),document.getElementById('box3')];
 let stream=null,imageData='',points=[];
 
 const menu=document.getElementById('menu');document.getElementById('openMenu').onclick=()=>{menu.classList.add('open');menu.setAttribute('aria-hidden','false')};document.getElementById('closeMenu').onclick=()=>{menu.classList.remove('open');menu.setAttribute('aria-hidden','true')};
+
+const FREE_TEST_DAILY_LIMIT=10;
+function testDayKey(){
+  const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function getTestUsage(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('teumArFreeTestUsage')||'{}');
+    if(saved.day!==testDayKey())return {day:testDayKey(),count:0};
+    return {day:saved.day,count:Math.max(0,Number(saved.count)||0)};
+  }catch(_){return {day:testDayKey(),count:0}}
+}
+function setTestUsage(count){
+  const value={day:testDayKey(),count:Math.max(0,count)};
+  localStorage.setItem('teumArFreeTestUsage',JSON.stringify(value));
+  updateTestMeter();
+}
+function updateTestMeter(){
+  const usage=getTestUsage();
+  testCount.textContent=Math.min(usage.count,FREE_TEST_DAILY_LIMIT)+'/'+FREE_TEST_DAILY_LIMIT;
+  testMeter.classList.toggle('limit',usage.count>=FREE_TEST_DAILY_LIMIT);
+}
+function canRunFreeTest(){
+  const usage=getTestUsage();
+  if(usage.count<FREE_TEST_DAILY_LIMIT)return true;
+  scanNotice.className='scan-notice show';
+  scanNotice.innerHTML='<strong>오늘 이 기기의 무료 테스트 10회를 사용했어요.</strong>내일 다시 테스트하거나, 다른 테스트 기기에서 확인해주세요.';
+  scanBtn.textContent='오늘 테스트 완료';
+  return false;
+}
+updateTestMeter();
 
 async function startCamera(){
   stopCamera(); clearResult();
@@ -516,8 +557,8 @@ async function startCamera(){
 }
 function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
 function resizeToDataURL(source,w,h){
-  const max=1280,scale=Math.min(1,max/Math.max(w,h));const cw=Math.round(w*scale),ch=Math.round(h*scale);
-  canvas.width=cw;canvas.height=ch;canvas.getContext('2d').drawImage(source,0,0,cw,ch);return canvas.toDataURL('image/jpeg',.72);
+  const max=896,scale=Math.min(1,max/Math.max(w,h));const cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));
+  canvas.width=cw;canvas.height=ch;canvas.getContext('2d').drawImage(source,0,0,cw,ch);return canvas.toDataURL('image/jpeg',.68);
 }
 function setPhoto(data){
   stopCamera();imageData=data;clearResult();
@@ -628,6 +669,9 @@ showAllBtn.onclick=()=>{
 };
 scanBtn.onclick=async()=>{
   if(!imageData)return;
+  if(!canRunFreeTest())return;
+  const beforeUsage=getTestUsage();
+  setTestUsage(beforeUsage.count+1);
   stage.classList.add('scanning');scanBtn.disabled=true;scanBtn.textContent='분석 중…';
   scanNotice.className='scan-notice';scanNotice.innerHTML='';
   try{
@@ -663,10 +707,13 @@ scanBtn.onclick=async()=>{
     if(!points.length){
       const message=data.result.summary||'사진에서 정리 포인트를 충분히 확인하지 못했어요.';
       scanNotice.className='scan-notice show'+(data.mode==='unavailable'?' error':'');
-      scanNotice.innerHTML=data.mode==='unavailable'
-        ? '<strong>사진은 다시 찍지 않아도 돼요.</strong>'+escapeHtml(message)+' 같은 사진으로 분석만 다시 눌러주세요.'
-        : '<strong>이 사진으로 한 번 더 볼게요.</strong>'+escapeHtml(message)+' 같은 사진에서 더 넓은 구역 기준으로 다시 분석할 수 있어요.';
-      scanBtn.textContent='같은 사진 다시 분석';
+      scanNotice.innerHTML=data.diagnostic==='free_limit'
+        ? '<strong>오늘 Cloudflare 무료 AI 한도를 모두 사용했어요.</strong>추가 과금 없이 여기서 멈춥니다. 다음 무료 한도 리셋 후 다시 테스트해주세요.'
+        : data.mode==='unavailable'
+          ? '<strong>사진은 다시 찍지 않아도 돼요.</strong>'+escapeHtml(message)+' 같은 사진으로 분석만 다시 눌러주세요.'
+          : '<strong>이 사진으로 다시 볼 수 있어요.</strong>'+escapeHtml(message)+' 같은 사진으로 다시 분석해주세요.';
+      scanBtn.textContent=data.diagnostic==='free_limit'?'오늘 무료 테스트 종료':'같은 사진 다시 분석';
+      scanBtn.disabled=data.diagnostic==='free_limit';
       return;
     }
     points.forEach((p,i)=>{
