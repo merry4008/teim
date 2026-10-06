@@ -141,6 +141,14 @@ button{cursor:pointer}
 .btn:disabled{opacity:.6}
 .full{grid-column:1/-1}
 
+.scan-notice{
+  display:none;margin-top:10px;padding:12px 13px;border-radius:15px;background:#fff7cf;color:#6e6240;
+  font-size:11px;line-height:1.5;border:1px solid #f4e3a0
+}
+.scan-notice.show{display:block}
+.scan-notice strong{display:block;color:#725d00;margin-bottom:3px}
+.scan-notice.error{background:#fff2f2;border-color:#ffd8d8;color:#7b5555}
+.scan-notice.error strong{color:#9b4444}
 .privacy{
   display:flex;gap:9px;margin:13px 4px 1px;padding:11px 12px;border-radius:14px;background:#faf9f7;
   color:#7b8390;font-size:10.5px;line-height:1.5
@@ -464,6 +472,7 @@ button{cursor:pointer}
       <button class="btn primary full" id="scanBtn" type="button" hidden>AI로 정리 포인트 찾기</button>
       <button class="btn ghost full" id="retryBtn" type="button" hidden>다시 촬영하기</button>
     </div>
+    <div class="scan-notice" id="scanNotice" role="status" aria-live="polite"></div>
     <div class="privacy"><b>✓</b><span>사진은 공간 추천을 위해 분석합니다. 사람의 신원이나 개인 특성을 추정하지 않고, 물건과 공간 배치만 확인해요.</span></div>
   </section>
 
@@ -487,7 +496,7 @@ const video=document.getElementById('video'),photo=document.getElementById('phot
 const cameraBtn=document.getElementById('cameraBtn'),uploadBtn=document.getElementById('uploadBtn'),captureBtn=document.getElementById('captureBtn'),scanBtn=document.getElementById('scanBtn'),retryBtn=document.getElementById('retryBtn'),fileInput=document.getElementById('fileInput');
 const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList');
 const focusCard=document.getElementById('focusCard'),focusNumber=document.getElementById('focusNumber'),focusPriority=document.getElementById('focusPriority'),focusLocation=document.getElementById('focusLocation'),focusTime=document.getElementById('focusTime'),focusTitle=document.getElementById('focusTitle'),focusMeta=document.getElementById('focusMeta'),focusAction=document.getElementById('focusAction'),focusEvidence=document.getElementById('focusEvidence'),focusReason=document.getElementById('focusReason'),focusStart=document.getElementById('focusStart'),showAllBtn=document.getElementById('showAllBtn');
-const thumbStrip=document.getElementById('thumbStrip'),shotTypeLabel=document.getElementById('shotTypeLabel');
+const thumbStrip=document.getElementById('thumbStrip'),shotTypeLabel=document.getElementById('shotTypeLabel'),scanNotice=document.getElementById('scanNotice');
 const scanCompleteTitle=document.getElementById('scanCompleteTitle'),scanCompleteSub=document.getElementById('scanCompleteSub'),resultCount=document.getElementById('resultCount');
 const markers=[document.getElementById('m1'),document.getElementById('m2'),document.getElementById('m3')];
 const boxes=[document.getElementById('box1'),document.getElementById('box2'),document.getElementById('box3')];
@@ -525,6 +534,7 @@ function clearResult(){
   points=[];stage.classList.remove('has-result','scanning');results.classList.remove('show');
   document.querySelector('.scan-card')?.classList.remove('has-scan-result');
   focusCard.classList.remove('show');
+  scanNotice.className='scan-notice';scanNotice.innerHTML='';
   thumbStrip.innerHTML='';
   shotTypeLabel.textContent='공간 촬영';shotTypeLabel.className='shot-type';
   markers.forEach(m=>{m.style.left='';m.style.top='';m.classList.remove('active','available');m.removeAttribute('title');m.removeAttribute('aria-label')});
@@ -619,6 +629,7 @@ showAllBtn.onclick=()=>{
 scanBtn.onclick=async()=>{
   if(!imageData)return;
   stage.classList.add('scanning');scanBtn.disabled=true;scanBtn.textContent='분석 중…';
+  scanNotice.className='scan-notice';scanNotice.innerHTML='';
   try{
     const r=await fetch('/api/space-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData})});
     const data=await r.json();if(!data.ok)throw new Error(data.message||'분석 실패');
@@ -650,12 +661,12 @@ scanBtn.onclick=async()=>{
       };
     });
     if(!points.length){
-      const message=data.result.summary||'사진에서 정리 대상을 충분히 확인하지 못했어요.';
-      if(data.mode==='unavailable'){
-        alert(message+' 사진은 다시 찍지 않아도 돼요. 잠시 후 분석만 다시 눌러주세요.');
-      }else{
-        alert(message+' 조금 더 밝게 찍거나, 정리하고 싶은 물건 가까이에서 찍어도 좋아요.');
-      }
+      const message=data.result.summary||'사진에서 정리 포인트를 충분히 확인하지 못했어요.';
+      scanNotice.className='scan-notice show'+(data.mode==='unavailable'?' error':'');
+      scanNotice.innerHTML=data.mode==='unavailable'
+        ? '<strong>사진은 다시 찍지 않아도 돼요.</strong>'+escapeHtml(message)+' 같은 사진으로 분석만 다시 눌러주세요.'
+        : '<strong>이 사진으로 한 번 더 볼게요.</strong>'+escapeHtml(message)+' 같은 사진에서 더 넓은 구역 기준으로 다시 분석할 수 있어요.';
+      scanBtn.textContent='같은 사진 다시 분석';
       return;
     }
     points.forEach((p,i)=>{
@@ -680,8 +691,16 @@ scanBtn.onclick=async()=>{
     boxes.forEach(b=>b.classList.remove('active'));
     [...document.querySelectorAll('.thumb-card')].forEach(t=>t.classList.remove('active'));
     requestAnimationFrame(()=>{positionTargets();stage.scrollIntoView({behavior:'smooth',block:'center'})});
-  }catch(e){alert(e.message||'공간 분석 중 문제가 생겼어요. 다시 시도해주세요.')}
-  finally{stage.classList.remove('scanning');scanBtn.disabled=false;scanBtn.textContent='AI로 정리 포인트 찾기'}
+  }catch(e){
+    scanNotice.className='scan-notice show error';
+    scanNotice.innerHTML='<strong>분석 연결이 잠깐 불안정해요.</strong>사진은 그대로 두고 잠시 후 같은 사진으로 다시 분석해주세요.';
+    scanBtn.textContent='같은 사진 다시 분석';
+  }
+  finally{
+    stage.classList.remove('scanning');scanBtn.disabled=false;
+    if(points.length)scanBtn.textContent='AI로 정리 포인트 찾기';
+    else if(scanBtn.textContent==='분석 중…')scanBtn.textContent='같은 사진 다시 분석';
+  }
 };
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 window.addEventListener('resize',()=>{if(points.length)positionTargets()});
