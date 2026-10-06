@@ -211,7 +211,7 @@ async function handleSpaceScan(request, env) {
           role:"user",
           content:[
             { type:"input_text", text:baseRules+"\n\n"+(spaceHint?"공간 힌트: "+spaceHint+"\n":"")+extra },
-            { type:"input_image", image_url:image }
+            { type:"input_image", image_url:image, detail:"high" }
           ]
         }],
         max_output_tokens:1000,
@@ -225,7 +225,10 @@ async function handleSpaceScan(request, env) {
         }
       })
     });
-    if (!aiResponse.ok) throw new Error("OpenAI response error: " + aiResponse.status);
+    if (!aiResponse.ok) {
+      const errorText = await aiResponse.text().catch(()=>"");
+      throw new Error("OpenAI response error: "+aiResponse.status+" "+errorText.slice(0,220));
+    }
     const data = await aiResponse.json();
     const out = extractOpenAiText(data);
     if (!out) throw new Error("Empty AI response");
@@ -244,8 +247,14 @@ async function handleSpaceScan(request, env) {
     const retry = await runVision(true);
     if (retry.points.length) return privateJsonResponse({ ok:true, mode:"ai_retry", result:retry });
     return privateJsonResponse({ ok:true, mode:"no_vision", result:retry });
-  } catch (_) {
-    return privateJsonResponse({ ok:true, mode:"unavailable", result:unavailableResult });
+  } catch (error) {
+    const reason = String(error && error.message || "");
+    const diagnostic = reason.includes("401") ? "auth" :
+      reason.includes("403") ? "permission" :
+      reason.includes("404") ? "model" :
+      reason.includes("429") ? "rate_limit" :
+      reason.includes("400") ? "request" : "upstream";
+    return privateJsonResponse({ ok:true, mode:"unavailable", diagnostic, result:unavailableResult });
   }
 }
 
