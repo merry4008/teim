@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#f8f6f2"/>
+<title>트임 | AR 공간 스캔</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif;color:#15264b;background:#f8f6f2}a{text-decoration:none;color:inherit}button,input{font:inherit}
+:root{--b:#2367e8;--n:#15264b;--y:#ffda52;--be:#f4ecdf;--line:#e7e2d9;--muted:#778397}
+.topbar{height:70px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 18px;position:sticky;top:0;z-index:40;background:rgba(248,246,242,.94);backdrop-filter:blur(18px);border-bottom:1px solid rgba(231,226,217,.75)}
+.back{width:44px;height:44px;border:0;border-radius:15px;background:#fff;color:var(--n);font-size:25px;display:grid;place-items:center}.topbar h1{margin:0;text-align:center;font-size:19px;letter-spacing:-.04em}.menu-btn{width:44px;height:44px;border:1px solid var(--line);background:#fff;border-radius:15px;display:grid;place-items:center}.menu-btn i,.menu-btn i:before,.menu-btn i:after{display:block;width:20px;height:2px;border-radius:999px;background:var(--n);content:"";position:relative}.menu-btn i:before{position:absolute;top:-6px}.menu-btn i:after{position:absolute;top:6px}
+.screen{width:min(760px,100%);margin:auto;padding:18px 18px 110px}.hero{background:linear-gradient(135deg,#f3e7d5,#fbf7f0);border:1px solid #eadfce;border-radius:28px;padding:25px 22px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:160px;height:160px;border-radius:50%;right:-54px;top:-74px;background:rgba(255,218,82,.27)}.kicker{font-size:10px;letter-spacing:.12em;font-weight:950;color:var(--b)}.hero h2{margin:9px 0 9px;font-size:31px;line-height:1.12;letter-spacing:-.065em}.hero h2 em{font-style:normal;color:var(--b)}.hero p{margin:0;color:#6f746f;font-size:13px;line-height:1.6;max-width:500px}
+.scan-card{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:26px;padding:15px;box-shadow:0 12px 28px rgba(62,53,41,.05)}
+.camera-stage{position:relative;aspect-ratio:4/5;max-height:560px;background:#eef1f5;border-radius:21px;overflow:hidden;display:grid;place-items:center}
+.camera-stage video,.camera-stage img{width:100%;height:100%;object-fit:cover;display:none}.camera-stage video.show,.camera-stage img.show{display:block}
+.placeholder{text-align:center;padding:28px;color:#7c8798}.placeholder b{display:block;font-size:44px;margin-bottom:12px}.placeholder strong{display:block;color:var(--n);font-size:19px;margin-bottom:7px}.placeholder span{font-size:12px;line-height:1.5}
+.scan-line{display:none;position:absolute;left:8%;right:8%;height:2px;background:linear-gradient(90deg,transparent,var(--y),transparent);box-shadow:0 0 16px rgba(255,218,82,.8);animation:scan 1.8s ease-in-out infinite;z-index:4}.scanning .scan-line{display:block}@keyframes scan{0%,100%{top:15%}50%{top:83%}}
+.marker{position:absolute;width:34px;height:34px;border:3px solid #fff;background:var(--b);color:#fff;border-radius:50%;display:none;place-items:center;font-weight:950;font-size:13px;box-shadow:0 7px 18px rgba(21,38,75,.24);transform:translate(-50%,-50%);z-index:8}.has-result .marker{display:grid}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.btn{border:0;border-radius:16px;min-height:52px;font-weight:900}.btn.primary{background:var(--b);color:#fff}.btn.secondary{background:#edf4ff;color:var(--b)}.btn.ghost{background:#f4f4f2;color:#596577}.full{grid-column:1/-1}
+.privacy{display:flex;gap:9px;margin:13px 3px 0;color:#7b8390;font-size:11px;line-height:1.5}.privacy b{color:var(--b)}
+.results{display:none;margin-top:22px}.results.show{display:block}.results-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:12px}.results h3{margin:0;font-size:23px;letter-spacing:-.05em}.results-head span{font-size:11px;color:#8390a3}.summary{margin:0 0 13px;color:#677386;font-size:13px;line-height:1.55}
+.point-list{display:grid;gap:10px}.point{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:start}.point-num{width:34px;height:34px;border-radius:50%;background:#edf4ff;color:var(--b);display:grid;place-items:center;font-weight:950}.point h4{margin:0 0 5px;font-size:16px;letter-spacing:-.035em}.point p{margin:0;color:#697487;font-size:12px;line-height:1.5}.point small{display:block;margin-top:7px;color:#8c94a1}.time{background:#fff4bd;color:#795d00;border-radius:999px;padding:6px 8px;font-size:10px;font-weight:900}
+.start-card{margin-top:13px;background:var(--n);color:#fff;border-radius:22px;padding:18px}.start-card small{color:var(--y);font-weight:900}.start-card h4{margin:7px 0 4px;font-size:18px}.start-card p{margin:0;color:rgba(255,255,255,.72);font-size:12px;line-height:1.5}.start-card a{margin-top:13px;display:flex;justify-content:center;align-items:center;min-height:49px;border-radius:15px;background:var(--y);color:var(--n);font-weight:950}
+.menu{position:fixed;inset:0;z-index:120;background:#fff;transform:translateX(100%);transition:.28s;overflow:auto}.menu.open{transform:none}.menu-head{height:70px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 18px;border-bottom:1px solid #eef1f5;position:sticky;top:0;background:#fff;z-index:2}.menu-head h2{text-align:center;margin:0;font-size:20px}.menu-close{width:44px;height:44px;border:0;border-radius:14px;background:#f6f7f9;font-size:25px}.menu-body{width:min(760px,100%);margin:auto;padding:22px 18px 34px}.menu-intro{background:var(--b);color:#fff;border-radius:25px;padding:20px}.menu-intro small{color:var(--y);font-weight:950}.menu-intro h3{margin:7px 0 5px;font-size:22px}.menu-intro p{margin:0;color:rgba(255,255,255,.75);font-size:12px}.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px;margin-top:23px}.menu-item{text-align:center;font-size:11px;font-weight:850}.menu-icon{width:58px;height:58px;border-radius:19px;background:#f4f6f8;display:grid;place-items:center;margin:0 auto 8px;font-size:22px;font-style:normal}.menu-item:nth-child(2n) .menu-icon{background:#edf4ff}.menu-item:nth-child(3n) .menu-icon{background:#fff4bd}
+.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));z-index:80;width:min(430px,calc(100% - 24px));height:72px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border:1px solid #e8edf5;border-radius:25px;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;box-shadow:0 15px 40px rgba(21,38,75,.13)}.bottom a{border-radius:19px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;color:#8993a2;font-size:10px;font-weight:800}.bottom a b{font-size:19px}.bottom a.active{background:#edf4ff;color:var(--b)}
+.status{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;background:rgba(21,38,75,.88);color:#fff;border-radius:16px;padding:12px 15px;font-size:12px;font-weight:850}.scanning .status{display:block}
+@media(max-width:390px){.hero h2{font-size:28px}.menu-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body data-teum-shell="ai">
+<aside class="menu" id="menu" aria-hidden="true">
+  <header class="menu-head"><button class="menu-close" id="closeMenu" aria-label="메뉴 닫기">‹</button><h2>전체메뉴</h2><span></span></header>
+  <div class="menu-body">
+    <section class="menu-intro"><small>TEUM SPACE</small><h3>공간을 비추면, 시작점이 보여요.</h3><p>AR 공간 스캔부터 작은 미션까지 바로 이어가요.</p></section>
+    <div class="menu-grid">
+      <a class="menu-item" href="test.html"><i class="menu-icon">✦</i>트임AI</a>
+      <a class="menu-item" href="space-scan.html"><i class="menu-icon">◎</i>AR 스캔</a>
+      <a class="menu-item" href="space.html"><i class="menu-icon">⌂</i>트임공간</a>
+      <a class="menu-item" href="action.html"><i class="menu-icon">⚡</i>트임미션</a>
+      <a class="menu-item" href="challenge.html"><i class="menu-icon">✓</i>트임기록</a>
+      <a class="menu-item" href="clothing-bins.html"><i class="menu-icon">♻</i>헌옷수거함</a>
+    </div>
+  </div>
+</aside>
+
+<header class="topbar">
+  <button class="back" type="button" onclick="history.back()" aria-label="뒤로가기">‹</button>
+  <h1>AR 공간 스캔</h1>
+  <button class="menu-btn" id="openMenu" type="button" aria-label="전체메뉴 열기"><i></i></button>
+</header>
+
+<main class="screen">
+  <section class="hero">
+    <div class="kicker">TEUM SPACE · AI SCAN</div>
+    <h2>카메라로 비추면<br><em>먼저 비울 곳</em>을 찾아드려요.</h2>
+    <p>공간 사진에서 정리 포인트 3곳을 찾아, 지금 바로 할 수 있는 작은 행동으로 바꿔드려요.</p>
+  </section>
+
+  <section class="scan-card">
+    <div class="camera-stage" id="stage">
+      <video id="video" autoplay playsinline muted></video>
+      <img id="photo" alt="촬영한 공간"/>
+      <div class="placeholder" id="placeholder"><b>◎</b><strong>공간을 비춰보세요</strong><span>카메라를 켜거나<br>사진 한 장을 선택해주세요.</span></div>
+      <div class="scan-line"></div>
+      <div class="status">공간을 살펴보는 중이에요…</div>
+      <button class="marker" id="m1" type="button">1</button><button class="marker" id="m2" type="button">2</button><button class="marker" id="m3" type="button">3</button>
+    </div>
+    <canvas id="canvas" hidden></canvas>
+    <input id="fileInput" type="file" accept="image/*" capture="environment" hidden/>
+    <div class="controls">
+      <button class="btn primary" id="cameraBtn" type="button">카메라 켜기</button>
+      <button class="btn secondary" id="uploadBtn" type="button">사진 선택</button>
+      <button class="btn primary full" id="captureBtn" type="button" hidden>이 화면 촬영하기</button>
+      <button class="btn primary full" id="scanBtn" type="button" hidden>AI로 정리 포인트 찾기</button>
+      <button class="btn ghost full" id="retryBtn" type="button" hidden>다시 촬영하기</button>
+    </div>
+    <div class="privacy"><b>✓</b><span>사진은 공간 추천을 위해 분석합니다. 사람의 신원이나 개인 특성을 추정하지 않고, 물건과 공간 배치만 확인해요.</span></div>
+  </section>
+
+  <section class="results" id="results">
+    <div class="results-head"><h3>여기부터 비워볼까요?</h3><span>정리 포인트 3개</span></div>
+    <p class="summary" id="summary"></p>
+    <div class="point-list" id="pointList"></div>
+    <div class="start-card" id="startCard">
+      <small>TEUM MISSION</small><h4 id="selectedTitle">1번부터 시작해볼까요?</h4>
+      <p id="selectedAction">사진 위 숫자를 누르면 해당 정리 미션을 볼 수 있어요.</p>
+      <a id="startLink" href="action.html">트임미션으로 시작하기 →</a>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom" aria-label="하단 메뉴">
+  <a href="index.html"><b>⌂</b><span>홈</span></a>
+  <a href="test.html"><b>✦</b><span>트임AI</span></a>
+  <a class="active" href="space.html"><b>◎</b><span>트임공간</span></a>
+  <a href="challenge.html"><b>✓</b><span>트임기록</span></a>
+</nav>
+
+<script>
+const video=document.getElementById('video'),photo=document.getElementById('photo'),stage=document.getElementById('stage'),placeholder=document.getElementById('placeholder'),canvas=document.getElementById('canvas');
+const cameraBtn=document.getElementById('cameraBtn'),uploadBtn=document.getElementById('uploadBtn'),captureBtn=document.getElementById('captureBtn'),scanBtn=document.getElementById('scanBtn'),retryBtn=document.getElementById('retryBtn'),fileInput=document.getElementById('fileInput');
+const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList'),selectedTitle=document.getElementById('selectedTitle'),selectedAction=document.getElementById('selectedAction'),startLink=document.getElementById('startLink');
+const markers=[document.getElementById('m1'),document.getElementById('m2'),document.getElementById('m3')];
+let stream=null,imageData='',points=[];
+
+const menu=document.getElementById('menu');document.getElementById('openMenu').onclick=()=>{menu.classList.add('open');menu.setAttribute('aria-hidden','false')};document.getElementById('closeMenu').onclick=()=>{menu.classList.remove('open');menu.setAttribute('aria-hidden','true')};
+
+async function startCamera(){
+  stopCamera(); clearResult();
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:1600}},audio:false});
+    video.srcObject=stream;video.classList.add('show');photo.classList.remove('show');placeholder.style.display='none';
+    cameraBtn.hidden=true;uploadBtn.hidden=true;captureBtn.hidden=false;scanBtn.hidden=true;retryBtn.hidden=true;
+  }catch(e){
+    fileInput.click();
+  }
+}
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
+function resizeToDataURL(source,w,h){
+  const max=1280,scale=Math.min(1,max/Math.max(w,h));const cw=Math.round(w*scale),ch=Math.round(h*scale);
+  canvas.width=cw;canvas.height=ch;canvas.getContext('2d').drawImage(source,0,0,cw,ch);return canvas.toDataURL('image/jpeg',.72);
+}
+function setPhoto(data){stopCamera();imageData=data;photo.src=data;photo.classList.add('show');video.classList.remove('show');placeholder.style.display='none';cameraBtn.hidden=true;uploadBtn.hidden=true;captureBtn.hidden=true;scanBtn.hidden=false;retryBtn.hidden=false;clearResult()}
+cameraBtn.onclick=startCamera;
+captureBtn.onclick=()=>{if(!video.videoWidth)return;setPhoto(resizeToDataURL(video,video.videoWidth,video.videoHeight))};
+uploadBtn.onclick=()=>fileInput.click();
+fileInput.onchange=()=>{const file=fileInput.files&&fileInput.files[0];if(!file)return;const img=new Image();img.onload=()=>setPhoto(resizeToDataURL(img,img.naturalWidth,img.naturalHeight));img.src=URL.createObjectURL(file)};
+retryBtn.onclick=()=>{imageData='';photo.classList.remove('show');photo.removeAttribute('src');placeholder.style.display='block';cameraBtn.hidden=false;uploadBtn.hidden=false;captureBtn.hidden=true;scanBtn.hidden=true;retryBtn.hidden=true;clearResult()};
+function clearResult(){points=[];stage.classList.remove('has-result','scanning');results.classList.remove('show');markers.forEach(m=>{m.style.left='';m.style.top=''})}
+function selectPoint(i){const p=points[i];if(!p)return;selectedTitle.textContent=(i+1)+'. '+p.title;selectedAction.textContent=p.action+' · 약 '+p.duration+'분';startLink.onclick=()=>{localStorage.setItem('teimInitialConcern',p.action);localStorage.setItem('teimSpaceMission',JSON.stringify(p))};document.querySelectorAll('.point').forEach((el,n)=>el.style.borderColor=n===i?'#2367e8':'#e7e2d9')}
+markers.forEach((m,i)=>m.onclick=()=>selectPoint(i));
+scanBtn.onclick=async()=>{
+  if(!imageData)return;
+  stage.classList.add('scanning');scanBtn.disabled=true;scanBtn.textContent='분석 중…';
+  try{
+    const r=await fetch('/api/space-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData})});
+    const data=await r.json();if(!data.ok)throw new Error(data.message||'분석 실패');
+    points=data.result.points||[];summary.textContent=data.result.summary||'지금 바로 할 수 있는 작은 정리부터 시작해보세요.';
+    pointList.innerHTML=points.map((p,i)=>'<article class="point" data-i="'+i+'"><div class="point-num">'+(i+1)+'</div><div><h4>'+escapeHtml(p.title)+'</h4><p>'+escapeHtml(p.action)+'</p><small>'+escapeHtml(p.reason)+'</small></div><span class="time">'+p.duration+'분</span></article>').join('');
+    [...pointList.children].forEach((el,i)=>el.onclick=()=>selectPoint(i));
+    points.forEach((p,i)=>{if(markers[i]){markers[i].style.left=p.x+'%';markers[i].style.top=p.y+'%'}});
+    stage.classList.add('has-result');results.classList.add('show');selectPoint(0);results.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){alert(e.message||'공간 분석 중 문제가 생겼어요. 다시 시도해주세요.')}
+  finally{stage.classList.remove('scanning');scanBtn.disabled=false;scanBtn.textContent='AI로 정리 포인트 찾기'}
+};
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+window.addEventListener('pagehide',stopCamera);
+</script>
+</body>
+</html>
