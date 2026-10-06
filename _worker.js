@@ -114,7 +114,7 @@ async function handleSpaceScan(request, env) {
   try { body = await request.json(); } catch (_) { return privateJsonResponse({ ok:false, message:"요청 형식이 올바르지 않습니다." }, 400); }
 
   const image = String(body.image || "");
-  const spaceHint = String(body.spaceHint || "").slice(0, 40);
+  const spaceHint = String(body.spaceHint || "").slice(0, 80);
   if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(image)) {
     return privateJsonResponse({ ok:false, message:"공간 사진이 필요합니다." }, 400);
   }
@@ -124,30 +124,31 @@ async function handleSpaceScan(request, env) {
 
   const unavailableResult = {
     shotType:"unknown",
-    summary:"사진은 그대로 두고 분석만 다시 시도할 수 있어요.",
+    summary:"사진은 그대로 두고 잠시 후 분석만 다시 시도해주세요.",
     points:[]
   };
-  if (!env.OPENAI_API_KEY) return privateJsonResponse({ ok:true, mode:"unavailable", result:unavailableResult });
 
   const baseRules = [
     "너는 정리·비움 서비스 트임의 공간 비전 분석 AI다.",
     "사용자가 촬영한 바로 그 사진에서 실제로 보이는 물건/구역을 근거로 1~3개의 실행 포인트를 만든다.",
     "방 전체 사진과 책상, 서랍, 침대 옆, 바닥, 옷장 한 칸 같은 근접 사진을 모두 정상 입력으로 처리한다.",
-    "사진에 물건이나 공간이 하나라도 식별되면 최소 1개 포인트를 반환한다. 정리가 이미 잘 되어 있어도 억지로 어수선하다고 말하지 말고, 실제로 보이는 대상의 정렬·분류·제자리·유지 포인트를 제안한다.",
-    "재촬영이 필요한 경우는 사진이 거의 검거나, 심하게 흔들렸거나, 손가락/벽 등으로 화면 대부분이 가려져 공간과 물건을 사실상 식별할 수 없을 때뿐이다.",
+    "사진에 물건이나 공간이 하나라도 식별되면 최소 1개 포인트를 반환한다.",
+    "정리가 이미 잘 되어 있어도 억지로 어수선하다고 말하지 말고 실제로 보이는 대상의 정렬·분류·제자리·유지 포인트를 제안한다.",
+    "재촬영이 필요한 경우는 사진이 거의 검거나 심하게 흔들렸거나 화면 대부분이 가려져 공간과 물건을 사실상 식별할 수 없을 때뿐이다.",
     "",
     "[정리 판단]",
     "공간 문제 진단 → 물품 분류/선별 → 정돈/수납 → 유지하기 쉬운 배치 순서로 판단한다.",
     "동선, 사용빈도, 종류 분류, 공간 목적, 계절성, 가시성, 유지용이성, 위생·안전을 고려한다.",
     "실행 방식은 비우기, 제자리, 같은종류, 접기·세우기, 구역나누기 중 가장 맞는 것을 선택한다.",
-    "주방/냉장고는 종류·사용빈도·꺼내기 쉬움, 옷장/침구는 종류·계절·접기/걸기, 거실/현관은 동선·임시 적치, 책상/서재는 사용중 물건과 보관물 분리, 욕실/베란다는 소모품과 청소도구 종류 분리를 우선 고려한다.",
+    "주방·냉장고는 종류/사용빈도/꺼내기 쉬움, 옷장·침구는 종류/계절/접기·걸기, 거실·현관은 동선/임시 적치, 책상·서재는 사용중 물건과 보관물 분리, 욕실·베란다는 소모품/청소도구의 종류 분리를 우선 고려한다.",
     "",
     "[사진 연결]",
     "anchor는 사진에서 사용자가 즉시 찾을 수 있는 실제 대상명 또는 실제 구역명으로 쓴다.",
     "evidence는 사진에 무엇이 어떻게 보여서 그곳을 선택했는지 관찰 사실만 쓴다.",
     "사진에 없는 물건이나 상태를 만들어내지 않는다.",
     "x,y는 대상 중심점, w,h는 대상/구역의 대략적 영역이며 사진 전체 대비 0~100 백분율이다.",
-    "confidence는 참고값일 뿐이다. 낮다고 결과를 버리지 않는다. 대상을 세밀하게 확신하기 어렵다면 '바닥 중앙 물건', '책장 한 칸', '침대 옆 구역'처럼 더 넓고 확실한 표현으로 바꾼다.",
+    "confidence는 참고값일 뿐이다. 낮다고 결과를 버리지 않는다.",
+    "대상을 세밀하게 확신하기 어렵다면 '바닥 중앙 물건', '책장 한 칸', '침대 옆 구역'처럼 더 넓고 확실한 표현으로 바꾼다.",
     "각 행동은 2~10분 이내로 구체적으로 쓴다.",
     "",
     "[안전]",
@@ -194,10 +195,71 @@ async function handleSpaceScan(request, env) {
     required:["shotType","summary","points"]
   };
 
-  async function runVision(salvage) {
-    const extra = salvage
-      ? "이전 분석에서 결과를 충분히 만들지 못했다. 이번에는 사진에 실제로 보이는 가장 확실한 대상이나 구역부터 최소 1개를 반드시 찾아라. 작은 물건 하나만 보여도 괜찮고, 대상명이 불확실하면 넓은 구역명으로 표현하라."
-      : "전체 공간인지 근접 사진인지 판단하고, 사진에 실제로 보이는 범위에서 가장 유용한 1~3개 정리 포인트를 찾아라.";
+  const promptFor = (salvage) => (spaceHint ? "공간 힌트: "+spaceHint+"\n" : "") + (
+    salvage
+      ? "이전 분석에서 결과가 없었다. 이번에는 사진에 실제로 보이는 가장 확실한 대상이나 구역부터 최소 1개를 반드시 찾아라. 작은 물건 하나만 보여도 괜찮고 대상명이 불확실하면 넓은 구역명으로 표현하라."
+      : "전체 공간인지 근접 사진인지 판단하고 사진에 실제로 보이는 범위에서 가장 유용한 1~3개 정리 포인트를 찾아라."
+  );
+
+  function normalizeResult(result) {
+    if (!result || typeof result !== "object") throw new Error("Invalid vision result");
+    result.shotType = ["wide","closeup","unknown"].includes(result.shotType) ? result.shotType : "unknown";
+    result.summary = String(result.summary || "사진에서 정리 포인트를 찾았어요.").slice(0, 240);
+    result.points = Array.isArray(result.points) ? result.points.slice(0,3).map((p) => ({
+      anchor:String(p && p.anchor || "정리 대상").slice(0,60),
+      evidence:String(p && p.evidence || "사진에서 확인된 구역이에요.").slice(0,180),
+      confidence:Math.max(0,Math.min(100,Number(p && p.confidence) || 0)),
+      method:["비우기","제자리","같은종류","접기·세우기","구역나누기"].includes(p && p.method) ? p.method : "구역나누기",
+      criteria:Array.isArray(p && p.criteria) && p.criteria.length ? p.criteria.slice(0,3) : ["가시성"],
+      title:String(p && p.title || "이 구역부터 정리하기").slice(0,90),
+      action:String(p && p.action || "지금 보이는 물건부터 같은 종류끼리 모아주세요.").slice(0,220),
+      reason:String(p && p.reason || "눈에 보이는 범위를 작게 잡으면 바로 시작하기 쉬워요.").slice(0,220),
+      duration:Math.max(2,Math.min(10,Number(p && p.duration) || 3)),
+      x:Math.max(0,Math.min(100,Number(p && p.x) || 50)),
+      y:Math.max(0,Math.min(100,Number(p && p.y) || 50)),
+      w:Math.max(3,Math.min(95,Number(p && p.w) || 20)),
+      h:Math.max(3,Math.min(95,Number(p && p.h) || 20))
+    })) : [];
+    return result;
+  }
+
+  function parseJsonLike(value) {
+    if (value && typeof value === "object" && !Array.isArray(value)) return value;
+    let text = String(value || "").trim();
+    if (!text) throw new Error("Empty model response");
+    text = text.replace(/^\`\`\`(?:json)?\s*/i,"").replace(/\s*\`\`\`$/,"").trim();
+    return JSON.parse(text);
+  }
+
+  async function runCloudflareVision(salvage) {
+    if (!env.AI || typeof env.AI.run !== "function") throw new Error("Workers AI binding unavailable");
+    const response = await env.AI.run("@cf/qwen/qwen3.8-27b", {
+      messages:[
+        { role:"system", content:baseRules },
+        {
+          role:"user",
+          content:[
+            { type:"text", text:promptFor(salvage) },
+            { type:"image_url", image_url:{ url:image } }
+          ]
+        }
+      ],
+      reasoning_effort:"low",
+      max_completion_tokens:1000,
+      temperature:0.15,
+      response_format:{ type:"json_schema", json_schema:schema }
+    });
+
+    let payload = null;
+    if (response && response.response != null) payload = response.response;
+    else if (response && Array.isArray(response.choices) && response.choices[0] && response.choices[0].message) payload = response.choices[0].message.content;
+    else payload = response;
+
+    return normalizeResult(parseJsonLike(payload));
+  }
+
+  async function runOpenAiVision(salvage) {
+    if (!env.OPENAI_API_KEY) throw new Error("OpenAI key unavailable");
     const aiResponse = await fetch("https://api.openai.com/v1/responses", {
       method:"POST",
       headers:{
@@ -205,12 +267,12 @@ async function handleSpaceScan(request, env) {
         "Content-Type":"application/json"
       },
       body:JSON.stringify({
-        model:"gpt-5.4-mini",
+        model:String(env.OPENAI_VISION_MODEL || "gpt-5.6-luna"),
         store:false,
         input:[{
           role:"user",
           content:[
-            { type:"input_text", text:baseRules+"\n\n"+(spaceHint?"공간 힌트: "+spaceHint+"\n":"")+extra },
+            { type:"input_text", text:baseRules+"\n\n"+promptFor(salvage) },
             { type:"input_image", image_url:image, detail:"high" }
           ]
         }],
@@ -227,35 +289,39 @@ async function handleSpaceScan(request, env) {
     });
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text().catch(()=>"");
-      throw new Error("OpenAI response error: "+aiResponse.status+" "+errorText.slice(0,220));
+      throw new Error("OpenAI "+aiResponse.status+" "+errorText.slice(0,180));
     }
     const data = await aiResponse.json();
-    const out = extractOpenAiText(data);
-    if (!out) throw new Error("Empty AI response");
-    const result = JSON.parse(out);
-    result.points = Array.isArray(result.points) ? result.points.slice(0,3) : [];
-    return result;
+    return normalizeResult(parseJsonLike(extractOpenAiText(data)));
   }
 
-  let first = null;
-  try {
-    first = await runVision(false);
-    if (first.points.length) return privateJsonResponse({ ok:true, mode:"ai", result:first });
-  } catch (_) {}
+  const attempts = [
+    ["cf", false],
+    ["cf", true],
+    ["openai", false],
+    ["openai", true]
+  ];
+  const failures = [];
+  let lastEmpty = null;
 
-  try {
-    const retry = await runVision(true);
-    if (retry.points.length) return privateJsonResponse({ ok:true, mode:"ai_retry", result:retry });
-    return privateJsonResponse({ ok:true, mode:"no_vision", result:retry });
-  } catch (error) {
-    const reason = String(error && error.message || "");
-    const diagnostic = reason.includes("401") ? "auth" :
-      reason.includes("403") ? "permission" :
-      reason.includes("404") ? "model" :
-      reason.includes("429") ? "rate_limit" :
-      reason.includes("400") ? "request" : "upstream";
-    return privateJsonResponse({ ok:true, mode:"unavailable", diagnostic, result:unavailableResult });
+  for (const [provider, salvage] of attempts) {
+    try {
+      const result = provider === "cf" ? await runCloudflareVision(salvage) : await runOpenAiVision(salvage);
+      if (result.points.length) {
+        return privateJsonResponse({ ok:true, mode:provider+(salvage?"_retry":""), result });
+      }
+      lastEmpty = result;
+    } catch (error) {
+      failures.push(provider+":"+(error && error.message ? String(error.message).slice(0,120) : "error"));
+    }
   }
+
+  if (lastEmpty) return privateJsonResponse({ ok:true, mode:"no_vision", result:lastEmpty });
+  const diagnostic = failures.some(x=>x.includes("401")) ? "auth" :
+    failures.some(x=>x.includes("403")) ? "permission" :
+    failures.some(x=>x.includes("429")) ? "rate_limit" :
+    failures.some(x=>x.includes("model")) ? "model" : "upstream";
+  return privateJsonResponse({ ok:true, mode:"unavailable", diagnostic, result:unavailableResult });
 }
 
 async function handleTeimAi(request, env) {
