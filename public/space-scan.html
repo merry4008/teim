@@ -176,6 +176,60 @@ button{cursor:pointer}
   background:var(--pb);color:#65738a;font-size:11px;line-height:1.5
 }
 .result-guide b{color:var(--b);flex:0 0 auto}
+.scan-complete{
+  display:none;position:absolute;left:12px;right:12px;bottom:12px;z-index:7;
+  padding:12px 14px;border-radius:17px;background:rgba(21,38,75,.90);color:#fff;
+  backdrop-filter:blur(12px);box-shadow:0 10px 28px rgba(21,38,75,.20)
+}
+.has-result .scan-complete{display:flex;align-items:center;gap:11px}
+.scan-complete .done-dot{
+  width:34px;height:34px;flex:0 0 auto;border-radius:12px;background:var(--y);color:var(--n);
+  display:grid;place-items:center;font-weight:950;font-size:15px
+}
+.scan-complete strong{display:block;font-size:12px;letter-spacing:-.02em}
+.scan-complete small{display:block;margin-top:3px;color:rgba(255,255,255,.68);font-size:10px;line-height:1.35}
+.marker-legend{
+  display:none;align-items:center;justify-content:space-between;gap:10px;margin:12px 2px 0;
+  padding:12px 13px;border-radius:16px;background:var(--pb)
+}
+.has-scan-result .marker-legend{display:flex}
+.marker-legend-copy strong{display:block;font-size:12px;color:var(--n)}
+.marker-legend-copy span{display:block;margin-top:3px;font-size:10px;color:var(--m)}
+.marker-order{display:flex;align-items:center;gap:5px}
+.marker-order b{
+  width:28px;height:28px;border-radius:10px;background:#fff;color:var(--b);display:grid;place-items:center;
+  font-size:11px;box-shadow:0 4px 10px rgba(35,103,232,.07)
+}
+.marker-order i{font-style:normal;color:#9da8b8;font-size:10px}
+
+.focus-card{
+  display:none;margin-top:12px;background:#fff;border:1.5px solid var(--b);border-radius:22px;padding:17px;
+  box-shadow:0 12px 28px rgba(35,103,232,.09)
+}
+.focus-card.show{display:block}
+.focus-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.focus-label{display:flex;align-items:center;gap:9px;min-width:0}
+.focus-number{
+  width:38px;height:38px;border-radius:13px;background:var(--b);color:#fff;display:grid;place-items:center;
+  font-weight:950;font-size:14px;flex:0 0 auto
+}
+.focus-label strong{display:block;font-size:12px;color:var(--n)}
+.focus-label small{display:block;margin-top:3px;font-size:10px;color:var(--m)}
+.focus-time{padding:7px 9px;border-radius:999px;background:var(--py);color:#795d00;font-size:10px;font-weight:900;white-space:nowrap}
+.focus-card h4{margin:0 0 9px;font-size:19px;line-height:1.35;letter-spacing:-.045em}
+.focus-action{margin:0;padding:13px 14px;border-radius:15px;background:#f7f8fb;color:#526078;font-size:12.5px;line-height:1.55}
+.focus-reason{margin:10px 2px 0;color:#8993a1;font-size:11px;line-height:1.5}
+.focus-reason b{color:#68758a}
+.focus-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.focus-start,.focus-all{
+  min-height:47px;border-radius:15px;display:flex;align-items:center;justify-content:center;border:0;
+  font-size:12px;font-weight:950
+}
+.focus-start{background:var(--b);color:#fff}
+.focus-all{background:var(--pb);color:var(--b)}
+.results{margin-top:22px}
+.results:not(.show){display:none}
+
 
 /* unified full menu */
 .menu{
@@ -320,7 +374,30 @@ button{cursor:pointer}
       <div class="scan-line"></div>
       <div class="status">공간을 살펴보는 중이에요…</div>
       <button class="marker" id="m1" type="button">1</button><button class="marker" id="m2" type="button">2</button><button class="marker" id="m3" type="button">3</button>
+      <div class="scan-complete" id="scanComplete">
+        <span class="done-dot">✓</span>
+        <span><strong>분석 완료 · 사진 속 숫자를 눌러보세요</strong><small>1 → 2 → 3 순서가 추천 우선순위예요.</small></span>
+      </div>
     </div>
+    <div class="marker-legend" id="markerLegend">
+      <div class="marker-legend-copy"><strong>먼저 사진 속 번호를 확인해주세요</strong><span>번호를 누르면 그 위치의 정리 방법이 열려요.</span></div>
+      <div class="marker-order" aria-hidden="true"><b>1</b><i>→</i><b>2</b><i>→</i><b>3</b></div>
+    </div>
+
+    <article class="focus-card" id="focusCard" aria-live="polite">
+      <div class="focus-head">
+        <div class="focus-label"><span class="focus-number" id="focusNumber">1</span><span><strong id="focusPriority">가장 먼저 추천</strong><small id="focusLocation">사진 속 1번 위치</small></span></div>
+        <span class="focus-time" id="focusTime">약 3분</span>
+      </div>
+      <h4 id="focusTitle"></h4>
+      <p class="focus-action" id="focusAction"></p>
+      <p class="focus-reason"><b>추천 이유</b> · <span id="focusReason"></span></p>
+      <div class="focus-actions">
+        <a class="focus-start" id="focusStart" href="action.html">이것부터 시작하기</a>
+        <button class="focus-all" id="showAllBtn" type="button">3개 결과 전체보기</button>
+      </div>
+    </article>
+
     <canvas id="canvas" hidden></canvas>
     <input id="fileInput" type="file" accept="image/*" capture="environment" hidden/>
     <div class="controls">
@@ -336,7 +413,7 @@ button{cursor:pointer}
   <section class="results" id="results">
     <div class="results-head"><h3>여기부터 비워볼까요?</h3><span>정리 포인트 3개</span></div>
     <p class="summary" id="summary"></p>
-    <div class="result-guide"><b>TIP</b><span>사진의 1·2·3 번호와 아래 카드 번호가 정확히 연결돼요. 번호를 누르면 해당 카드가 강조됩니다.</span></div>
+    <div class="result-guide"><b>전체 결과</b><span>사진의 번호와 같은 번호 카드가 연결돼 있어요. 카드를 누르면 사진 속 마커도 함께 강조됩니다.</span></div>
     <div class="point-list" id="pointList"></div>
   </section>
 </main>
@@ -352,6 +429,7 @@ button{cursor:pointer}
 const video=document.getElementById('video'),photo=document.getElementById('photo'),stage=document.getElementById('stage'),placeholder=document.getElementById('placeholder'),canvas=document.getElementById('canvas');
 const cameraBtn=document.getElementById('cameraBtn'),uploadBtn=document.getElementById('uploadBtn'),captureBtn=document.getElementById('captureBtn'),scanBtn=document.getElementById('scanBtn'),retryBtn=document.getElementById('retryBtn'),fileInput=document.getElementById('fileInput');
 const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList');
+const focusCard=document.getElementById('focusCard'),focusNumber=document.getElementById('focusNumber'),focusPriority=document.getElementById('focusPriority'),focusLocation=document.getElementById('focusLocation'),focusTime=document.getElementById('focusTime'),focusTitle=document.getElementById('focusTitle'),focusAction=document.getElementById('focusAction'),focusReason=document.getElementById('focusReason'),focusStart=document.getElementById('focusStart'),showAllBtn=document.getElementById('showAllBtn');
 const markers=[document.getElementById('m1'),document.getElementById('m2'),document.getElementById('m3')];
 let stream=null,imageData='',points=[];
 
@@ -380,16 +458,37 @@ fileInput.onchange=()=>{const file=fileInput.files&&fileInput.files[0];if(!file)
 retryBtn.onclick=()=>{imageData='';photo.classList.remove('show');photo.removeAttribute('src');placeholder.style.display='block';cameraBtn.hidden=false;uploadBtn.hidden=false;captureBtn.hidden=true;scanBtn.hidden=true;retryBtn.hidden=true;clearResult()};
 function clearResult(){
   points=[];stage.classList.remove('has-result','scanning');results.classList.remove('show');
+  document.querySelector('.scan-card')?.classList.remove('has-scan-result');
+  focusCard.classList.remove('show');
   markers.forEach(m=>{m.style.left='';m.style.top='';m.classList.remove('active');m.removeAttribute('title');m.removeAttribute('aria-label')})
 }
-function selectPoint(i,scrollCard=false){
+function priorityLabel(i){
+  return i===0?'가장 먼저 추천':i===1?'두 번째 추천':'세 번째 추천';
+}
+function selectPoint(i,fromMarker=false){
   const p=points[i];if(!p)return;
   const cards=[...document.querySelectorAll('.point')];
   cards.forEach((el,n)=>el.classList.toggle('active',n===i));
   markers.forEach((m,n)=>m.classList.toggle('active',n===i));
-  if(scrollCard&&cards[i])cards[i].scrollIntoView({behavior:'smooth',block:'center'});
+  focusNumber.textContent=String(i+1);
+  focusPriority.textContent=priorityLabel(i);
+  focusLocation.textContent='사진 속 '+(i+1)+'번 위치';
+  focusTime.textContent='약 '+p.duration+'분';
+  focusTitle.textContent=p.title;
+  focusAction.textContent=p.action;
+  focusReason.textContent=p.reason;
+  focusStart.onclick=()=>{
+    localStorage.setItem('teimInitialConcern',p.action);
+    localStorage.setItem('teimSpaceMission',JSON.stringify(p));
+  };
+  focusCard.classList.add('show');
+  if(fromMarker) requestAnimationFrame(()=>focusCard.scrollIntoView({behavior:'smooth',block:'nearest'}));
 }
 markers.forEach((m,i)=>m.onclick=()=>selectPoint(i,true));
+showAllBtn.onclick=()=>{
+  results.classList.add('show');
+  results.scrollIntoView({behavior:'smooth',block:'start'});
+};
 scanBtn.onclick=async()=>{
   if(!imageData)return;
   stage.classList.add('scanning');scanBtn.disabled=true;scanBtn.textContent='분석 중…';
@@ -410,7 +509,7 @@ scanBtn.onclick=async()=>{
       '</article>'
     ).join('');
     [...pointList.children].forEach((el,i)=>{
-      el.onclick=()=>selectPoint(i);
+      el.onclick=()=>selectPoint(i,false);
       const start=el.querySelector('[data-start]');
       start.onclick=(e)=>{
         e.stopPropagation();
@@ -426,7 +525,12 @@ scanBtn.onclick=async()=>{
         markers[i].setAttribute('aria-label',(i+1)+'번 '+p.title);
       }
     });
-    stage.classList.add('has-result');results.classList.add('show');selectPoint(0);results.scrollIntoView({behavior:'smooth',block:'start'});
+    stage.classList.add('has-result');
+    document.querySelector('.scan-card')?.classList.add('has-scan-result');
+    results.classList.remove('show');
+    focusCard.classList.remove('show');
+    markers.forEach(m=>m.classList.remove('active'));
+    stage.scrollIntoView({behavior:'smooth',block:'center'});
   }catch(e){alert(e.message||'공간 분석 중 문제가 생겼어요. 다시 시도해주세요.')}
   finally{stage.classList.remove('scanning');scanBtn.disabled=false;scanBtn.textContent='AI로 정리 포인트 찾기'}
 };
