@@ -219,6 +219,36 @@ button{cursor:pointer}
 }
 .marker-order i{font-style:normal;color:#9da8b8;font-size:10px}
 
+.result-peek{display:none;margin-top:12px}
+.has-scan-result .result-peek{display:block}
+.peek-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 9px}
+.peek-head strong{font-size:13px;letter-spacing:-.03em}
+.shot-type{
+  padding:6px 8px;border-radius:999px;background:#f3f5f8;color:#68758a;font-size:9px;font-weight:900;white-space:nowrap
+}
+.shot-type.closeup{background:var(--py);color:#725d00}
+.thumb-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.thumb-card{
+  min-width:0;border:1.5px solid var(--l);border-radius:17px;background:#fff;padding:6px;text-align:left;
+  transition:.18s;box-shadow:0 7px 18px rgba(31,59,113,.035)
+}
+.thumb-card.active{border-color:var(--b);box-shadow:0 10px 22px rgba(35,103,232,.11)}
+.thumb-img{position:relative;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:#eef1f5}
+.thumb-img img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-num{
+  position:absolute;left:6px;top:6px;width:26px;height:26px;border-radius:9px;background:var(--b);color:#fff;
+  display:grid;place-items:center;font-size:10px;font-weight:950;border:2px solid #fff
+}
+.thumb-card.active .thumb-num{background:var(--y);color:var(--n)}
+.thumb-label{display:block;margin:7px 2px 2px;font-size:10px;font-weight:900;color:var(--n);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thumb-sub{display:block;margin:0 2px 2px;font-size:8.5px;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.method-chips{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0 0}
+.method-chip,.criteria-chip{
+  padding:6px 8px;border-radius:999px;font-size:9px;font-weight:850;line-height:1
+}
+.method-chip{background:var(--pb);color:var(--b)}
+.criteria-chip{background:#f3f5f8;color:#65738a}
+
 .focus-card{
   display:none;margin-top:12px;background:#fff;border:1.5px solid var(--b);border-radius:22px;padding:17px;
   box-shadow:0 12px 28px rgba(35,103,232,.09)
@@ -384,7 +414,7 @@ button{cursor:pointer}
     <div class="hero-art" aria-hidden="true"><span class="scan-chip">AI 공간 분석</span><div class="scan-orb"></div></div>
   </section>
 
-  <div class="section-title"><h3>지금 공간을 보여주세요</h3><span>카메라 · 사진 업로드</span></div>
+  <div class="section-title"><h3>지금 공간을 보여주세요</h3><span>전체 · 근접 촬영 모두 가능</span></div>
   <section class="scan-card">
     <div class="camera-stage" id="stage">
       <video id="video" autoplay playsinline muted></video>
@@ -400,9 +430,14 @@ button{cursor:pointer}
       </div>
     </div>
     <div class="marker-legend" id="markerLegend">
-      <div class="marker-legend-copy"><strong>먼저 사진 속 번호를 확인해주세요</strong><span>번호를 누르면 그 위치의 정리 방법이 열려요.</span></div>
+      <div class="marker-legend-copy"><strong>먼저 사진 속 번호를 확인해주세요</strong><span>방 전체도, 책상·서랍처럼 가까이 찍은 사진도 분석해요.</span></div>
       <div class="marker-order" aria-hidden="true"><b>1</b><i>→</i><b>2</b><i>→</i><b>3</b></div>
     </div>
+
+    <section class="result-peek" id="resultPeek" aria-label="사진에서 찾은 정리 포인트">
+      <div class="peek-head"><strong>사진에서 찾은 정리 포인트</strong><span class="shot-type" id="shotTypeLabel">공간 촬영</span></div>
+      <div class="thumb-strip" id="thumbStrip"></div>
+    </section>
 
     <article class="focus-card" id="focusCard" aria-live="polite">
       <div class="focus-head">
@@ -410,6 +445,7 @@ button{cursor:pointer}
         <span class="focus-time" id="focusTime">약 3분</span>
       </div>
       <h4 id="focusTitle"></h4>
+      <div class="method-chips" id="focusMeta"></div>
       <p class="focus-action" id="focusAction"></p>
       <p class="focus-evidence"><b>사진에서 확인</b> · <span id="focusEvidence"></span></p>
       <p class="focus-reason"><b>추천 이유</b> · <span id="focusReason"></span></p>
@@ -450,7 +486,8 @@ button{cursor:pointer}
 const video=document.getElementById('video'),photo=document.getElementById('photo'),stage=document.getElementById('stage'),placeholder=document.getElementById('placeholder'),canvas=document.getElementById('canvas');
 const cameraBtn=document.getElementById('cameraBtn'),uploadBtn=document.getElementById('uploadBtn'),captureBtn=document.getElementById('captureBtn'),scanBtn=document.getElementById('scanBtn'),retryBtn=document.getElementById('retryBtn'),fileInput=document.getElementById('fileInput');
 const results=document.getElementById('results'),summary=document.getElementById('summary'),pointList=document.getElementById('pointList');
-const focusCard=document.getElementById('focusCard'),focusNumber=document.getElementById('focusNumber'),focusPriority=document.getElementById('focusPriority'),focusLocation=document.getElementById('focusLocation'),focusTime=document.getElementById('focusTime'),focusTitle=document.getElementById('focusTitle'),focusAction=document.getElementById('focusAction'),focusEvidence=document.getElementById('focusEvidence'),focusReason=document.getElementById('focusReason'),focusStart=document.getElementById('focusStart'),showAllBtn=document.getElementById('showAllBtn');
+const focusCard=document.getElementById('focusCard'),focusNumber=document.getElementById('focusNumber'),focusPriority=document.getElementById('focusPriority'),focusLocation=document.getElementById('focusLocation'),focusTime=document.getElementById('focusTime'),focusTitle=document.getElementById('focusTitle'),focusMeta=document.getElementById('focusMeta'),focusAction=document.getElementById('focusAction'),focusEvidence=document.getElementById('focusEvidence'),focusReason=document.getElementById('focusReason'),focusStart=document.getElementById('focusStart'),showAllBtn=document.getElementById('showAllBtn');
+const thumbStrip=document.getElementById('thumbStrip'),shotTypeLabel=document.getElementById('shotTypeLabel');
 const scanCompleteTitle=document.getElementById('scanCompleteTitle'),scanCompleteSub=document.getElementById('scanCompleteSub'),resultCount=document.getElementById('resultCount');
 const markers=[document.getElementById('m1'),document.getElementById('m2'),document.getElementById('m3')];
 const boxes=[document.getElementById('box1'),document.getElementById('box2'),document.getElementById('box3')];
@@ -488,6 +525,8 @@ function clearResult(){
   points=[];stage.classList.remove('has-result','scanning');results.classList.remove('show');
   document.querySelector('.scan-card')?.classList.remove('has-scan-result');
   focusCard.classList.remove('show');
+  thumbStrip.innerHTML='';
+  shotTypeLabel.textContent='공간 촬영';shotTypeLabel.className='shot-type';
   markers.forEach(m=>{m.style.left='';m.style.top='';m.classList.remove('active','available');m.removeAttribute('title');m.removeAttribute('aria-label')});
   boxes.forEach(b=>{b.style.left='';b.style.top='';b.style.width='';b.style.height='';b.classList.remove('active','available');b.querySelector('span').textContent=''})
 }
@@ -497,7 +536,9 @@ function priorityLabel(i){
 function selectPoint(i,fromMarker=false){
   const p=points[i];if(!p)return;
   const cards=[...document.querySelectorAll('.point')];
+  const thumbs=[...document.querySelectorAll('.thumb-card')];
   cards.forEach((el,n)=>el.classList.toggle('active',n===i));
+  thumbs.forEach((el,n)=>el.classList.toggle('active',n===i));
   markers.forEach((m,n)=>m.classList.toggle('active',n===i));
   boxes.forEach((b,n)=>b.classList.toggle('active',n===i));
   focusNumber.textContent=String(i+1);
@@ -505,6 +546,8 @@ function selectPoint(i,fromMarker=false){
   focusLocation.textContent=p.anchor ? '사진 속 '+p.anchor : '사진 속 '+(i+1)+'번 위치';
   focusTime.textContent='약 '+p.duration+'분';
   focusTitle.textContent=p.title;
+  focusMeta.innerHTML='<span class="method-chip">'+escapeHtml(p.method||'정리')+'</span>'+
+    (Array.isArray(p.criteria)?p.criteria.map(v=>'<span class="criteria-chip">'+escapeHtml(v)+'</span>').join(''):'');
   focusAction.textContent=p.action;
   focusEvidence.textContent=p.evidence||'사진에서 확인된 정리 대상이에요.';
   focusReason.textContent=p.reason;
@@ -537,6 +580,37 @@ function positionTargets(){
     box.style.left=bl+'px';box.style.top=bt+'px';box.style.width=bw+'px';box.style.height=bh+'px';
   });
 }
+function cropThumbnail(p){
+  if(!photo.naturalWidth||!photo.naturalHeight)return '';
+  const iw=photo.naturalWidth,ih=photo.naturalHeight;
+  const x=Math.max(0,Math.min(100,Number(p.x)||50));
+  const y=Math.max(0,Math.min(100,Number(p.y)||50));
+  const rawW=Math.max(8,Math.min(90,Number(p.w)||20));
+  const rawH=Math.max(8,Math.min(90,Number(p.h)||20));
+  const pad=1.45;
+  const w=Math.min(100,rawW*pad),h=Math.min(100,rawH*pad);
+  const sx=Math.max(0,Math.min(iw-iw*w/100,iw*(x-w/2)/100));
+  const sy=Math.max(0,Math.min(ih-ih*h/100,ih*(y-h/2)/100));
+  const sw=Math.min(iw-sx,iw*w/100),sh=Math.min(ih-sy,ih*h/100);
+  const tc=document.createElement('canvas');tc.width=240;tc.height=240;
+  const ctx=tc.getContext('2d');ctx.fillStyle='#eef1f5';ctx.fillRect(0,0,240,240);
+  const scale=Math.max(240/sw,240/sh),dw=sw*scale,dh=sh*scale;
+  ctx.drawImage(photo,sx,sy,sw,sh,(240-dw)/2,(240-dh)/2,dw,dh);
+  return tc.toDataURL('image/jpeg',.76);
+}
+function renderThumbnails(shotType){
+  shotTypeLabel.textContent=shotType==='closeup'?'근접 촬영 분석':shotType==='wide'?'전체 공간 분석':'사진 분석';
+  shotTypeLabel.classList.toggle('closeup',shotType==='closeup');
+  thumbStrip.innerHTML=points.map((p,i)=>{
+    const src=cropThumbnail(p);
+    return '<button class="thumb-card" type="button" data-thumb="'+i+'">'+
+      '<span class="thumb-img"><img src="'+src+'" alt="'+escapeHtml((i+1)+'번 '+(p.anchor||'정리 대상'))+'"><b class="thumb-num">'+(i+1)+'</b></span>'+
+      '<span class="thumb-label">'+escapeHtml(p.anchor||p.title)+'</span>'+
+      '<span class="thumb-sub">'+escapeHtml(p.method||'정리')+' · 약 '+p.duration+'분</span>'+
+    '</button>';
+  }).join('');
+  [...thumbStrip.children].forEach((el,i)=>el.onclick=()=>selectPoint(i,false));
+}
 markers.forEach((m,i)=>m.onclick=()=>selectPoint(i,true));
 showAllBtn.onclick=()=>{
   results.classList.add('show');
@@ -556,6 +630,9 @@ scanBtn.onclick=async()=>{
           '<span class="time">약 '+p.duration+'분</span>'+
         '</div>'+
         '<h4>'+escapeHtml(p.title)+'</h4>'+
+        '<div class="method-chips"><span class="method-chip">'+escapeHtml(p.method||'정리')+'</span>'+
+          (Array.isArray(p.criteria)?p.criteria.map(v=>'<span class="criteria-chip">'+escapeHtml(v)+'</span>').join(''):'')+
+        '</div>'+
         '<p class="point-action">'+escapeHtml(p.action)+'</p>'+
         '<p class="point-evidence"><b>사진에서 확인</b> · '+escapeHtml(p.evidence||'사진에서 확인된 정리 대상')+'</p>'+
         '<p class="point-reason"><b>추천 이유</b> · '+escapeHtml(p.reason)+'</p>'+
@@ -573,9 +650,12 @@ scanBtn.onclick=async()=>{
       };
     });
     if(!points.length){
-      clearResult();
-      summary.textContent=data.result.summary||'사진에서 정리 대상을 정확히 찾지 못했어요.';
-      alert('정리할 물건이나 구역이 조금 더 잘 보이도록 다시 촬영해주세요.');
+      const message=data.result.summary||'사진에서 정리 대상을 충분히 확인하지 못했어요.';
+      if(data.mode==='unavailable'){
+        alert(message+' 사진은 다시 찍지 않아도 돼요. 잠시 후 분석만 다시 눌러주세요.');
+      }else{
+        alert(message+' 조금 더 밝게 찍거나, 정리하고 싶은 물건 가까이에서 찍어도 좋아요.');
+      }
       return;
     }
     points.forEach((p,i)=>{
@@ -587,16 +667,18 @@ scanBtn.onclick=async()=>{
         markers[i].setAttribute('aria-label',(i+1)+'번 '+(p.anchor||p.title));
       }
     });
+    renderThumbnails(data.result.shotType||'unknown');
     resultCount.textContent='정리 포인트 '+points.length+'개';
     showAllBtn.textContent=points.length+'개 결과 전체보기';
     scanCompleteTitle.textContent='분석 완료 · 사진 속 '+points.length+'개 대상을 찾았어요';
-    scanCompleteSub.textContent='번호와 영역 박스가 실제 사진 속 정리 대상에 연결돼요.';
+    scanCompleteSub.textContent=(data.result.shotType==='closeup'?'가까이 찍은 사진도':'촬영한 사진에서')+' 실제 보이는 정리 대상에 번호를 연결했어요.';
     stage.classList.add('has-result');
     document.querySelector('.scan-card')?.classList.add('has-scan-result');
     results.classList.remove('show');
     focusCard.classList.remove('show');
     markers.forEach(m=>m.classList.remove('active'));
     boxes.forEach(b=>b.classList.remove('active'));
+    [...document.querySelectorAll('.thumb-card')].forEach(t=>t.classList.remove('active'));
     requestAnimationFrame(()=>{positionTargets();stage.scrollIntoView({behavior:'smooth',block:'center'})});
   }catch(e){alert(e.message||'공간 분석 중 문제가 생겼어요. 다시 시도해주세요.')}
   finally{stage.classList.remove('scanning');scanBtn.disabled=false;scanBtn.textContent='AI로 정리 포인트 찾기'}
