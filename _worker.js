@@ -122,56 +122,82 @@ async function handleSpaceScan(request, env) {
     return privateJsonResponse({ ok:false, message:"이미지가 너무 큽니다. 다시 촬영해주세요." }, 413);
   }
 
-  const noVisionResult = {
-    shotType:"unknown",
-    summary:"사진에서 정리할 대상을 충분히 확인하지 못했어요.",
-    points:[]
-  };
   const unavailableResult = {
     shotType:"unknown",
-    summary:"사진은 그대로 두고 잠시 후 분석만 다시 시도해주세요.",
+    summary:"사진은 그대로 두고 분석만 다시 시도할 수 있어요.",
     points:[]
   };
-
   if (!env.OPENAI_API_KEY) return privateJsonResponse({ ok:true, mode:"unavailable", result:unavailableResult });
 
-  const systemPrompt = [
+  const baseRules = [
     "너는 정리·비움 서비스 트임의 공간 비전 분석 AI다.",
-    "사용자가 사진을 찍은 이유가 분명하도록, 사진에서 실제로 보이는 정리 대상과 정확히 연결된 1~3개의 실행 포인트를 만든다.",
+    "사용자가 촬영한 바로 그 사진에서 실제로 보이는 물건/구역을 근거로 1~3개의 실행 포인트를 만든다.",
+    "방 전체 사진과 책상, 서랍, 침대 옆, 바닥, 옷장 한 칸 같은 근접 사진을 모두 정상 입력으로 처리한다.",
+    "사진에 물건이나 공간이 하나라도 식별되면 최소 1개 포인트를 반환한다. 정리가 이미 잘 되어 있어도 억지로 어수선하다고 말하지 말고, 실제로 보이는 대상의 정렬·분류·제자리·유지 포인트를 제안한다.",
+    "재촬영이 필요한 경우는 사진이 거의 검거나, 심하게 흔들렸거나, 손가락/벽 등으로 화면 대부분이 가려져 공간과 물건을 사실상 식별할 수 없을 때뿐이다.",
     "",
-    "[촬영 방식]",
-    "1. 방 전체를 찍은 사진뿐 아니라 책상 한쪽, 서랍 한 칸, 옷장 일부, 바닥 한 구역처럼 가까이 찍은 근접 사진도 정상적인 입력이다.",
-    "2. closeup 사진에서는 억지로 방 전체를 추정하지 말고 사진 안에 실제로 보이는 물건 묶음 또는 작은 구역을 1~3개 추천한다.",
-    "3. 사진이 조금 좁아도 재촬영을 요구하지 않는다. 너무 어둡거나 심하게 흔들렸거나 물건/공간이 거의 보이지 않을 때만 points를 비운다.",
+    "[정리 판단]",
+    "공간 문제 진단 → 물품 분류/선별 → 정돈/수납 → 유지하기 쉬운 배치 순서로 판단한다.",
+    "동선, 사용빈도, 종류 분류, 공간 목적, 계절성, 가시성, 유지용이성, 위생·안전을 고려한다.",
+    "실행 방식은 비우기, 제자리, 같은종류, 접기·세우기, 구역나누기 중 가장 맞는 것을 선택한다.",
+    "주방/냉장고는 종류·사용빈도·꺼내기 쉬움, 옷장/침구는 종류·계절·접기/걸기, 거실/현관은 동선·임시 적치, 책상/서재는 사용중 물건과 보관물 분리, 욕실/베란다는 소모품과 청소도구 종류 분리를 우선 고려한다.",
     "",
-    "[정리 판단 프레임]",
-    "공개된 정리수납 전문가 교육과정의 공통 흐름인 '공간 문제 진단 → 물품 분류/선별 → 정돈/수납 → 유지하기 쉬운 배치'를 따른다.",
-    "공간의 목적, 물건의 종류, 사용자 동선, 사용빈도, 계절성, 꺼내고 넣기 쉬운지, 유지하기 쉬운지를 함께 고려한다.",
-    "우선순위는 다음 순서로 판단한다: ① 통로나 작업면을 방해하는 정도 ② 같은 종류가 흩어진 정도 ③ 자주 쓰는 물건의 접근성 ④ 짧은 시간에 체감 변화가 큰 정도 ⑤ 다시 흐트러지지 않게 유지하기 쉬운 정도.",
-    "실행 방법은 가급적 '비우기/배출', '제자리로 이동', '같은 종류끼리 분류', '접기·세우기', '구역 나누기' 중 하나로 구체화한다.",
-    "공간별로는 주방·냉장고는 종류/사용빈도/꺼내기 쉬움, 옷장·침구는 종류/계절/접기·걸기, 거실·현관은 동선/임시 적치, 책상·서재는 현재 사용물과 보관물 분리, 욕실·베란다는 소모품/청소도구의 종류 분리를 우선 고려한다.",
-    "",
-    "[사진 근거와 좌표]",
-    "1. 사진에 실제로 보이는 구체적인 물건, 물건 묶음 또는 명확한 구역만 선택한다.",
-    "2. 사진에서 확인할 수 없는 물건이나 위치를 절대 만들어내지 않는다.",
-    "3. 서로 다른 위치를 선택하고 같은 대상을 중복하지 않는다.",
-    "4. anchor는 사용자가 사진에서 바로 찾을 수 있는 짧은 이름이다. 예: '컵·포장지', '침대 끝 옷더미', '책상 오른쪽 문구류'.",
-    "5. evidence는 왜 그 위치를 선택했는지 사진에서 실제로 보이는 근거를 한 문장으로 쓴다.",
-    "6. x,y는 대상 중심점, w,h는 대상/구역의 대략적 폭과 높이다. 모두 사진 좌상단 0,0 / 우하단 100,100 기준 백분율이다.",
-    "7. confidence는 사진 속 대상과 위치가 얼마나 명확한지 평가한다. 25 이상이면 결과 후보로 사용할 수 있다. 낮은 신뢰도에서는 작은 물건명을 단정하기보다 '책상 오른쪽 물건 묶음'처럼 보이는 구역 단위로 표현한다.",
+    "[사진 연결]",
+    "anchor는 사진에서 사용자가 즉시 찾을 수 있는 실제 대상명 또는 실제 구역명으로 쓴다.",
+    "evidence는 사진에 무엇이 어떻게 보여서 그곳을 선택했는지 관찰 사실만 쓴다.",
+    "사진에 없는 물건이나 상태를 만들어내지 않는다.",
+    "x,y는 대상 중심점, w,h는 대상/구역의 대략적 영역이며 사진 전체 대비 0~100 백분율이다.",
+    "confidence는 참고값일 뿐이다. 낮다고 결과를 버리지 않는다. 대상을 세밀하게 확신하기 어렵다면 '바닥 중앙 물건', '책장 한 칸', '침대 옆 구역'처럼 더 넓고 확실한 표현으로 바꾼다.",
+    "각 행동은 2~10분 이내로 구체적으로 쓴다.",
     "",
     "[안전]",
     "사람의 신원, 나이, 성별, 건강, 경제상태 등 개인 특성을 추론하지 않는다.",
-    "중요 문서, 약, 신분증, 금융자료, 위험물은 버리라고 하지 않는다.",
-    "가족이나 타인의 물건은 임의 폐기를 권하지 말고 분리·확인 대상으로 표현한다.",
-    "각 추천은 2~10분 이내로 끝낼 수 있는 작은 행동이어야 한다.",
-    "한국어로 짧고 구체적으로 작성한다."
+    "약, 중요 문서, 신분증, 금융자료, 위험물의 폐기를 권하지 않는다.",
+    "타인의 물건은 임의 폐기 대신 분리·확인 대상으로 표현한다."
   ].join("\n");
 
-  const userText = (spaceHint ? "공간 힌트: " + spaceHint + "\n" : "") +
-    "전체 공간 사진인지 근접 사진인지 먼저 판단하고, 사진에 실제로 보이는 범위 안에서 재촬영 없이 가능한 한 1~3개의 정리 포인트를 찾아줘.";
+  const schema = {
+    type:"object",
+    additionalProperties:false,
+    properties:{
+      shotType:{type:"string",enum:["wide","closeup","unknown"]},
+      summary:{type:"string"},
+      points:{
+        type:"array",
+        minItems:0,
+        maxItems:3,
+        items:{
+          type:"object",
+          additionalProperties:false,
+          properties:{
+            anchor:{type:"string"},
+            evidence:{type:"string"},
+            confidence:{type:"integer",minimum:0,maximum:100},
+            method:{type:"string",enum:["비우기","제자리","같은종류","접기·세우기","구역나누기"]},
+            criteria:{
+              type:"array",minItems:1,maxItems:3,
+              items:{type:"string",enum:["동선","사용빈도","종류분류","공간목적","계절","가시성","유지용이성","위생·안전"]}
+            },
+            title:{type:"string"},
+            action:{type:"string"},
+            reason:{type:"string"},
+            duration:{type:"integer",minimum:2,maximum:10},
+            x:{type:"number",minimum:0,maximum:100},
+            y:{type:"number",minimum:0,maximum:100},
+            w:{type:"number",minimum:3,maximum:95},
+            h:{type:"number",minimum:3,maximum:95}
+          },
+          required:["anchor","evidence","confidence","method","criteria","title","action","reason","duration","x","y","w","h"]
+        }
+      }
+    },
+    required:["shotType","summary","points"]
+  };
 
-  try {
+  async function runVision(salvage) {
+    const extra = salvage
+      ? "이전 분석에서 결과를 충분히 만들지 못했다. 이번에는 사진에 실제로 보이는 가장 확실한 대상이나 구역부터 최소 1개를 반드시 찾아라. 작은 물건 하나만 보여도 괜찮고, 대상명이 불확실하면 넓은 구역명으로 표현하라."
+      : "전체 공간인지 근접 사진인지 판단하고, 사진에 실제로 보이는 범위에서 가장 유용한 1~3개 정리 포인트를 찾아라.";
     const aiResponse = await fetch("https://api.openai.com/v1/responses", {
       method:"POST",
       headers:{
@@ -184,72 +210,40 @@ async function handleSpaceScan(request, env) {
         input:[{
           role:"user",
           content:[
-            { type:"input_text", text: systemPrompt + "\n\n" + userText },
+            { type:"input_text", text:baseRules+"\n\n"+(spaceHint?"공간 힌트: "+spaceHint+"\n":"")+extra },
             { type:"input_image", image_url:image }
           ]
         }],
-        max_output_tokens:1100,
+        max_output_tokens:1000,
         text:{
           format:{
             type:"json_schema",
-            name:"teum_space_scan_v2",
+            name:salvage?"teum_space_scan_retry":"teum_space_scan",
             strict:true,
-            schema:{
-              type:"object",
-              additionalProperties:false,
-              properties:{
-                shotType:{type:"string",enum:["wide","closeup","unknown"]},
-                summary:{type:"string"},
-                points:{
-                  type:"array",
-                  minItems:0,
-                  maxItems:3,
-                  items:{
-                    type:"object",
-                    additionalProperties:false,
-                    properties:{
-                      anchor:{type:"string"},
-                      evidence:{type:"string"},
-                      confidence:{type:"integer",minimum:25,maximum:100},
-                      method:{type:"string",enum:["비우기","제자리","같은종류","접기·세우기","구역나누기"]},
-                      criteria:{
-                        type:"array",
-                        minItems:1,
-                        maxItems:3,
-                        items:{type:"string",enum:["동선","사용빈도","종류분류","공간목적","계절","가시성","유지용이성","위생·안전"]}
-                      },
-                      title:{type:"string"},
-                      action:{type:"string"},
-                      reason:{type:"string"},
-                      duration:{type:"integer",minimum:2,maximum:10},
-                      x:{type:"number",minimum:0,maximum:100},
-                      y:{type:"number",minimum:0,maximum:100},
-                      w:{type:"number",minimum:3,maximum:90},
-                      h:{type:"number",minimum:3,maximum:90}
-                    },
-                    required:["anchor","evidence","confidence","method","criteria","title","action","reason","duration","x","y","w","h"]
-                  }
-                }
-              },
-              required:["shotType","summary","points"]
-            }
+            schema
           }
         }
       })
     });
     if (!aiResponse.ok) throw new Error("OpenAI response error: " + aiResponse.status);
     const data = await aiResponse.json();
-    const text = extractOpenAiText(data);
-    if (!text) throw new Error("Empty AI response");
-    const result = JSON.parse(text);
-    result.points = Array.isArray(result.points)
-      ? result.points.filter(p => Number(p.confidence) >= 25).slice(0,3)
-      : [];
-    if (!result.points.length) {
-      result.summary = result.summary || noVisionResult.summary;
-      return privateJsonResponse({ ok:true, mode:"no_vision", result });
-    }
-    return privateJsonResponse({ ok:true, mode:"ai", result });
+    const out = extractOpenAiText(data);
+    if (!out) throw new Error("Empty AI response");
+    const result = JSON.parse(out);
+    result.points = Array.isArray(result.points) ? result.points.slice(0,3) : [];
+    return result;
+  }
+
+  let first = null;
+  try {
+    first = await runVision(false);
+    if (first.points.length) return privateJsonResponse({ ok:true, mode:"ai", result:first });
+  } catch (_) {}
+
+  try {
+    const retry = await runVision(true);
+    if (retry.points.length) return privateJsonResponse({ ok:true, mode:"ai_retry", result:retry });
+    return privateJsonResponse({ ok:true, mode:"no_vision", result:retry });
   } catch (_) {
     return privateJsonResponse({ ok:true, mode:"unavailable", result:unavailableResult });
   }
