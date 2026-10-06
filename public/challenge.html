@@ -4,21 +4,77 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ffffff" />
-  <title>트임 | 정리 챌린지</title>
+  <title>트임 | 트임기록</title>
   <link rel="stylesheet" href="styles.css?v=teum-action-1" />
   <link rel="stylesheet" href="teum-rewards.css?v=1" />
   <style>
     .challenge-screen{padding-top:20px}.challenge-hero{background:#2563EB;color:#fff;border-radius:34px;padding:26px 22px;box-shadow:0 18px 44px rgba(37,99,235,.22)}.challenge-hero .small-label{color:#FFC928}.challenge-hero h1{margin:0;font-size:36px;line-height:1.08;letter-spacing:-.075em;color:#fff}.challenge-hero p{margin:12px 0 0;color:rgba(255,255,255,.86);font-size:15px}.challenge-progress{margin-top:14px;background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:28px;padding:18px;box-shadow:0 14px 34px rgba(37,99,235,.08)}.challenge-progress b{display:block;color:#183B6B;font-size:21px;letter-spacing:-.05em}.challenge-progress p{margin:5px 0 12px;color:#64748b;font-size:13px}.challenge-track{height:10px;border-radius:999px;background:#eaf1ff;overflow:hidden}.challenge-fill{height:100%;width:0;background:linear-gradient(90deg,#2563EB,#FFC928);border-radius:999px;transition:.2s}.challenge-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px}.day-cell{background:#fff;border:1px solid rgba(37,99,235,.14);border-radius:20px;padding:10px 7px;min-height:112px;box-shadow:0 12px 28px rgba(37,99,235,.07);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center}.day-cell.done{border-color:#2563EB;background:#f8fbff}.day-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#EEF4FF;color:#2563EB;font-weight:1000;font-size:12px}.day-cell.done .day-num{background:#2563EB;color:#fff}.day-check{width:26px;height:26px;border-radius:50%;border:2px solid #dbe7ff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:1000;font-size:14px}.day-cell.done .day-check{background:#FFC928;border-color:#FFC928;color:#183B6B}.photo-preview{display:none;width:100%;aspect-ratio:1/1;border-radius:13px;object-fit:cover;background:#EEF4FF;margin:8px 0}.day-cell.has-photo .photo-preview{display:block}.photo-btn{width:100%;border:0;border-radius:14px;background:#FFC928;color:#183B6B;font-size:11px;font-weight:1000;padding:9px 4px;cursor:pointer}.photo-input{display:none}.reset-box{margin-top:14px;background:#fff;border:1px solid rgba(37,99,235,.12);border-radius:24px;padding:16px;text-align:center}.reset-box p{margin:0 0 10px;color:#64748b;font-size:13px}.reset-box button{border:0;border-radius:999px;background:#EEF4FF;color:#2563EB;font-weight:950;padding:11px 15px}@media(max-width:640px){.challenge-hero{border-radius:28px;padding:23px 20px}.challenge-hero h1{font-size:31px}.challenge-calendar{grid-template-columns:repeat(2,1fr);gap:9px}.day-cell{min-height:148px;border-radius:20px;padding:12px}.day-num{width:34px;height:34px}.photo-btn{font-size:12px;padding:10px 7px}}
+  
+    /* 2026 TEUM record refresh */
+    :root{--teum-blue:#2367e8;--teum-navy:#15264b;--teum-yellow:#ffda52;--teum-beige:#f4ecdf;--teum-cream:#fbf7f0;--teum-line:#e8e1d7;--teum-muted:#778397}
+    body{background:#f8f6f2;color:var(--teum-navy);padding-bottom:105px}
+    .bottom-nav{display:none!important}
+    .topbar{height:70px;max-width:760px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(248,246,242,.92);backdrop-filter:blur(16px);position:sticky;top:0;z-index:30;border-bottom:0}
+    .topbar img{height:30px!important}
+    .record-menu-btn{width:44px;height:44px;border:1px solid #e8e1d7;background:#fff;border-radius:15px;display:grid;place-items:center;padding:0;cursor:pointer}
+    .record-menu-btn i,.record-menu-btn i:before,.record-menu-btn i:after{display:block;width:20px;height:2px;border-radius:999px;background:var(--teum-navy);content:"";position:relative}.record-menu-btn i:before{position:absolute;top:-6px;left:0}.record-menu-btn i:after{position:absolute;top:6px;left:0}
+    .record-menu{position:fixed;inset:0;z-index:120;background:#fff;transform:translateX(100%);transition:transform .28s ease;overflow:auto}.record-menu.open{transform:none}
+    .record-menu-head{height:70px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 18px;border-bottom:1px solid #eef0f3;position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);z-index:2}.record-menu-head h2{margin:0;text-align:center;font-size:20px;letter-spacing:-.05em}.record-menu-close{width:44px;height:44px;border:0;border-radius:14px;background:#f6f7f9;font-size:25px;color:var(--teum-navy)}
+    .record-menu-body{width:min(760px,100%);margin:auto;padding:22px 18px 34px}.record-menu-intro{background:var(--teum-beige);border-radius:24px;padding:20px;margin-bottom:24px}.record-menu-intro small{font-size:10px;color:var(--teum-blue);font-weight:950;letter-spacing:.1em}.record-menu-intro h3{margin:7px 0 4px;font-size:22px;letter-spacing:-.05em}.record-menu-intro p{margin:0;color:#7b7c79;font-size:12px;line-height:1.6}
+    .record-menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 10px}.record-menu-item{text-align:center;font-size:11px;font-weight:850;color:var(--teum-navy)}.record-menu-icon{width:58px;height:58px;margin:0 auto 8px;border-radius:19px;background:#f4f6f8;display:grid;place-items:center;font-size:22px;font-style:normal}.record-menu-item:nth-child(2n) .record-menu-icon{background:#edf4ff}.record-menu-item:nth-child(3n) .record-menu-icon{background:#fff4bd}
+    .challenge-screen{max-width:760px;padding:14px 18px 28px;gap:18px}
+    .challenge-hero{background:linear-gradient(135deg,#f3e7d5 0%,#f8f2e9 100%);color:var(--teum-navy);border:1px solid #eadfce;border-radius:30px;padding:27px 23px;box-shadow:none;position:relative;overflow:hidden}
+    .challenge-hero:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,218,82,.24);right:-45px;top:-50px}
+    .challenge-hero .small-label{color:var(--teum-blue);font-size:10px;font-weight:950;letter-spacing:.12em;margin:0 0 10px}
+    .challenge-hero h1{color:var(--teum-navy);font-size:31px;line-height:1.13;letter-spacing:-.07em;max-width:420px}
+    .challenge-hero h1 em{font-style:normal;color:var(--teum-blue)}
+    .challenge-hero p:last-child{color:#6f746f;font-size:13px;line-height:1.6;margin-top:11px;max-width:430px}
+    .teum-rewards{gap:18px}
+    .tr-section-heading{margin:4px 3px 0}.tr-kicker{color:var(--teum-blue)!important}.tr-section-heading h2{color:var(--teum-navy);font-size:24px}.tr-section-heading>p:last-child{color:var(--teum-muted);line-height:1.6}
+    .tr-summary{background:#fff;color:var(--teum-navy);border:1px solid var(--teum-line);padding:22px;border-radius:25px;box-shadow:0 10px 28px rgba(72,60,44,.05)}
+    .tr-summary:before{border-color:rgba(35,103,232,.1);right:-100px;top:-105px}
+    .tr-pill{background:var(--teum-yellow);color:var(--teum-navy)}
+    .tr-total strong{color:var(--teum-blue)}.tr-summary-text>p{color:var(--teum-navy)}.tr-footnote{color:var(--teum-muted)}
+    .tr-circle-back{stroke:#edf0f4}.tr-circle-value{stroke:var(--teum-blue)}.tr-circle-inner strong{color:var(--teum-blue)}.tr-circle-inner span{color:#617089}
+    .tr-source{gap:8px}.tr-source span{background:#fff;border:1px solid var(--teum-line);border-radius:16px;color:#6a7890;padding:13px 5px}.tr-source b{color:var(--teum-navy)}
+    .tr-map,.tr-gifts{border:1px solid var(--teum-line);box-shadow:none;border-radius:24px;background:#fff}
+    .tr-map-head h3{color:var(--teum-navy)}.tr-map-head p:last-child{color:var(--teum-muted)}.tr-map-icon{background:#fff4bd;color:var(--teum-navy)}
+    .tr-category{background:#faf9f7;border-color:#ebe7e0;color:var(--teum-navy)}.tr-category[aria-pressed="true"]{border-color:var(--teum-blue);background:#edf4ff;box-shadow:none}.tr-category-top strong{color:var(--teum-blue)}
+    .tr-next{background:var(--teum-beige)}.tr-next-pill{color:var(--teum-blue)}.tr-next h4{color:var(--teum-navy)}.tr-next a{background:var(--teum-blue)}
+    .tr-gift{background:#faf9f7;border-color:#ebe7e0}.tr-gift[data-open="true"]{background:#fff7dc;border-color:var(--teum-yellow)}.tr-gift[data-open="true"] em{background:var(--teum-blue)}
+    .tr-gift-open{background:var(--teum-navy)}
+    .tr-photo-heading{margin-top:4px}
+    .challenge-progress{margin-top:0;border:1px solid var(--teum-line);box-shadow:none;border-radius:22px;padding:17px}.challenge-progress b{color:var(--teum-navy)}.challenge-track{background:#edf0f4}.challenge-fill{background:linear-gradient(90deg,var(--teum-blue),var(--teum-yellow))}
+    .day-cell{border-color:var(--teum-line);box-shadow:none;border-radius:18px}.day-cell.done{border-color:#bcd2ff;background:#f7faff}.day-num{background:#edf4ff;color:var(--teum-blue)}.day-cell.done .day-num{background:var(--teum-blue)}.day-check{border-color:#dce4ee}.day-cell.done .day-check{background:var(--teum-yellow);border-color:var(--teum-yellow);color:var(--teum-navy)}.photo-btn{background:#edf4ff;color:var(--teum-blue)}
+    .reset-box{border-color:var(--teum-line);background:#fff;border-radius:20px}.reset-box button{background:#f3f4f6;color:#6c7480}
+    #teumRecordNav{position:fixed;z-index:80;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));width:min(430px,calc(100% - 24px));height:72px;border-radius:25px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);box-shadow:0 15px 40px rgba(21,38,75,.14);border:1px solid #e8edf5;display:grid;grid-template-columns:repeat(4,1fr);padding:6px}
+    #teumRecordNav a{border-radius:19px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8791a1;font-size:10px;font-weight:800;text-decoration:none}#teumRecordNav a b{font-size:19px;line-height:1}#teumRecordNav a.active{background:#edf4ff;color:var(--teum-blue)}
+    .record-lock{overflow:hidden}
+    @media(max-width:640px){.challenge-hero{padding:23px 20px;border-radius:25px}.challenge-hero h1{font-size:29px}.challenge-calendar{grid-template-columns:repeat(2,1fr)}.tr-summary{padding:19px 15px}.tr-source span{font-size:10px}.tr-source b{font-size:18px}}
   </style>
 </head>
 <body data-page="challenge">
-  <header class="topbar"><a href="index.html" aria-label="트임 홈" style="display:flex;align-items:center"><img src="/tuim_logo.png" alt="TEUM" style="display:block;height:34px;width:auto" /></a><a class="top-action" href="index.html">홈</a></header>
+  <aside class="record-menu" id="recordMenu" aria-hidden="true">
+  <header class="record-menu-head"><button class="record-menu-close" id="recordMenuClose" type="button" aria-label="전체메뉴 닫기">‹</button><h2>전체메뉴</h2><span></span></header>
+  <div class="record-menu-body">
+    <section class="record-menu-intro"><small>TEUM SERVICES</small><h3>오늘은 어디부터 트여볼까요?</h3><p>AI 추천부터 작은 실행, 기록까지 한곳에서 이어가요.</p></section>
+    <div class="record-menu-grid">
+      <a class="record-menu-item" href="test.html"><i class="record-menu-icon">✦</i>트임AI</a>
+      <a class="record-menu-item" href="test.html#profile"><i class="record-menu-icon">✓</i>트임체크</a>
+      <a class="record-menu-item" href="action.html"><i class="record-menu-icon">⚡</i>트임미션</a>
+      <a class="record-menu-item" href="space.html"><i class="record-menu-icon">⌂</i>트임공간</a>
+      <a class="record-menu-item" href="test.html?q=%EB%A7%88%EC%9D%8C%EC%9D%B4%20%EB%8B%B5%EB%8B%B5%ED%95%B4%EC%9A%94"><i class="record-menu-icon">♡</i>트임마음</a>
+      <a class="record-menu-item" href="challenge.html"><i class="record-menu-icon">▤</i>트임기록</a>
+    </div>
+  </div>
+</aside>
+<header class="topbar"><a href="index.html" aria-label="트임 홈" style="display:flex;align-items:center"><img src="/tuim_logo.png" alt="TEUM" style="display:block;width:auto" /></a><button class="record-menu-btn" id="recordMenuOpen" type="button" aria-label="전체메뉴 열기"><i aria-hidden="true"></i></button></header>
   <main class="screen challenge-screen">
-    <section class="challenge-hero"><p class="small-label">MY TEUM · MY LITTLE SPACE</p><h1>작은 틈이 모여,<br>나만의 여유가 돼요.</h1><p>내가 해낸 작은 비움과 오늘의 선물을 여기서 확인해요.</p></section>
+    <section class="challenge-hero"><p class="small-label">MY TEUM · RECORD</p><h1>작은 비움이 쌓여,<br><em>나만의 틈</em>이 돼요.</h1><p>오늘 해낸 비움과 쌓여가는 변화를 트임기록에서 확인해보세요.</p></section>
     <section class="teum-rewards" aria-labelledby="rewardHeading">
-      <div class="tr-section-heading"><p class="tr-kicker">MY LITTLE SPACE · REWARD</p><h2 id="rewardHeading">내가 모은 틈, 얼마나 커졌을까?</h2><p>작은 실행들이 남긴 기록을 한눈에 살펴봐요.</p></div>
+      <div class="tr-section-heading"><p class="tr-kicker">MY TEUM · SUMMARY</p><h2 id="rewardHeading">내가 만든 틈을 한눈에</h2><p>작은 실행이 얼마나 쌓였는지 가볍게 확인해요.</p></div>
       <div class="tr-summary">
-        <div class="tr-summary-text"><span class="tr-pill">내가 만든 작은 변화</span><div class="tr-total"><strong id="trTotal">0</strong><span>개의 틈 ✳</span></div><p id="trHeadline">첫 틈이 생길 준비가 됐어요.</p><span class="tr-footnote">이 브라우저의 현재 완료 기록을 합산해요.</span></div>
+        <div class="tr-summary-text"><span class="tr-pill">나의 트임</span><div class="tr-total"><strong id="trTotal">0</strong><span>개의 틈 ✳</span></div><p id="trHeadline">첫 틈이 생길 준비가 됐어요.</p><span class="tr-footnote">이 브라우저의 현재 완료 기록을 합산해요.</span></div>
         <div class="tr-circle" role="img" id="trCircle" aria-label="다음 디지털 선물까지 진행 현황">
           <svg viewBox="0 0 160 160" aria-hidden="true"><circle class="tr-circle-back" cx="80" cy="80" r="66"></circle><circle class="tr-circle-value" id="trCircleValue" cx="80" cy="80" r="66"></circle></svg>
           <div class="tr-circle-inner"><span>다음 선물까지</span><strong id="trRemaining">1</strong><span id="trNextText">틈 남음</span></div>
@@ -26,7 +82,7 @@
       </div>
       <div class="tr-source" aria-label="완료 기록 구성"><span>오늘의 비움 <b id="trDaily">0</b></span><span>비움 빙고 <b id="trBingo">0</b></span><span>바로 비우기 <b id="trQuick">0</b></span><span>사진 기록 <b id="trPhoto">0</b></span></div>
       <div class="tr-map">
-        <div class="tr-map-head"><div><p class="tr-kicker">MY TEUM MAP</p><h3>어떤 틈을 만들었나요?</h3><p>영역을 누르면 다음에 해볼 작은 비움을 추천해요.</p></div><span class="tr-map-icon" aria-hidden="true">✳</span></div>
+        <div class="tr-map-head"><div><p class="tr-kicker">TEUM BALANCE</p><h3>어떤 비움을 해왔나요?</h3><p>영역을 누르면 다음에 해볼 작은 비움을 추천해요.</p></div><span class="tr-map-icon" aria-hidden="true">✳</span></div>
         <div class="tr-categories" role="group" aria-label="비움 영역 선택">
           <button type="button" class="tr-category" data-kind="space" aria-pressed="true"><span class="tr-category-top"><b>공간 비움</b><strong id="trSpace">0</strong></span><span class="tr-bar"><i id="trSpaceBar"></i></span><small>책상·신발·옷</small></button>
           <button type="button" class="tr-category" data-kind="digital" aria-pressed="false"><span class="tr-category-top"><b>디지털 비움</b><strong id="trDigital">0</strong></span><span class="tr-bar"><i id="trDigitalBar"></i></span><small>사진·탭·알림</small></button>
@@ -36,7 +92,7 @@
         <div class="tr-next" aria-live="polite"><span class="tr-next-pill" id="trSuggestionTag">다음 작은 틈</span><h4 id="trSuggestionTitle">책상 위 물건 하나 제자리로</h4><p id="trSuggestionBody">전체를 정리할 필요 없어요. 지금 보이는 것 하나면 충분해요.</p><a href="index.html#bingo" id="trSuggestionLink">미션으로 이동 ↗</a></div>
         <p class="tr-encourage" id="trEncourage"></p>
       </div>
-      <div class="tr-gifts"><div class="tr-map-head"><div><p class="tr-kicker">LITTLE PRESENTS</p><h3>틈을 모아 열어보는 선물함</h3><p>기록이 쌓이면 무료 디지털 트임카드가 열려요.</p></div></div>
+      <div class="tr-gifts"><div class="tr-map-head"><div><p class="tr-kicker">TEUM REWARD</p><h3>기록이 쌓이면 열리는 작은 선물</h3><p>기록이 쌓이면 무료 디지털 트임카드가 열려요.</p></div></div>
         <div class="tr-gift-grid" id="trGifts">
           <button type="button" class="tr-gift" data-needed="1"><span class="tr-gift-icon" aria-hidden="true">✳</span><b>첫 틈 선물</b><small>1틈</small><em>잠김</em></button>
           <button type="button" class="tr-gift" data-needed="3"><span class="tr-gift-icon" aria-hidden="true">☀</span><b>작은 시작 카드</b><small>3틈</small><em>잠김</em></button>
@@ -47,13 +103,23 @@
         <p class="tr-chart-note">선물은 디지털 카드이며 실제 상품·쿠폰이 아닙니다. 기록 체크를 취소하거나 초기화하면 현재 보상 단계도 함께 다시 계산됩니다.</p>
       </div>
     </section>
-    <div class="tr-section-heading tr-photo-heading"><p class="tr-kicker">PHOTO RECORD · 14 DAYS</p><h2>사진으로 남기는 14일 트임기록</h2><p>하루의 작은 비움을 사진으로 남기고, 아래 달력에서 확인하세요.</p></div>
+    <div class="tr-section-heading tr-photo-heading"><p class="tr-kicker">PHOTO RECORD</p><h2>사진으로 남기는 트임기록</h2><p>하루의 작은 비움을 사진으로 남겨보세요.</p></div>
     <section class="challenge-progress"><b id="progressTitle">0 / 14 완료</b><p id="progressText">사진 인증을 올리면 해당 날짜가 체크됩니다.</p><div class="challenge-track"><div id="challengeFill" class="challenge-fill"></div></div></section>
     <section id="challengeCalendar" class="challenge-calendar" aria-label="14일 정리 챌린지 달력"></section>
     <section class="reset-box"><p>체크는 사진을 올린 날짜만 완료 처리됩니다.</p><button id="resetChallenge" type="button">챌린지 초기화</button></section>
   </main>
-  <nav class="bottom-nav"><a data-nav="home" href="index.html">홈</a><a data-nav="test" href="test.html">마음비움</a><a data-nav="space" href="space.html">공간비움</a><a class="active" data-nav="challenge" href="challenge.html">챌린지</a><a data-nav="action" href="action.html">바로시작</a><a data-nav="program" href="program.html">문의</a></nav>
+  <nav id="teumRecordNav" aria-label="트임 하단 메뉴">
+  <a href="index.html"><b>⌂</b><span>홈</span></a>
+  <a href="test.html"><b>✦</b><span>트임AI</span></a>
+  <a href="action.html"><b>↗</b><span>트임미션</span></a>
+  <a class="active" href="challenge.html"><b>✓</b><span>트임기록</span></a>
+</nav>
   <script>
+    (function(){
+      const menu=document.getElementById('recordMenu'),open=document.getElementById('recordMenuOpen'),close=document.getElementById('recordMenuClose');
+      function setMenu(v){menu.classList.toggle('open',v);menu.setAttribute('aria-hidden',String(!v));document.body.classList.toggle('record-lock',v)}
+      open.addEventListener('click',()=>setMenu(true));close.addEventListener('click',()=>setMenu(false));document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
+    })();
     const key='teimChallenge14';
     const calendar=document.getElementById('challengeCalendar');
     const progressTitle=document.getElementById('progressTitle');
