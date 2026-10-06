@@ -118,210 +118,120 @@ async function handleSpaceScan(request, env) {
   if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(image)) {
     return privateJsonResponse({ ok:false, message:"공간 사진이 필요합니다." }, 400);
   }
-  if (image.length > 2200000) {
-    return privateJsonResponse({ ok:false, message:"이미지가 너무 큽니다. 다시 촬영해주세요." }, 413);
+  if (image.length > 1600000) {
+    return privateJsonResponse({ ok:false, message:"테스트용 이미지가 너무 큽니다. 사진을 다시 선택해주세요." }, 413);
+  }
+  if (!env.AI || typeof env.AI.run !== "function") {
+    return privateJsonResponse({
+      ok:true, mode:"unavailable", diagnostic:"binding",
+      result:{ shotType:"unknown", summary:"무료 AI 연결을 준비 중이에요.", points:[] }
+    });
   }
 
-  const unavailableResult = {
-    shotType:"unknown",
-    summary:"사진은 그대로 두고 잠시 후 분석만 다시 시도해주세요.",
-    points:[]
-  };
-
-  const baseRules = [
-    "너는 정리·비움 서비스 트임의 공간 비전 분석 AI다.",
-    "사용자가 촬영한 바로 그 사진에서 실제로 보이는 물건/구역을 근거로 1~3개의 실행 포인트를 만든다.",
-    "방 전체 사진과 책상, 서랍, 침대 옆, 바닥, 옷장 한 칸 같은 근접 사진을 모두 정상 입력으로 처리한다.",
-    "사진에 물건이나 공간이 하나라도 식별되면 최소 1개 포인트를 반환한다.",
-    "정리가 이미 잘 되어 있어도 억지로 어수선하다고 말하지 말고 실제로 보이는 대상의 정렬·분류·제자리·유지 포인트를 제안한다.",
-    "재촬영이 필요한 경우는 사진이 거의 검거나 심하게 흔들렸거나 화면 대부분이 가려져 공간과 물건을 사실상 식별할 수 없을 때뿐이다.",
-    "",
-    "[정리 판단]",
-    "공간 문제 진단 → 물품 분류/선별 → 정돈/수납 → 유지하기 쉬운 배치 순서로 판단한다.",
-    "동선, 사용빈도, 종류 분류, 공간 목적, 계절성, 가시성, 유지용이성, 위생·안전을 고려한다.",
-    "실행 방식은 비우기, 제자리, 같은종류, 접기·세우기, 구역나누기 중 가장 맞는 것을 선택한다.",
-    "주방·냉장고는 종류/사용빈도/꺼내기 쉬움, 옷장·침구는 종류/계절/접기·걸기, 거실·현관은 동선/임시 적치, 책상·서재는 사용중 물건과 보관물 분리, 욕실·베란다는 소모품/청소도구의 종류 분리를 우선 고려한다.",
-    "",
-    "[사진 연결]",
-    "anchor는 사진에서 사용자가 즉시 찾을 수 있는 실제 대상명 또는 실제 구역명으로 쓴다.",
-    "evidence는 사진에 무엇이 어떻게 보여서 그곳을 선택했는지 관찰 사실만 쓴다.",
-    "사진에 없는 물건이나 상태를 만들어내지 않는다.",
-    "x,y는 대상 중심점, w,h는 대상/구역의 대략적 영역이며 사진 전체 대비 0~100 백분율이다.",
-    "confidence는 참고값일 뿐이다. 낮다고 결과를 버리지 않는다.",
-    "대상을 세밀하게 확신하기 어렵다면 '바닥 중앙 물건', '책장 한 칸', '침대 옆 구역'처럼 더 넓고 확실한 표현으로 바꾼다.",
-    "각 행동은 2~10분 이내로 구체적으로 쓴다.",
-    "",
-    "[안전]",
-    "사람의 신원, 나이, 성별, 건강, 경제상태 등 개인 특성을 추론하지 않는다.",
-    "약, 중요 문서, 신분증, 금융자료, 위험물의 폐기를 권하지 않는다.",
-    "타인의 물건은 임의 폐기 대신 분리·확인 대상으로 표현한다."
-  ].join("\n");
-
-  const schema = {
-    type:"object",
-    additionalProperties:false,
-    properties:{
-      shotType:{type:"string",enum:["wide","closeup","unknown"]},
-      summary:{type:"string"},
-      points:{
-        type:"array",
-        minItems:0,
-        maxItems:3,
-        items:{
-          type:"object",
-          additionalProperties:false,
-          properties:{
-            anchor:{type:"string"},
-            evidence:{type:"string"},
-            confidence:{type:"integer",minimum:0,maximum:100},
-            method:{type:"string",enum:["비우기","제자리","같은종류","접기·세우기","구역나누기"]},
-            criteria:{
-              type:"array",minItems:1,maxItems:3,
-              items:{type:"string",enum:["동선","사용빈도","종류분류","공간목적","계절","가시성","유지용이성","위생·안전"]}
-            },
-            title:{type:"string"},
-            action:{type:"string"},
-            reason:{type:"string"},
-            duration:{type:"integer",minimum:2,maximum:10},
-            x:{type:"number",minimum:0,maximum:100},
-            y:{type:"number",minimum:0,maximum:100},
-            w:{type:"number",minimum:3,maximum:95},
-            h:{type:"number",minimum:3,maximum:95}
-          },
-          required:["anchor","evidence","confidence","method","criteria","title","action","reason","duration","x","y","w","h"]
-        }
-      }
-    },
-    required:["shotType","summary","points"]
-  };
-
-  const promptFor = (salvage) => (spaceHint ? "공간 힌트: "+spaceHint+"\n" : "") + (
-    salvage
-      ? "이전 분석에서 결과가 없었다. 이번에는 사진에 실제로 보이는 가장 확실한 대상이나 구역부터 최소 1개를 반드시 찾아라. 작은 물건 하나만 보여도 괜찮고 대상명이 불확실하면 넓은 구역명으로 표현하라."
-      : "전체 공간인지 근접 사진인지 판단하고 사진에 실제로 보이는 범위에서 가장 유용한 1~3개 정리 포인트를 찾아라."
-  );
-
-  function normalizeResult(result) {
-    if (!result || typeof result !== "object") throw new Error("Invalid vision result");
-    result.shotType = ["wide","closeup","unknown"].includes(result.shotType) ? result.shotType : "unknown";
-    result.summary = String(result.summary || "사진에서 정리 포인트를 찾았어요.").slice(0, 240);
-    result.points = Array.isArray(result.points) ? result.points.slice(0,3).map((p) => ({
-      anchor:String(p && p.anchor || "정리 대상").slice(0,60),
-      evidence:String(p && p.evidence || "사진에서 확인된 구역이에요.").slice(0,180),
-      confidence:Math.max(0,Math.min(100,Number(p && p.confidence) || 0)),
-      method:["비우기","제자리","같은종류","접기·세우기","구역나누기"].includes(p && p.method) ? p.method : "구역나누기",
-      criteria:Array.isArray(p && p.criteria) && p.criteria.length ? p.criteria.slice(0,3) : ["가시성"],
-      title:String(p && p.title || "이 구역부터 정리하기").slice(0,90),
-      action:String(p && p.action || "지금 보이는 물건부터 같은 종류끼리 모아주세요.").slice(0,220),
-      reason:String(p && p.reason || "눈에 보이는 범위를 작게 잡으면 바로 시작하기 쉬워요.").slice(0,220),
-      duration:Math.max(2,Math.min(10,Number(p && p.duration) || 3)),
-      x:Math.max(0,Math.min(100,Number(p && p.x) || 50)),
-      y:Math.max(0,Math.min(100,Number(p && p.y) || 50)),
-      w:Math.max(3,Math.min(95,Number(p && p.w) || 20)),
-      h:Math.max(3,Math.min(95,Number(p && p.h) || 20))
-    })) : [];
-    return result;
-  }
+  const question = [
+    "너는 한국의 정리·수납 서비스 트임의 사진 분석가다.",
+    "이 사진에서 실제로 보이는 것만 근거로 정리 포인트를 1~3개 골라라.",
+    "방 전체뿐 아니라 책상 한쪽, 서랍, 침대 옆, 바닥처럼 가까이 찍은 사진도 정상 입력이다.",
+    "물건이 하나라도 식별되면 최소 1개를 반환한다. 사진에 없는 물건은 만들지 않는다.",
+    "정리 판단 순서는 공간 문제 진단 → 물품 분류/선별 → 정돈/수납 → 유지하기 쉬운 배치다.",
+    "동선, 사용빈도, 종류분류, 공간목적, 계절, 가시성, 유지용이성, 위생·안전을 고려한다.",
+    "method는 비우기/제자리/같은종류/접기·세우기/구역나누기 중 하나다.",
+    "각 행동은 2~10분 안에 가능해야 한다.",
+    "x,y는 사진 전체 기준 대상 중심점 %, w,h는 대상 영역 크기 %다.",
+    "대상이 정확히 무엇인지 애매하면 물건명을 지어내지 말고 '책상 오른쪽 물건 묶음'처럼 확실한 구역명으로 표현한다.",
+    "약, 중요문서, 신분증, 금융자료, 위험물, 타인의 물건은 임의 폐기시키지 않는다.",
+    spaceHint ? "공간 힌트: "+spaceHint : "",
+    "설명 없이 아래 JSON 형식만 출력해라:",
+    '{"shotType":"wide|closeup|unknown","summary":"짧은 요약","points":[{"anchor":"사진에서 보이는 대상명","evidence":"사진에서 실제로 확인되는 근거","confidence":0,"method":"제자리","criteria":["동선"],"title":"짧은 제목","action":"구체적인 행동","reason":"추천 이유","duration":3,"x":50,"y":50,"w":20,"h":20}]}'
+  ].filter(Boolean).join("\n");
 
   function parseJsonLike(value) {
     if (value && typeof value === "object" && !Array.isArray(value)) return value;
     let text = String(value || "").trim();
-    if (!text) throw new Error("Empty model response");
+    if (!text) throw new Error("empty");
     text = text.replace(/^\`\`\`(?:json)?\s*/i,"").replace(/\s*\`\`\`$/,"").trim();
+    const first = text.indexOf("{"), last = text.lastIndexOf("}");
+    if (first >= 0 && last > first) text = text.slice(first,last+1);
     return JSON.parse(text);
   }
 
-  async function runCloudflareVision(salvage) {
-    if (!env.AI || typeof env.AI.run !== "function") throw new Error("Workers AI binding unavailable");
-    const response = await env.AI.run("@cf/qwen/qwen3.8-27b", {
-      messages:[
-        { role:"system", content:baseRules },
-        {
-          role:"user",
-          content:[
-            { type:"text", text:promptFor(salvage) },
-            { type:"image_url", image_url:{ url:image } }
-          ]
-        }
-      ],
-      reasoning_effort:"low",
-      max_completion_tokens:1000,
-      temperature:0.15,
-      response_format:{ type:"json_schema", json_schema:schema }
-    });
-
-    let payload = null;
-    if (response && response.response != null) payload = response.response;
-    else if (response && Array.isArray(response.choices) && response.choices[0] && response.choices[0].message) payload = response.choices[0].message.content;
-    else payload = response;
-
-    return normalizeResult(parseJsonLike(payload));
+  function normalizeResult(result) {
+    const methods = ["비우기","제자리","같은종류","접기·세우기","구역나누기"];
+    const allowedCriteria = ["동선","사용빈도","종류분류","공간목적","계절","가시성","유지용이성","위생·안전"];
+    if (!result || typeof result !== "object") throw new Error("invalid");
+    const points = Array.isArray(result.points) ? result.points.slice(0,3).map((p)=>({
+      anchor:String(p && p.anchor || "촬영한 구역").slice(0,60),
+      evidence:String(p && p.evidence || "사진에서 확인되는 구역이에요.").slice(0,160),
+      confidence:Math.max(0,Math.min(100,Number(p && p.confidence) || 0)),
+      method:methods.includes(p && p.method) ? p.method : "구역나누기",
+      criteria:(Array.isArray(p && p.criteria) ? p.criteria.filter(v=>allowedCriteria.includes(v)).slice(0,3) : []).concat(["가시성"]).slice(0,3),
+      title:String(p && p.title || "이 구역부터 정리하기").slice(0,80),
+      action:String(p && p.action || "눈에 보이는 물건부터 같은 종류끼리 모아주세요.").slice(0,180),
+      reason:String(p && p.reason || "범위를 작게 잡으면 바로 시작하기 쉬워요.").slice(0,180),
+      duration:Math.max(2,Math.min(10,Number(p && p.duration) || 3)),
+      x:Math.max(0,Math.min(100,Number(p && p.x) || 50)),
+      y:Math.max(0,Math.min(100,Number(p && p.y) || 50)),
+      w:Math.max(4,Math.min(95,Number(p && p.w) || 22)),
+      h:Math.max(4,Math.min(95,Number(p && p.h) || 22))
+    })) : [];
+    return {
+      shotType:["wide","closeup","unknown"].includes(result.shotType) ? result.shotType : "unknown",
+      summary:String(result.summary || (points.length ? "사진에서 정리 포인트를 찾았어요." : "사진에서 정리 대상을 확인하지 못했어요.")).slice(0,220),
+      points
+    };
   }
 
-  async function runOpenAiVision(salvage) {
-    if (!env.OPENAI_API_KEY) throw new Error("OpenAI key unavailable");
-    const aiResponse = await fetch("https://api.openai.com/v1/responses", {
-      method:"POST",
-      headers:{
-        "Authorization":"Bearer " + env.OPENAI_API_KEY,
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        model:String(env.OPENAI_VISION_MODEL || "gpt-5.6-luna"),
-        store:false,
-        input:[{
-          role:"user",
-          content:[
-            { type:"input_text", text:baseRules+"\n\n"+promptFor(salvage) },
-            { type:"input_image", image_url:image, detail:"high" }
-          ]
-        }],
-        max_output_tokens:1000,
-        text:{
-          format:{
-            type:"json_schema",
-            name:salvage?"teum_space_scan_retry":"teum_space_scan",
-            strict:true,
-            schema
-          }
-        }
-      })
+  try {
+    const aiResponse = await env.AI.run("@cf/moondream/moondream3.1-9B-A2B", {
+      task:"query",
+      image,
+      question
     });
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text().catch(()=>"");
-      throw new Error("OpenAI "+aiResponse.status+" "+errorText.slice(0,180));
-    }
-    const data = await aiResponse.json();
-    return normalizeResult(parseJsonLike(extractOpenAiText(data)));
-  }
 
-  const attempts = [
-    ["cf", false],
-    ["cf", true],
-    ["openai", false],
-    ["openai", true]
-  ];
-  const failures = [];
-  let lastEmpty = null;
+    const raw = aiResponse && (
+      aiResponse.description ??
+      aiResponse.response ??
+      aiResponse.answer ??
+      aiResponse.text ??
+      aiResponse.result ??
+      aiResponse
+    );
+    const result = normalizeResult(parseJsonLike(raw));
 
-  for (const [provider, salvage] of attempts) {
-    try {
-      const result = provider === "cf" ? await runCloudflareVision(salvage) : await runOpenAiVision(salvage);
-      if (result.points.length) {
-        return privateJsonResponse({ ok:true, mode:provider+(salvage?"_retry":""), result });
+    const usageRaw = aiResponse && aiResponse.usage ? aiResponse.usage : {};
+    const promptTokens = Math.max(0, Number(usageRaw.prompt_tokens || usageRaw.input_tokens || 0));
+    const completionTokens = Math.max(0, Number(usageRaw.completion_tokens || usageRaw.output_tokens || 0));
+    const estimatedNeurons = promptTokens || completionTokens
+      ? Math.round(promptTokens * 27273 / 1000000 + completionTokens * 90909 / 1000000)
+      : null;
+
+    return privateJsonResponse({
+      ok:true,
+      mode:result.points.length ? "cf_free" : "no_vision",
+      result,
+      usage:{
+        promptTokens,
+        completionTokens,
+        estimatedNeurons,
+        model:"moondream3.1-9B-A2B"
       }
-      lastEmpty = result;
-    } catch (error) {
-      failures.push(provider+":"+(error && error.message ? String(error.message).slice(0,120) : "error"));
-    }
+    });
+  } catch (error) {
+    const reason = String(error && error.message || "");
+    const diagnostic = /3036|429/.test(reason) ? "free_limit" :
+      /3040/.test(reason) ? "capacity" :
+      /403|5035/.test(reason) ? "plan" :
+      /binding/i.test(reason) ? "binding" : "upstream";
+    const summary = diagnostic === "free_limit"
+      ? "오늘 무료 AI 사용량을 모두 사용했어요. 무료 한도는 다음 리셋 후 다시 사용할 수 있어요."
+      : diagnostic === "capacity"
+        ? "무료 AI 서버가 잠깐 붐비고 있어요. 사진은 그대로 두고 잠시 후 다시 분석해주세요."
+        : "무료 AI 분석 연결을 확인하고 있어요. 사진은 다시 찍지 않아도 돼요.";
+    return privateJsonResponse({
+      ok:true, mode:"unavailable", diagnostic,
+      result:{ shotType:"unknown", summary, points:[] }
+    });
   }
-
-  if (lastEmpty) return privateJsonResponse({ ok:true, mode:"no_vision", result:lastEmpty });
-  const diagnostic = failures.some(x=>x.includes("401")) ? "auth" :
-    failures.some(x=>x.includes("403")) ? "permission" :
-    failures.some(x=>x.includes("429")) ? "rate_limit" :
-    failures.some(x=>x.includes("model")) ? "model" : "upstream";
-  return privateJsonResponse({ ok:true, mode:"unavailable", diagnostic, result:unavailableResult });
 }
 
 async function handleTeimAi(request, env) {
