@@ -3,6 +3,7 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);
     if (url.pathname === "/api/teim-ai") return handleTeimAi(request, env);
+    if (url.pathname === "/api/space-scan") return handleSpaceScan(request, env);
     if (url.pathname === "/api/clothing-bins") return handleClothingBins(request, env);
     if (url.pathname === "/api/clothing-bins/geocode") return handleClothingBinsGeocode(request, env);
     if (url.pathname === "/teum-logo.png" || url.pathname === "/tuim%20logo.png" || decodeURIComponent(url.pathname) === "/tuim logo.png") {
@@ -106,6 +107,109 @@ function quickScript() {
   return `<script id="quick-teim-flow-script">(function(){var card=document.querySelector('[data-quick-card]');var stage=document.querySelector('[data-quick-stage]');if(!card||!stage)return;var state={step:'intro',concern:'work',space:'desk'};var history=[];var aliases={kitchen:'living',entry:'living',bath:'living',transit:'outside'};var current=['💼 브라우저 탭 3개 닫기','다시 볼 것 같아도 일단 닫기. 필요하면 어차피 또 찾습니다 😌'];var base={bed:[['🛏 이불 위 물건 1개 내리기','침대 위에 올라온 것 하나만 내려도 충분해요.'],['📱 휴대폰 뒤집어놓고 1분 있기','일단 화면을 안 보이게만 해볼게요.'],['👕 침대 위 옷 1벌 옷장에 넣기','딱 한 벌만 제자리로 보내요.'],['📚 책 1권 책상에 두기','읽을지 말지는 나중에, 위치만 바꿔요.'],['🔌 충전선 1개 정리하기','꼬인 선 하나만 풀어도 시야가 가벼워져요.'],['🧦 양말 1켤레 빨래통에 넣기','가장 쉬운 것 하나만 움직여요.'],['🧴 침대 옆 물건 1개 서랍에 넣기','보이는 것을 하나만 줄여볼게요.'],['⏰ 알람 1개 끄기','나를 재촉하는 소리 하나를 줄여요.'],['🧻 휴지 1개 버리기','손에 잡히는 쓰레기 하나면 충분해요.'],['💡 조명 밝기 낮추기','공간을 조금 쉬는 모드로 바꿔요.'],['📝 내일 할 일 1개만 메모하기','머릿속에서 하나만 꺼내놓으세요.'],['🧺 침대 밑 물건 1개 빼기','깊게 말고 하나만 꺼내요.'],['📸 사진 1장 숨기기','계속 보이는 장면 하나만 잠깐 숨겨요.'],['🚪 방문 10초 열어두기','공기를 바꾸는 것도 비움이에요.'],['🧘 눈 감고 10초 쉬기','아무것도 안 하는 10초를 만들어보세요.']],desk:[['💼 브라우저 탭 3개 닫기','다시 볼 것 같아도 일단 닫기. 필요하면 어차피 또 찾습니다 😌'],['🗂 파일 3개 폴더에 넣기','바탕화면 복잡함 3개만 접어둘게요.'],['📄 종이 1장 버리기','판단 쉬운 종이 한 장만 비워요.'],['🖊 안 쓰는 펜 1개 서랍에 넣기','책상 위 도구 하나만 줄여요.'],['☕ 컵 1개 주방에 두기','컵 하나만 사라져도 책상이 달라져요.'],['📱 휴대폰 화면 뒤집기','시야에서 알림을 잠깐 빼요.'],['✅ 할 일 1개 삭제하기','오늘 안 해도 되는 것 하나만 덜어요.'],['🧽 책상 한 뼘 닦기','전부 말고 손바닥만큼만 닦아요.'],['🔌 충전기 선 1개 감기','선 하나만 정리해도 훨씬 덜 복잡해요.'],['🧾 영수증 1장 버리기','쌓인 기록 하나만 비워요.'],['🖥 창 1개 최소화하기','화면에 보이는 것 하나만 줄여요.'],['📌 메모 1개 떼기','이미 끝난 메모 하나만 빼요.'],['🎧 이어폰 케이스에 넣기','작은 물건 하나만 자리로 보내요.'],['⬜ A4 한 장 크기만 비우기','책상 전체 말고 한 장만큼만 비워요.'],['📝 지금 해야 할 일 1개만 남기기','나머지는 잠깐 뒤로 보내요.']],living:[['📦 테이블 위 물건 1개 제자리로','거실 전체 말고 하나만 움직여요.'],['☕ 컵 1개 주방에 두기','가장 쉬운 것부터 옮겨요.'],['👕 옷 1벌 방으로 가져가기','내 흔적 하나만 회수해요.'],['🎒 가방 1개 한쪽에 세우기','바닥에 퍼진 느낌을 줄여요.'],['🧾 영수증 1장 버리기','작은 종이 하나만 비워요.'],['📺 TV 1분 끄기','채우는 소리를 잠깐 줄여요.'],['🧸 쿠션 1개 바로 놓기','정리보다 정돈에 가까운 행동이에요.'],['🧻 쓰레기 1개 버리기','보이는 쓰레기 하나만 처리해요.'],['🔌 리모컨 제자리 두기','찾기 쉬운 자리를 하나 만들어요.'],['🧺 빨래 1개 빨래통에 넣기','한 개만 넣어도 시작이에요.'],['📚 책 1권 꽂기','읽을지 말지 말고 위치만 정해요.'],['🍽 접시 1개 싱크대로','가벼운 이동 하나면 충분해요.'],['🚪 현관 신발 1켤레 맞추기','나가는 자리부터 정돈해요.'],['🧴 화장품 1개 욕실로','제자리 하나만 찾아줘요.'],['🌬 창문 10초 열기','공기부터 살짝 바꿔요.']],outside:[['🔕 알림 1개 끄기','나를 부르는 소리 하나를 줄여요.'],['📱 앱 1개 홈 화면에서 빼기','보이는 입구 하나만 줄여요.'],['🌐 탭 3개 닫기','찾다 만 생각 3개를 닫아둘게요.'],['🖼 스크린샷 3장 삭제하기','손 안의 공간을 가볍게 해요.'],['💬 채팅방 1개 알림 끄기','지금 안 봐도 되는 방 하나만 조용히 해요.'],['📧 메일 3개 읽음 처리하기','알림 숫자부터 줄여요.'],['🎧 이어폰 빼고 1분 걷기','계속 채우지 않아도 괜찮아요.'],['📝 해야 할 일 1개만 메모하기','머릿속에서 하나만 꺼내요.'],['⭐ 사진 즐겨찾기 1장 해제','계속 보던 장면 하나만 덜어내요.'],['🚇 휴대폰 10초 내려놓기','이동 중에도 틈은 만들 수 있어요.'],['📍 저장 장소 1개 삭제하기','안 갈 곳 하나만 지워요.'],['🛒 장바구니 1개 삭제하기','살지 말지 고민 하나를 줄여요.'],['🧾 결제 알림 1개 지우기','지나간 알림 하나를 비워요.'],['📆 오늘 안 할 일 1개 내일로','오늘의 나를 조금 덜 몰아붙여요.'],['🌤 하늘 10초 보기','화면 말고 바깥을 잠깐 봐요.']]};var flavor={love:['관계 생각이 떠오르면, 일단 보이는 것 하나만 줄여요.','지금은 끊어내기보다 덜 보이게 하기.','마음이 흔들릴수록 행동은 작게 가요.'],work:['일 생각이 따라올 땐 화면과 알림부터 줄여요.','퇴근 모드로 바꾸는 작은 신호예요.','다 해내기보다 하나 덜어내기.'],family:['가족 전체가 아니라 내 몫 하나만 정리해요.','내 공간의 경계를 작게 세워요.','버리는 게 아니라 제자리로 보내요.'],study:['공부 시작 전, 시작선을 작게 만들어봐요.','계획보다 눈앞 하나가 먼저예요.','미루는 마음엔 아주 작은 행동이 좋아요.'],self:['성과보다 회복을 먼저 둬요.','나를 재촉하는 것을 하나 줄여요.','오늘은 잘하기보다 덜어내기예요.']};var mind={love:['근데 왜 아직 못 놓고 있을까요?','💗 관계 마음비움 해보기 →','test.html?type=love'],work:['퇴근했는데 머리는 아직 출근 중?','💼 일상 마음비움 해보기 →','test.html?type=work'],family:['가족 앞에만 가면 왜 내 페이스가 사라질까?','🏠 가족 마음비움 해보기 →','test.html?type=family'],study:['해야 하는 건 아는데 왜 시작은 안 될까?','📚 해야 할 일 마음비움 해보기 →','test.html?type=study'],self:['쉬고 있는데도 왜 계속 뭔가 해야 할 것 같지?','☀️ 나 자신 마음비움 해보기 →','test.html?type=self']};function render(step,pop){state.step=step;card.dataset.step=step;if(pop){card.classList.remove('quick-pop');void card.offsetWidth;card.classList.add('quick-pop')}var html='';if(step==='intro')html='<p class="small-label">TRY TEIM</p><h2>지금 딱 하나만<br>비워볼까요?</h2><p>지금 내 상태에 맞는 작은 비움 하나를 찾아드려요.</p><span class="quick-time">약 30초 · 바로 시작</span><button class="quick-main-btn" data-next="concern">시작하기 →</button>';if(step==='concern')html='<p class="small-label">STEP 01</p><h2>지금 뭐가<br>제일 막혀요?</h2><div class="quick-options"><button data-concern="love">💗 관계</button><button data-concern="work">💼 일상</button><button data-concern="family">🏠 가족</button><button data-concern="study">📚 해야 할 일</button><button data-concern="self">☀️ 나 자신</button></div>';if(step==='space')html='<p class="small-label">STEP 02</p><h2>지금 어디에<br>있나요?</h2><div class="quick-options"><button data-space="bed">🛏 침대</button><button data-space="desk">🖥 책상</button><button data-space="living">🛋 거실</button><button data-space="kitchen">🍳 주방</button><button data-space="entry">🚪 현관</button><button data-space="bath">🛁 화장실</button><button data-space="outside">🚶 밖</button><button data-space="transit">🚇 이동 중</button></div>';if(step==='result')html='<div class="quick-stage result-pop"><p class="small-label">오늘은 이것 하나만 👀</p><h2>'+titleBreak(current[0])+'</h2><p>'+current[1]+'</p><span class="quick-time">약 10초~1분</span><button class="quick-done">✓ 했어요</button><button class="quick-ghost quick-again">↻ 이건 싫어요. 다른 거 주세요</button></div>';if(step==='complete'){var m=mind[state.concern]||mind.work;html='<div class="quick-sun">☀️ +1 트임</div><h2>오, 진짜 했네요.</h2><p>작아 보여도<br>방금 내 공간에 틈 하나 만든 거예요.</p><p class="quick-next-copy">그런데 혹시 요즘<br><b>'+m[0]+'</b></p><a class="quick-complete-link" href="'+m[2]+'">'+m[1]+'</a><button class="quick-ghost quick-restart">하나 더 비우기</button>';}stage.className='quick-stage'+(step==='result'?' result-pop':'');stage.innerHTML=html}function titleBreak(t){return t.replace(/ (\d개|\d장|\d분|\d벌|\d권|\dm|\d초|1켤레)/,'<br>$1')}function pick(){var space=aliases[state.space]||state.space;var list=base[space]||base.desk;var idx=Math.floor(Math.random()*list.length);var guard=0;while(history.indexOf(space+'-'+idx)>-1&&guard<20){idx=Math.floor(Math.random()*list.length);guard++}history.push(space+'-'+idx);if(history.length>8)history.shift();var item=list[idx];var fl=flavor[state.concern]||flavor.work;current=[item[0],item[1]+' '+fl[Math.floor(Math.random()*fl.length)]]}card.addEventListener('click',function(e){var btn=e.target.closest('button,a');if(!btn)return;if(btn.dataset.next)render(btn.dataset.next,true);if(btn.dataset.concern){state.concern=btn.dataset.concern;render('space',true)}if(btn.dataset.space){state.space=btn.dataset.space;pick();render('result',true)}if(btn.classList.contains('quick-done'))render('complete',true);if(btn.classList.contains('quick-again')){pick();render('result',true)}if(btn.classList.contains('quick-restart'))render('concern',true)});render('intro',false)})();</script>`;
 }
 
+
+async function handleSpaceScan(request, env) {
+  if (request.method !== "POST") return privateJsonResponse({ ok:false, message:"POST 요청만 지원합니다." }, 405);
+  let body = {};
+  try { body = await request.json(); } catch (_) { return privateJsonResponse({ ok:false, message:"요청 형식이 올바르지 않습니다." }, 400); }
+
+  const image = String(body.image || "");
+  const spaceHint = String(body.spaceHint || "").slice(0, 40);
+  if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(image)) {
+    return privateJsonResponse({ ok:false, message:"공간 사진이 필요합니다." }, 400);
+  }
+  if (image.length > 2200000) {
+    return privateJsonResponse({ ok:false, message:"이미지가 너무 큽니다. 다시 촬영해주세요." }, 413);
+  }
+
+  const fallback = {
+    summary:"사진을 기준으로 정리 범위를 작게 잡아보세요.",
+    points:[
+      {title:"바닥 통로부터 확보",action:"발에 걸리는 물건 3개만 제자리로 옮겨주세요.",reason:"이동 동선을 먼저 만들면 다음 행동이 쉬워져요.",duration:3,x:30,y:72},
+      {title:"수평면 한 곳 비우기",action:"책상·서랍장·테이블 중 한 면에서 물건 5개만 분류해주세요.",reason:"눈에 보이는 한 면의 변화가 가장 빠르게 체감돼요.",duration:5,x:58,y:45},
+      {title:"같은 종류끼리 모으기",action:"옷·책·컵처럼 같은 종류의 물건만 한곳에 모아주세요.",reason:"버릴지 고민하기 전에 분류부터 하면 부담이 줄어요.",duration:5,x:72,y:62}
+    ]
+  };
+
+  if (!env.OPENAI_API_KEY) return privateJsonResponse({ ok:true, mode:"fallback", result:fallback });
+
+  const systemPrompt = [
+    "너는 정리·비움 서비스 트임의 공간 스캔 AI다.",
+    "사용자가 제공한 실내 공간 사진을 보고 지금 바로 실행할 수 있는 정리 포인트 3개를 추천한다.",
+    "사진 속 사람의 신원, 나이, 성별, 건강, 경제상태 등 개인 특성을 추론하지 말고 오직 공간과 물건 배치만 본다.",
+    "중요 문서, 약, 신분증, 금융자료, 위험물은 버리라고 하지 않는다.",
+    "가족이나 타인의 물건은 버리라고 하지 말고 분리·확인 대상으로 표현한다.",
+    "각 추천은 3~10분 이내의 작은 행동이어야 한다.",
+    "x와 y는 사진 좌상단을 0,0 우하단을 100,100으로 한 마커 중심의 대략적 위치다.",
+    "사진에서 실제로 보이는 대상과 연결되는 지점을 우선한다.",
+    "한국어로 짧고 명확하게 작성한다."
+  ].join("\n");
+
+  const userText = spaceHint ? "공간 힌트: " + spaceHint : "공간 사진을 분석해줘.";
+
+  try {
+    const aiResponse = await fetch("https://api.openai.com/v1/responses", {
+      method:"POST",
+      headers:{
+        "Authorization":"Bearer " + env.OPENAI_API_KEY,
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        model:"gpt-5.4-mini",
+        store:false,
+        input:[{
+          role:"user",
+          content:[
+            { type:"input_text", text: systemPrompt + "\n\n" + userText },
+            { type:"input_image", image_url:image }
+          ]
+        }],
+        max_output_tokens:700,
+        text:{
+          format:{
+            type:"json_schema",
+            name:"teum_space_scan",
+            strict:true,
+            schema:{
+              type:"object",
+              additionalProperties:false,
+              properties:{
+                summary:{type:"string"},
+                points:{
+                  type:"array",
+                  minItems:3,
+                  maxItems:3,
+                  items:{
+                    type:"object",
+                    additionalProperties:false,
+                    properties:{
+                      title:{type:"string"},
+                      action:{type:"string"},
+                      reason:{type:"string"},
+                      duration:{type:"integer",minimum:1,maximum:10},
+                      x:{type:"number",minimum:0,maximum:100},
+                      y:{type:"number",minimum:0,maximum:100}
+                    },
+                    required:["title","action","reason","duration","x","y"]
+                  }
+                }
+              },
+              required:["summary","points"]
+            }
+          }
+        }
+      })
+    });
+    if (!aiResponse.ok) throw new Error("OpenAI response error: " + aiResponse.status);
+    const data = await aiResponse.json();
+    const text = extractOpenAiText(data);
+    if (!text) throw new Error("Empty AI response");
+    const result = JSON.parse(text);
+    return privateJsonResponse({ ok:true, mode:"ai", result });
+  } catch (_) {
+    return privateJsonResponse({ ok:true, mode:"fallback", result:fallback });
+  }
+}
 
 async function handleTeimAi(request, env) {
   if (request.method !== "POST") return privateJsonResponse({ ok: false, message: "POST 요청만 지원합니다." }, 405);
