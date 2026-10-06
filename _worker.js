@@ -123,35 +123,53 @@ async function handleSpaceScan(request, env) {
   }
 
   const noVisionResult = {
-    summary:"사진에서 정리 포인트를 정확히 잡지 못했어요. 공간이 넓게 보이도록 다시 촬영해주세요.",
+    shotType:"unknown",
+    summary:"사진에서 정리할 대상을 충분히 확인하지 못했어요.",
+    points:[]
+  };
+  const unavailableResult = {
+    shotType:"unknown",
+    summary:"사진은 그대로 두고 잠시 후 분석만 다시 시도해주세요.",
     points:[]
   };
 
-  if (!env.OPENAI_API_KEY) return privateJsonResponse({ ok:true, mode:"no_vision", result:noVisionResult });
+  if (!env.OPENAI_API_KEY) return privateJsonResponse({ ok:true, mode:"unavailable", result:unavailableResult });
 
   const systemPrompt = [
     "너는 정리·비움 서비스 트임의 공간 비전 분석 AI다.",
-    "목표는 사용자가 사진을 찍은 이유가 분명하도록, 사진에서 실제로 보이는 정리 대상에 정확히 연결된 최대 3개의 포인트를 찾는 것이다.",
-    "가장 중요한 규칙:",
-    "1. 사진에 실제로 보이는 구체적인 물건, 물건 묶음, 또는 명확한 공간 구역만 선택한다.",
-    "2. '바닥', '책상', '정리하기'처럼 너무 넓고 추상적인 대상만 고르지 않는다. 가능하면 '책상 왼쪽 컵과 포장지', '침대 끝 옷더미', '바닥 중앙 쇼핑백 2개'처럼 보이는 근거를 적는다.",
-    "3. 사진에서 확인할 수 없는 물건이나 위치를 절대 만들어내지 않는다.",
-    "4. 세 포인트는 서로 다른 실제 위치를 가리켜야 한다. 같은 대상을 중복 선택하지 않는다.",
-    "5. 우선순위는 체감 변화가 크고, 동선을 방해하거나, 같은 종류가 뭉쳐 있고, 3~10분 안에 정리 가능한 대상을 먼저 둔다.",
-    "6. x,y는 선택한 실제 대상의 중심점이다. 사진 좌상단 0,0 / 우하단 100,100 기준의 백분율 좌표다.",
-    "7. w,h는 선택한 대상 또는 대상 묶음을 감싸는 대략적 폭과 높이다. 역시 사진 전체 대비 백분율이다. 너무 큰 영역을 잡지 말고 실제 대상에 가깝게 잡는다.",
-    "8. anchor는 사진에서 사용자가 바로 찾을 수 있는 짧은 이름이다. 예: '컵·포장지', '옷더미', '쇼핑백'.",
-    "9. evidence는 왜 그 위치에 번호를 찍었는지 사진에서 보이는 근거를 한 문장으로 설명한다.",
-    "10. confidence는 해당 위치와 대상이 사진에서 얼마나 명확히 보이는지 0~100으로 평가한다. 65 미만이면 해당 포인트를 만들지 않는다.",
-    "11. 사진에 의미 있는 대상이 3개보다 적으면 억지로 3개를 채우지 말고 1~2개만 반환한다.",
-    "12. 사람의 신원, 나이, 성별, 건강, 경제상태 등 개인 특성을 추론하지 않는다.",
-    "13. 중요 문서, 약, 신분증, 금융자료, 위험물은 버리라고 하지 않는다.",
-    "14. 가족이나 타인의 물건은 버리라고 하지 말고 분리·확인 대상으로 표현한다.",
-    "15. 각 추천은 3~10분 이내의 작은 행동이어야 한다.",
-    "16. 한국어로 짧고 명확하게 작성한다."
+    "사용자가 사진을 찍은 이유가 분명하도록, 사진에서 실제로 보이는 정리 대상과 정확히 연결된 1~3개의 실행 포인트를 만든다.",
+    "",
+    "[촬영 방식]",
+    "1. 방 전체를 찍은 사진뿐 아니라 책상 한쪽, 서랍 한 칸, 옷장 일부, 바닥 한 구역처럼 가까이 찍은 근접 사진도 정상적인 입력이다.",
+    "2. closeup 사진에서는 억지로 방 전체를 추정하지 말고 사진 안에 실제로 보이는 물건 묶음 또는 작은 구역을 1~3개 추천한다.",
+    "3. 사진이 조금 좁아도 재촬영을 요구하지 않는다. 너무 어둡거나 심하게 흔들렸거나 물건/공간이 거의 보이지 않을 때만 points를 비운다.",
+    "",
+    "[정리 판단 프레임]",
+    "공개된 정리수납 전문가 교육과정의 공통 흐름인 '공간 문제 진단 → 물품 분류/선별 → 정돈/수납 → 유지하기 쉬운 배치'를 따른다.",
+    "공간의 목적, 물건의 종류, 사용자 동선, 사용빈도, 계절성, 꺼내고 넣기 쉬운지, 유지하기 쉬운지를 함께 고려한다.",
+    "우선순위는 다음 순서로 판단한다: ① 통로나 작업면을 방해하는 정도 ② 같은 종류가 흩어진 정도 ③ 자주 쓰는 물건의 접근성 ④ 짧은 시간에 체감 변화가 큰 정도 ⑤ 다시 흐트러지지 않게 유지하기 쉬운 정도.",
+    "실행 방법은 가급적 '비우기/배출', '제자리로 이동', '같은 종류끼리 분류', '접기·세우기', '구역 나누기' 중 하나로 구체화한다.",
+    "공간별로는 주방·냉장고는 종류/사용빈도/꺼내기 쉬움, 옷장·침구는 종류/계절/접기·걸기, 거실·현관은 동선/임시 적치, 책상·서재는 현재 사용물과 보관물 분리, 욕실·베란다는 소모품/청소도구의 종류 분리를 우선 고려한다.",
+    "",
+    "[사진 근거와 좌표]",
+    "1. 사진에 실제로 보이는 구체적인 물건, 물건 묶음 또는 명확한 구역만 선택한다.",
+    "2. 사진에서 확인할 수 없는 물건이나 위치를 절대 만들어내지 않는다.",
+    "3. 서로 다른 위치를 선택하고 같은 대상을 중복하지 않는다.",
+    "4. anchor는 사용자가 사진에서 바로 찾을 수 있는 짧은 이름이다. 예: '컵·포장지', '침대 끝 옷더미', '책상 오른쪽 문구류'.",
+    "5. evidence는 왜 그 위치를 선택했는지 사진에서 실제로 보이는 근거를 한 문장으로 쓴다.",
+    "6. x,y는 대상 중심점, w,h는 대상/구역의 대략적 폭과 높이다. 모두 사진 좌상단 0,0 / 우하단 100,100 기준 백분율이다.",
+    "7. confidence는 사진 속 대상과 위치가 얼마나 명확한지 평가한다. 25 이상이면 결과 후보로 사용할 수 있다. 낮은 신뢰도에서는 작은 물건명을 단정하기보다 '책상 오른쪽 물건 묶음'처럼 보이는 구역 단위로 표현한다.",
+    "",
+    "[안전]",
+    "사람의 신원, 나이, 성별, 건강, 경제상태 등 개인 특성을 추론하지 않는다.",
+    "중요 문서, 약, 신분증, 금융자료, 위험물은 버리라고 하지 않는다.",
+    "가족이나 타인의 물건은 임의 폐기를 권하지 말고 분리·확인 대상으로 표현한다.",
+    "각 추천은 2~10분 이내로 끝낼 수 있는 작은 행동이어야 한다.",
+    "한국어로 짧고 구체적으로 작성한다."
   ].join("\n");
 
-  const userText = spaceHint ? "공간 힌트: " + spaceHint + "\n사진에서 실제로 보이는 정리 포인트만 분석해줘." : "이 사진에서 실제로 보이는 정리 포인트만 분석해줘.";
+  const userText = (spaceHint ? "공간 힌트: " + spaceHint + "\n" : "") +
+    "전체 공간 사진인지 근접 사진인지 먼저 판단하고, 사진에 실제로 보이는 범위 안에서 재촬영 없이 가능한 한 1~3개의 정리 포인트를 찾아줘.";
 
   try {
     const aiResponse = await fetch("https://api.openai.com/v1/responses", {
@@ -170,16 +188,17 @@ async function handleSpaceScan(request, env) {
             { type:"input_image", image_url:image }
           ]
         }],
-        max_output_tokens:900,
+        max_output_tokens:1100,
         text:{
           format:{
             type:"json_schema",
-            name:"teum_space_scan_grounded",
+            name:"teum_space_scan_v2",
             strict:true,
             schema:{
               type:"object",
               additionalProperties:false,
               properties:{
+                shotType:{type:"string",enum:["wide","closeup","unknown"]},
                 summary:{type:"string"},
                 points:{
                   type:"array",
@@ -191,21 +210,28 @@ async function handleSpaceScan(request, env) {
                     properties:{
                       anchor:{type:"string"},
                       evidence:{type:"string"},
-                      confidence:{type:"integer",minimum:65,maximum:100},
+                      confidence:{type:"integer",minimum:25,maximum:100},
+                      method:{type:"string",enum:["비우기","제자리","같은종류","접기·세우기","구역나누기"]},
+                      criteria:{
+                        type:"array",
+                        minItems:1,
+                        maxItems:3,
+                        items:{type:"string",enum:["동선","사용빈도","종류분류","공간목적","계절","가시성","유지용이성","위생·안전"]}
+                      },
                       title:{type:"string"},
                       action:{type:"string"},
                       reason:{type:"string"},
-                      duration:{type:"integer",minimum:1,maximum:10},
+                      duration:{type:"integer",minimum:2,maximum:10},
                       x:{type:"number",minimum:0,maximum:100},
                       y:{type:"number",minimum:0,maximum:100},
-                      w:{type:"number",minimum:2,maximum:80},
-                      h:{type:"number",minimum:2,maximum:80}
+                      w:{type:"number",minimum:3,maximum:90},
+                      h:{type:"number",minimum:3,maximum:90}
                     },
-                    required:["anchor","evidence","confidence","title","action","reason","duration","x","y","w","h"]
+                    required:["anchor","evidence","confidence","method","criteria","title","action","reason","duration","x","y","w","h"]
                   }
                 }
               },
-              required:["summary","points"]
+              required:["shotType","summary","points"]
             }
           }
         }
@@ -217,12 +243,15 @@ async function handleSpaceScan(request, env) {
     if (!text) throw new Error("Empty AI response");
     const result = JSON.parse(text);
     result.points = Array.isArray(result.points)
-      ? result.points.filter(p => Number(p.confidence) >= 65).slice(0,3)
+      ? result.points.filter(p => Number(p.confidence) >= 25).slice(0,3)
       : [];
-    if (!result.points.length) result.summary = noVisionResult.summary;
+    if (!result.points.length) {
+      result.summary = result.summary || noVisionResult.summary;
+      return privateJsonResponse({ ok:true, mode:"no_vision", result });
+    }
     return privateJsonResponse({ ok:true, mode:"ai", result });
   } catch (_) {
-    return privateJsonResponse({ ok:true, mode:"no_vision", result:noVisionResult });
+    return privateJsonResponse({ ok:true, mode:"unavailable", result:unavailableResult });
   }
 }
 
