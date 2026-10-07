@@ -1,142 +1,25 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#f7f8fb" />
-<meta name="description" content="트임 AI 정리비서가 생활 상태와 현재 공간을 바탕으로 지금 할 비움 하나를 추천합니다." />
-<title>트임 | AI 정리비서</title>
-<style>
-:root{--b:#2367e8;--n:#15264b;--y:#ffda52;--bg:#f7f8fb;--w:#fff;--m:#748198;--l:#e8edf5;--pb:#edf4ff;--py:#fff4bd;--red:#ff6b6b}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--n);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding-bottom:36px}button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.bottom-nav{display:none!important}
-.ai-wrap{width:min(560px,100%);margin:0 auto;padding:0 18px 38px}.ai-top{height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(247,248,251,.92);backdrop-filter:blur(16px);z-index:15}.ai-back{width:40px;height:40px;border:1px solid var(--l);background:#fff;border-radius:14px;display:grid;place-items:center;font-size:22px;color:var(--n)}.ai-top strong{font-size:16px;letter-spacing:-.03em}.ai-save{font-size:12px;color:var(--b);font-weight:900}
-.progress{height:5px;background:#e8edf5;border-radius:999px;overflow:hidden;margin:4px 0 22px}.progress i{display:block;height:100%;width:16%;background:var(--b);border-radius:999px;transition:.25s}
-.assistant{background:#fff;border:1px solid var(--l);border-radius:26px;padding:18px;display:flex;gap:13px;box-shadow:0 14px 32px rgba(21,38,75,.06)}.assistant-face{width:46px;height:46px;flex:0 0 46px;border-radius:15px;background:var(--y);position:relative}.assistant-face:before,.assistant-face:after{content:"";position:absolute;top:16px;width:7px;height:9px;border-radius:50%;background:var(--n)}.assistant-face:before{left:12px}.assistant-face:after{right:12px}.assistant-face i{position:absolute;width:15px;height:7px;border-bottom:3px solid var(--n);border-radius:0 0 15px 15px;left:16px;top:28px}.assistant small{display:block;color:var(--b);font-weight:950;font-size:10px;letter-spacing:.08em}.assistant b{display:block;font-size:16px;line-height:1.42;letter-spacing:-.035em;margin-top:4px}.assistant p{font-size:12px;color:var(--m);line-height:1.5;margin:6px 0 0}
-.user-query{margin:12px 0 0 auto;width:fit-content;max-width:84%;padding:12px 15px;border-radius:18px 18px 5px 18px;background:var(--b);color:#fff;font-size:13px;line-height:1.45;display:none}
-.panel{margin-top:18px;background:#fff;border:1px solid var(--l);border-radius:28px;padding:21px 18px;box-shadow:0 16px 34px rgba(21,38,75,.05)}.step-kicker{font-size:11px;font-weight:950;color:var(--b);letter-spacing:.1em;margin:0 0 7px}.panel h1,.panel h2{margin:0;letter-spacing:-.06em;line-height:1.18}.panel h1{font-size:29px}.panel h2{font-size:24px}.panel .sub{margin:9px 0 0;color:var(--m);font-size:13px;line-height:1.58}.privacy-note{margin-top:13px;padding:11px 12px;border-radius:15px;background:#f4f7fb;color:#65738b;font-size:11px;line-height:1.45}.field{margin-top:22px}.field>label,.field>strong{display:block;font-size:14px;font-weight:900;letter-spacing:-.03em;margin-bottom:10px}.options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.options.three{grid-template-columns:repeat(3,1fr)}.option{border:1px solid var(--l);background:#fff;color:var(--n);border-radius:17px;padding:13px 11px;text-align:left;font-size:13px;font-weight:850;min-height:48px}.option.center{text-align:center}.option[aria-pressed="true"]{border-color:var(--b);background:var(--pb);color:var(--b);box-shadow:inset 0 0 0 1px var(--b)}.option small{display:block;font-size:10px;color:var(--m);font-weight:700;margin-top:3px}.option[aria-pressed="true"] small{color:#527bc9}.cta-row{display:grid;grid-template-columns:.72fr 1.28fr;gap:8px;margin-top:22px}.btn{border:0;border-radius:18px;padding:15px 16px;font-weight:950;font-size:14px}.btn.secondary{background:#eef2f7;color:var(--n)}.btn.primary{background:var(--b);color:#fff}.btn.primary:disabled{opacity:.36;cursor:not-allowed}.step{display:none}.step.active{display:block}
-.summary{display:grid;gap:9px;margin-top:16px}.summary-row{display:flex;justify-content:space-between;gap:12px;padding:12px 13px;border-radius:16px;background:#f6f8fb;font-size:12px}.summary-row span{color:var(--m)}.summary-row b{text-align:right}
-.loading{display:none;text-align:center;padding:34px 8px}.loading.active{display:block}.dots{display:flex;justify-content:center;gap:6px;margin-bottom:15px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--b);animation:bounce 1s infinite ease-in-out}.dots i:nth-child(2){animation-delay:.13s}.dots i:nth-child(3){animation-delay:.26s}@keyframes bounce{0%,60%,100%{transform:none;opacity:.3}30%{transform:translateY(-7px);opacity:1}}
-.result{display:none}.result.active{display:block}.result-card{margin-top:18px;background:var(--n);color:#fff;border-radius:30px;padding:22px;position:relative;overflow:hidden}.result-card:after{content:"";position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.07);right:-52px;top:-32px}.result-card small{color:var(--y);font-weight:950;letter-spacing:.08em}.result-card h2{font-size:30px;line-height:1.15;margin:10px 0 11px;position:relative;z-index:2}.result-card p{font-size:13px;color:rgba(255,255,255,.79);line-height:1.58;margin:0;position:relative;z-index:2}.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px;position:relative;z-index:2}.tags span{padding:7px 9px;border-radius:999px;background:rgba(255,255,255,.10);font-size:10px;font-weight:850}.action-box{margin-top:12px;background:#fff;border:1px solid var(--l);border-radius:24px;padding:18px}.action-box small{color:var(--b);font-weight:950}.action-box strong{display:block;margin-top:7px;font-size:17px;line-height:1.48}.why{margin-top:9px;color:var(--m);font-size:12px;line-height:1.55}.result-actions{display:grid;gap:8px;margin-top:12px}.result-actions .btn{width:100%}.btn.yellow{background:var(--y);color:var(--n)}.btn.ghost{background:#eef2f7;color:var(--n)}
-.timer{display:none;margin-top:12px;background:#fff;border:1px solid var(--l);border-radius:24px;padding:21px;text-align:center}.timer.active{display:block}.timer b{display:block;font-size:46px;color:var(--b);letter-spacing:-.06em}.timer p{margin:7px 0 15px;font-size:12px;color:var(--m)}.done{display:none;text-align:center;background:var(--y);border-radius:28px;padding:28px 20px;margin-top:18px}.done.active{display:block}.done i{font-style:normal;font-size:36px}.done h2{margin:8px 0;font-size:25px;letter-spacing:-.055em}.done p{font-size:13px;line-height:1.55;margin:0 0 16px}.done a{display:inline-flex;padding:13px 16px;border-radius:16px;background:var(--n);color:#fff;font-size:13px;font-weight:950}
-@media(max-width:380px){.options.three{grid-template-columns:1fr 1fr}.panel h1{font-size:27px}}
-</style>
-</head>
-<body data-teum-shell="ai">
-<main class="ai-wrap">
-<header class="ai-top"><a class="ai-back" href="index.html" aria-label="홈으로">‹</a><strong>트임 AI 정리비서</strong><span class="ai-save">자동 저장</span></header>
-<div class="progress"><i id="progressBar"></i></div>
-
-<section class="assistant">
-  <div class="assistant-face"><i></i></div>
-  <div><small>TEUM AI</small><b id="assistantTitle">먼저 지금의 생활을 조금만 알려주세요.</b><p id="assistantDesc">정리 추천에 필요한 정보만 묻고, 입력값은 이 브라우저에 저장해요.</p></div>
-</section>
-<div class="user-query" id="userQuery"></div>
-
-<section class="panel step active" id="stepProfile">
-  <p class="step-kicker">STEP 01 · 기본 상태</p>
-  <h1>나에게 맞는 정리를 위해<br>생활 정보를 알려주세요.</h1>
-  <p class="sub">키·몸무게 대신 트임은 <b>생활 방식과 공간</b>을 봐요.</p>
-  <div class="privacy-note">실명·주소·생년월일은 받지 않아요. 아래 정보는 맞춤 비움 추천과 다음 방문 시 이어보기에만 사용됩니다.</div>
-
-  <div class="field"><strong>누구와 살고 있나요?</strong><div class="options" data-field="living">
-    <button class="option" data-value="혼자 살아요">혼자 살아요</button><button class="option" data-value="가족과 살아요">가족과 살아요</button>
-    <button class="option" data-value="파트너와 살아요">파트너와 살아요</button><button class="option" data-value="룸메이트와 살아요">룸메이트와 살아요</button>
-  </div></div>
-
-  <div class="field"><strong>지금의 생활 유형은?</strong><div class="options" data-field="role">
-    <button class="option" data-value="직장인">직장인</button><button class="option" data-value="학생">학생</button>
-    <button class="option" data-value="프리랜서">프리랜서</button><button class="option" data-value="기타">기타</button>
-  </div></div>
-
-  <div class="field"><strong>가장 자주 신경 쓰이는 공간은?</strong><div class="options three" data-field="space">
-    <button class="option center" data-value="옷장">옷장</button><button class="option center" data-value="책상">책상</button><button class="option center" data-value="침실">침실</button>
-    <button class="option center" data-value="거실">거실</button><button class="option center" data-value="현관">현관</button><button class="option center" data-value="주방">주방</button>
-  </div></div>
-
-  <div class="cta-row"><a class="btn secondary" href="index.html">나중에</a><button class="btn primary" id="toCurrent" disabled>다음</button></div>
-</section>
-
-<section class="panel step" id="stepCurrent">
-  <p class="step-kicker">STEP 02 · 지금 상태</p>
-  <h2>오늘의 컨디션은 어때요?</h2>
-  <p class="sub">오늘 할 수 있는 만큼만 추천하기 위해 묻는 질문이에요.</p>
-
-  <div class="field"><strong>지금 기분과 에너지는?</strong><div class="options" data-field="mood">
-    <button class="option" data-value="괜찮아요">🙂 괜찮아요</button><button class="option" data-value="피곤해요">🥱 피곤해요</button>
-    <button class="option" data-value="답답해요">😮‍💨 답답해요</button><button class="option" data-value="아무것도 하기 싫어요">🫠 아무것도 하기 싫어요</button>
-  </div></div>
-
-  <div class="field"><strong>공간은 지금 어느 정도예요?</strong><div class="options" data-field="clutter">
-    <button class="option" data-value="조금 어수선해요">조금 어수선해요<small>몇 개만 치우면 될 것 같아요</small></button>
-    <button class="option" data-value="많이 어수선해요">많이 어수선해요<small>눈에 보이는 게 많아요</small></button>
-    <button class="option" data-value="어디서 시작할지 모르겠어요">시작이 막막해요<small>뭐부터 해야 할지 모르겠어요</small></button>
-    <button class="option" data-value="공간보다 머리가 복잡해요">머리가 복잡해요<small>공간보다 생각부터 줄이고 싶어요</small></button>
-  </div></div>
-
-  <div class="field"><strong>지금 몇 분 정도 쓸 수 있나요?</strong><div class="options three" data-field="minutes">
-    <button class="option center" data-value="3">3분</button><button class="option center" data-value="10">10분</button><button class="option center" data-value="20">20분</button>
-  </div></div>
-
-  <div class="cta-row"><button class="btn secondary" id="backProfile">이전</button><button class="btn primary" id="toSummary" disabled>다음</button></div>
-</section>
-
-<section class="panel step" id="stepSummary">
-  <p class="step-kicker">STEP 03 · 추천 전 확인</p>
-  <h2>이 상태를 기준으로<br>오늘의 비움을 골라볼게요.</h2>
-  <div class="summary" id="summary"></div>
-  <div class="cta-row"><button class="btn secondary" id="backCurrent">수정하기</button><button class="btn primary" id="getMission">AI 추천 받기</button></div>
-  <div class="loading" id="loading"><div class="dots"><i></i><i></i><i></i></div><b>지금 할 수 있는 하나를 고르는 중이에요.</b></div>
-</section>
-
-<section class="result" id="result">
-  <div class="result-card"><small>오늘의 트임</small><h2 id="resultTitle">책상 한 뼘만 비우기</h2><p id="resultReason"></p><div class="tags"><span id="tagTime">10분</span><span id="tagCategory">공간비움</span><span id="tagSpace">책상</span></div></div>
-  <div class="action-box"><small>지금 할 일</small><strong id="resultAction"></strong><p class="why" id="resultTarget"></p></div>
-  <div class="result-actions" id="resultActions"><button class="btn yellow" id="startMission">이 비움 시작하기 →</button><button class="btn ghost" id="retryMission">다른 비움 추천받기</button></div>
-  <div class="timer" id="timer"><b id="timerText">10:00</b><p id="timerMission"></p><button class="btn primary" id="completeMission">비움 완료했어요</button></div>
-</section>
-
-<section class="done" id="done"><i>☀️</i><h2>오늘도 틈 하나 만들었어요.</h2><p>작은 비움이 트임기록에 저장됐어요.<br>오늘은 여기까지 해도 충분해요.</p><a href="challenge.html">트임기록 보기 →</a></section>
-</main>
-
-<script>
-(function(){
- const state={profile:{living:'',role:'',space:''},current:{mood:'',clutter:'',minutes:''},query:'',mission:null,exclude:''};
- const params=new URLSearchParams(location.search);state.query=(params.get('q')||localStorage.getItem('teimInitialConcern')||'').trim();localStorage.removeItem('teimInitialConcern');
- try{const saved=JSON.parse(localStorage.getItem('teimProfile')||'null');if(saved)state.profile={...state.profile,...saved}}catch(e){}
- const q=document.getElementById('userQuery');if(state.query){q.textContent=state.query;q.style.display='block'}
- const steps=['stepProfile','stepCurrent','stepSummary'];let stepIndex=0;
- const $=id=>document.getElementById(id);
- function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
- function showStep(i){stepIndex=i;steps.forEach((id,idx)=>$(id).classList.toggle('active',idx===i));$('result').classList.remove('active');$('done').classList.remove('active');$('progressBar').style.width=((i+1)/3*100)+'%';window.scrollTo({top:0,behavior:'smooth'});updateAssistant()}
- function updateAssistant(){const a=[['먼저 지금의 생활을 조금만 알려주세요.','정리 추천에 필요한 정보만 묻고, 입력값은 이 브라우저에 저장해요.'],['오늘 컨디션까지 알면 더 무리 없는 비움을 고를 수 있어요.','완벽한 정리보다 지금 가능한 만큼이 중요해요.'],['좋아요. 이제 오늘 딱 하나만 골라볼게요.','입력한 상태를 바탕으로 바로 실행 가능한 미션 하나를 추천해요.']][stepIndex];$('assistantTitle').textContent=a[0];$('assistantDesc').textContent=a[1]}
- function applySaved(){document.querySelectorAll('[data-field]').forEach(group=>{const field=group.dataset.field;const val=state.profile[field]||state.current[field];group.querySelectorAll('.option').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.value===String(val))))});validate()}
- function validate(){$('toCurrent').disabled=!(state.profile.living&&state.profile.role&&state.profile.space);$('toSummary').disabled=!(state.current.mood&&state.current.clutter&&state.current.minutes)}
- document.addEventListener('click',e=>{const btn=e.target.closest('.option');if(!btn)return;const group=btn.closest('[data-field]');const field=group.dataset.field;const value=btn.dataset.value;if(field in state.profile)state.profile[field]=value;else state.current[field]=value;group.querySelectorAll('.option').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));validate()})
- $('toCurrent').onclick=()=>{localStorage.setItem('teimProfile',JSON.stringify(state.profile));showStep(1)}
- $('backProfile').onclick=()=>showStep(0)
- $('toSummary').onclick=()=>{renderSummary();showStep(2)}
- $('backCurrent').onclick=()=>showStep(1)
- function renderSummary(){const rows=[['주거 형태',state.profile.living],['생활 유형',state.profile.role],['신경 쓰이는 공간',state.profile.space],['오늘 상태',state.current.mood],['공간 상태',state.current.clutter],['가능 시간',state.current.minutes+'분']];$('summary').innerHTML=rows.map(r=>'<div class="summary-row"><span>'+escapeHtml(r[0])+'</span><b>'+escapeHtml(r[1])+'</b></div>').join('')+(state.query?'<div class="summary-row"><span>내가 입력한 고민</span><b>'+escapeHtml(state.query)+'</b></div>':'')}
- async function getMission(){
-   $('loading').classList.add('active');$('getMission').disabled=true;
-   let history=[];try{history=JSON.parse(localStorage.getItem('teimAiRecords')||'[]').slice(0,5)}catch(e){}
-   const stateText=[state.query,state.profile.space,state.current.mood,state.current.clutter,state.profile.living,state.profile.role].filter(Boolean).join(' · ').slice(0,120);
-   try{
-     const res=await fetch('/api/teim-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:stateText,minutes:Number(state.current.minutes),history,excludeTitle:state.exclude})});
-     const data=await res.json();if(!data.ok||!data.mission)throw new Error('bad');state.mission=data.mission;
-   }catch(e){state.mission=fallbackMission()}
-   $('loading').classList.remove('active');$('getMission').disabled=false;renderResult();
- }
- function fallbackMission(){const s=state.profile.space;const easy=state.current.mood.includes('피곤')||state.current.mood.includes('싫');const title=easy?s+'에서 보이는 물건 3개만 제자리로':s+' 한 뼘만 비우기';return {title,target:s,action:easy?'손이 닿는 곳에서 가장 판단 쉬운 물건 3개만 원래 자리로 보내주세요.':'A4 한 장 정도의 자리만 정하고 그 안에 있는 물건만 제자리로 보내주세요.',reason:'오늘 상태에서 끝까지 할 수 있는 범위로 작게 시작해요.',duration:Number(state.current.minutes)||3,category:'공간비움'}}
- function renderResult(){const m=state.mission;steps.forEach(id=>$(id).classList.remove('active'));$('result').classList.add('active');$('progressBar').style.width='100%';$('assistantTitle').textContent='지금은 이 정도가 딱 좋아요.';$('assistantDesc').textContent='전체를 정리하지 말고 아래 하나만 끝내보세요.';$('resultTitle').textContent=m.title;$('resultReason').textContent=m.reason||'';$('resultAction').textContent=m.action;$('resultTarget').textContent=m.target?'추천 공간 · '+m.target:'';$('tagTime').textContent=(m.duration||state.current.minutes)+'분';$('tagCategory').textContent=m.category||'공간비움';$('tagSpace').textContent=state.profile.space;window.scrollTo({top:0,behavior:'smooth'})}
- $('getMission').onclick=getMission;$('retryMission').onclick=()=>{state.exclude=state.mission?.title||'';getMission()}
- let remain=0,tick=null;
- $('startMission').onclick=()=>{remain=Math.max(60,Number(state.mission?.duration||state.current.minutes)*60);$('resultActions').style.display='none';$('timer').classList.add('active');$('timerMission').textContent=state.mission?.action||'';drawTimer();tick=setInterval(()=>{remain--;drawTimer();if(remain<=0){clearInterval(tick)}},1000)}
- function drawTimer(){const mm=String(Math.floor(remain/60)).padStart(2,'0'),ss=String(remain%60).padStart(2,'0');$('timerText').textContent=mm+':'+ss}
- $('completeMission').onclick=()=>{if(tick)clearInterval(tick);const rec={title:state.mission.title,category:state.mission.category||'공간비움',space:state.profile.space,action:state.mission.action,completedAt:new Date().toISOString()};let list=[];try{list=JSON.parse(localStorage.getItem('teimAiRecords')||'[]')}catch(e){}list.unshift(rec);localStorage.setItem('teimAiRecords',JSON.stringify(list.slice(0,50)));$('result').classList.remove('active');$('done').classList.add('active');$('assistantTitle').textContent='오, 진짜 했네요. 오늘도 하나 트였습니다.';$('assistantDesc').textContent='완료한 비움은 이 브라우저의 트임기록에 저장했어요.'}
- applySaved();showStep(0);
- if(state.profile.living&&state.profile.role&&state.profile.space&&location.hash!=='#profile'){showStep(1)}
-})();
-</script>
-</body>
-</html>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f8fb"><title>트임 | AI 정리비서</title><style>
+:root{--b:#2367e8;--n:#15264b;--y:#ffda52;--bg:#f7f8fb;--m:#748198;--l:#e7ebf2}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--n);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}.bottom-nav{display:none!important}.app{width:min(620px,100%);min-height:100vh;margin:auto;background:#fff;display:flex;flex-direction:column}.top{height:68px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f2f6;position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);z-index:5}.top a{text-decoration:none;color:var(--n);font-size:25px}.top b{font-size:16px}.online{font-size:11px;color:#36a36a;font-weight:800}.chat{padding:22px 18px 150px;display:flex;flex-direction:column;gap:16px}.row{display:flex;gap:10px;align-items:flex-end}.row.me{justify-content:flex-end}.face{width:38px;height:38px;border-radius:13px;background:var(--y);display:grid;place-items:center;font-weight:950;flex:none}.bubble{max-width:82%;padding:14px 16px;border-radius:20px 20px 20px 6px;background:#f2f5f9;font-size:14px;line-height:1.55}.me .bubble{background:var(--b);color:#fff;border-radius:20px 20px 6px 20px}.bubble small{display:block;color:var(--b);font-size:10px;font-weight:900;margin-bottom:4px}.choices{display:flex;flex-wrap:wrap;gap:8px;margin-left:48px}.choices button{border:1px solid var(--l);background:#fff;border-radius:999px;padding:11px 14px;font-weight:750;color:var(--n)}.choices button:active{background:#edf4ff;border-color:var(--b)}.typing{display:flex;gap:5px}.typing i{width:6px;height:6px;background:#9ba6b7;border-radius:50%}.result{background:#15264b;color:#fff;border-radius:24px;padding:20px;margin-left:48px}.result small{color:var(--y);font-weight:900}.result h2{font-size:24px;letter-spacing:-.045em;margin:8px 0}.result p{color:#d5dbea;font-size:13px;line-height:1.6}.result .actions{display:grid;gap:8px;margin-top:15px}.result a,.result button{border:0;text-decoration:none;text-align:center;padding:14px;border-radius:15px;font-weight:850}.start{background:var(--y);color:var(--n)}.subbtn{background:rgba(255,255,255,.1);color:#fff}.composer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(620px,100%);padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#fff 22%);display:flex;gap:8px}.composer input{flex:1;border:1px solid var(--l);background:#f7f8fb;border-radius:20px;padding:15px 17px;outline:0;font:inherit}.composer input:focus{border-color:var(--b)}.composer button{width:50px;border:0;border-radius:18px;background:var(--b);color:#fff;font-size:20px}.hint{font-size:11px;color:var(--m);margin-left:48px}.hidden{display:none}
+</style></head><body data-teum-shell="ai"><main class="app"><header class="top"><a href="index.html">‹</a><b>트임 AI 정리비서</b><span class="online">● 대화 중</span></header><section class="chat" id="chat"></section><form class="composer" id="composer"><input id="input" autocomplete="off" placeholder="직접 말해도 괜찮아요"><button aria-label="보내기">↑</button></form></main><script>
+const chat=document.getElementById('chat'),form=document.getElementById('composer'),input=document.getElementById('input');
+const state={answers:[],space:'',problem:'',item:'',reason:'',effort:'',mission:null};let stage=0;
+const flows=[
+ {q:'오늘은 뭐가 제일 신경 쓰여요?',c:['집이 전체적으로 어수선해요','특정 공간만 정리하고 싶어요','물건 하나 때문에 고민이에요','뭐부터 해야 할지 모르겠어요']},
+ {q:'좋아요. 어디를 먼저 볼까요?',c:['옷장','책상','주방','침실','거실','욕실','현관','직접 말할게요']},
+ {q:'거기서 뭐가 제일 막막해요?',c:['물건이 너무 많아요','어디에 둬야 할지 모르겠어요','버릴지 말지 고민돼요','치워도 금방 다시 어질러져요','정리할 엄두가 안 나요']},
+ {q:'조금만 더 볼게요. 특히 어떤 점이 그래요?',c:[]},
+ {q:'오늘 어디까지 해볼까요?',c:['진짜 하나만','부담 없이 조금만','눈에 보이는 만큼','오늘은 제대로 해볼래요']}
+];
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function bot(text){chat.insertAdjacentHTML('beforeend','<div class="row"><div class="face">T</div><div class="bubble"><small>TEUM AI</small>'+esc(text)+'</div></div>')}
+function me(text){chat.insertAdjacentHTML('beforeend','<div class="row me"><div class="bubble">'+esc(text)+'</div></div>')}
+function choices(arr){if(!arr.length)return;const d=document.createElement('div');d.className='choices';arr.forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>answer(x);d.appendChild(b)});chat.appendChild(d)}
+function scroll(){setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),30)}
+function dynamic(){const p=state.problem;if(p.includes('어디에'))return ['옷','서류·책','화장품','전자기기·선','생활용품','잡동사니'];if(p.includes('버릴'))return ['언젠가 쓸 것 같아요','아직 멀쩡해요','추억이 있어요','비싸게 샀어요','어떻게 버리는지 몰라요'];if(p.includes('금방'))return ['제자리가 없어요','꺼내기 불편해요','물건이 너무 많아요','가족이 같이 사용해요','나도 잘 모르겠어요'];if(p.includes('너무 많'))return ['종류가 너무 섞여 있어요','수납할 곳이 부족해요','안 쓰는 것도 많아요','어디부터 손댈지 모르겠어요'];return ['시작할 힘이 없어요','끝까지 못 할 것 같아요','생각만 해도 피곤해요','그냥 막막해요']}
+function ask(){const f=flows[stage];bot(f.q);choices(stage===3?dynamic():f.c);scroll()}
+function answer(v){document.querySelectorAll('.choices').forEach(x=>x.remove());me(v);state.answers.push(v);if(stage===1)state.space=v;if(stage===2)state.problem=v;if(stage===3)state.reason=v;if(stage===4)state.effort=v;stage++;if(stage<flows.length)setTimeout(ask,220);else setTimeout(recommend,300);scroll()}
+async function recommend(){bot('좋아요. 지금 상황에서 끝낼 수 있는 딱 하나를 골라볼게요.');const effort=state.effort||'부담 없이 조금만';const mins=effort.includes('하나')?3:effort.includes('제대로')?20:effort.includes('눈에')?10:5;const stateText=state.answers.join(' · ').slice(0,220);let history=[];try{history=JSON.parse(localStorage.getItem('teimAiRecords')||'[]').slice(0,5)}catch(e){}try{const r=await fetch('/api/teim-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:stateText,minutes:mins,history})});const d=await r.json();if(d.ok&&d.mission)state.mission=d.mission}catch(e){}if(!state.mission)state.mission={title:(state.space||'지금 공간')+'에서 제자리 없는 물건 3개만 고르기',action:'전체를 치우지 말고 눈에 먼저 들어오는 물건 3개만 골라 같은 종류끼리 모아주세요.',reason:'지금 막히는 이유를 먼저 줄이면 다음 행동을 정하기 쉬워져요.',duration:mins,category:'공간비움'};showResult()}
+function showResult(){const m=state.mission;const d=document.createElement('div');d.className='result';d.innerHTML='<small>오늘의 1트</small><h2>'+esc(m.title)+'</h2><p>'+esc(m.action)+'<br><br>'+esc(m.reason||'')+'</p><div class="actions"><a class="start" href="action.html">바로 시작하기 →</a>'+(state.problem.includes('어디에')?'<a class="subbtn" href="put-away.html">어디에 둘지 보기</a>':'')+(state.problem.includes('버릴')?'<a class="subbtn" href="discard.html">버리는 방법 보기</a>':'')+'<button class="subbtn" id="again">다른 방법 추천</button></div>';chat.appendChild(d);document.getElementById('again').onclick=()=>{d.remove();state.mission=null;recommend()};scroll()}
+form.onsubmit=e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';answer(v)}
+bot('안녕하세요 :) 저는 트임 AI 정리비서예요. 정답을 고르는 설문보다 지금 상황을 같이 좁혀볼게요.');setTimeout(ask,250);
+</script></body></html>
