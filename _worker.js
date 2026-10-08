@@ -57,10 +57,20 @@ function rewriteHtml(response, pathname) {
     }
 
     if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
+    pageHtml = injectTeumBottomNav(pageHtml);
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
     return new Response(pageHtml, { status: response.status, statusText: response.statusText, headers });
   });
+}
+
+function injectTeumBottomNav(html) {
+  const oldNavScript = /<script\b[^>]*src=["'][^"']*teum-bottom-nav\.js[^"']*["'][^>]*>\s*<\/script>/gi;
+  const cleanHtml = html.replace(oldNavScript, "");
+  const scriptTag = '<script src="/teum-bottom-nav.js?v=20261008-1" defer></script>';
+  const bodyEnd = cleanHtml.toLowerCase().lastIndexOf("</body>");
+  if (bodyEnd < 0) return cleanHtml + scriptTag;
+  return cleanHtml.slice(0, bodyEnd) + scriptTag + cleanHtml.slice(bodyEnd);
 }
 
 function enhanceHome(pageHtml) {
