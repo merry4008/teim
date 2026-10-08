@@ -1,0 +1,21 @@
+{
+  "banner": {
+    "height_mobile": 112,
+    "height_desktop": 144,
+    "radius_mobile": 23,
+    "radius_desktop": 26,
+    "padding_mobile": 20,
+    "padding_desktop": 24
+  },
+  "typography": {
+    "title_mobile": 22,
+    "title_desktop": 28,
+    "description_mobile": 11,
+    "description_desktop": 13
+  },
+  "colors": {
+    "blue": "#2563EB",
+    "navy": "#183B6B",
+    "yellow": "#FFC928"
+  }
+}
