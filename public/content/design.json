@@ -1,11 +1,11 @@
 {
   "banner": {
-    "height_mobile": 108,
-    "height_desktop": 108,
-    "radius_mobile": 23,
-    "radius_desktop": 23,
-    "padding_mobile": 19,
-    "padding_desktop": 19
+    "height_mobile": 110,
+    "height_desktop": 110,
+    "radius_mobile": 25,
+    "radius_desktop": 25,
+    "padding_mobile": 20,
+    "padding_desktop": 20
   },
   "typography": {
     "title_mobile": 23,
