@@ -425,6 +425,105 @@ body{background:#fbf8f3}
 main.ar-complete-mode>:not(.ar-complete){display:none!important}
 main.ar-complete-mode>.ar-complete{display:flex!important}
 
+
+/* teim-ar-single-screen-v1 */
+body.ar-fullscreen{height:100svh!important;min-height:100svh!important;overflow:hidden!important;padding:0 0 calc(82px + env(safe-area-inset-bottom,0px))!important}
+.topbar{height:64px!important;position:relative!important;top:auto!important;flex:0 0 64px!important}
+.screen.ar-wizard{width:min(760px,100%);height:calc(100svh - 64px - 82px - env(safe-area-inset-bottom,0px));min-height:0;margin:0 auto;padding:7px 16px 8px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.ar-wizard .page-back{display:none!important}
+.ar-wizard .hero{position:sticky;top:0;z-index:12;flex:0 0 102px;min-height:102px;height:102px;padding:14px 17px;border-radius:21px;overflow:hidden}
+.ar-wizard .hero-copy{width:75%;z-index:2}
+.ar-wizard .hero .kicker{font-size:8px;margin:0}
+.ar-wizard .hero h2{font-size:21px;line-height:1.12;margin:5px 0}
+.ar-wizard .hero p{font-size:10px;line-height:1.35;max-width:300px}
+.ar-wizard .hero-art{right:13px;bottom:10px;transform:scale(.68);transform-origin:right bottom}
+.ar-wizard .ar-flow{order:1;flex:0 0 41px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;gap:2px;overflow:hidden;padding:0;margin:0}
+.ar-wizard .ar-flow-item{min-width:0;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:8px;line-height:1;color:#929baa}
+.ar-wizard .ar-flow-item:before{width:20px;height:20px;font-size:8px}
+.ar-wizard .ar-intro-card,.ar-wizard .ar-room-card,.ar-wizard .scan-card,.ar-wizard .ar-loading-card,.ar-wizard .results,.ar-wizard .ar-complete{order:2;flex:1 1 auto;min-height:0;max-height:100%;margin:0!important;overflow:hidden}
+.ar-wizard .ar-intro-card,.ar-wizard .ar-room-card,.ar-wizard .ar-loading-card{border:1px solid #ece8e1;border-radius:24px;background:#fff;padding:22px;box-shadow:0 10px 28px rgba(62,53,40,.05)}
+.ar-wizard .ar-intro-card{display:none;flex-direction:column;align-items:flex-start;justify-content:center}
+.ar-intro-card .ar-intro-icon{width:58px;height:58px;border-radius:20px;background:#fff3cf;display:grid;place-items:center;font-size:28px;margin-bottom:13px}
+.ar-intro-card h3{margin:0;color:#15264b;font-size:25px;line-height:1.15;letter-spacing:-.055em}
+.ar-intro-card p{margin:9px 0 0;color:#68758a;font-size:13px;line-height:1.55}
+.ar-wizard .ar-room-card{display:none;flex-direction:column;justify-content:center}
+.ar-wizard .ar-room-card h3{font-size:20px}
+.ar-wizard .ar-rooms{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ar-wizard .ar-room{min-height:48px}
+.ar-next-step{width:100%;min-height:48px;margin-top:14px;border:0;border-radius:15px;background:#15264b;color:#fff;font-size:13px;font-weight:950}
+.ar-step-back{width:100%;min-height:42px;margin-top:8px;border:1px solid #e3e7ed;border-radius:14px;background:#fff;color:#607086;font-size:12px;font-weight:850}
+.ar-wizard .section-title{display:none!important}
+.ar-wizard .scan-card{display:none;flex-direction:column;padding:10px;border-radius:22px}
+.ar-wizard .camera-stage{flex:1 1 auto;min-height:96px;max-height:none;aspect-ratio:auto;border-radius:16px}
+.ar-wizard .placeholder{padding:12px}
+.ar-wizard .placeholder b{width:44px;height:44px;border-radius:15px;font-size:25px;margin-bottom:8px}
+.ar-wizard .placeholder strong{font-size:15px;margin-bottom:4px}
+.ar-wizard .placeholder span{font-size:10px}
+.ar-wizard .controls{flex:0 0 auto;margin-top:8px;gap:7px}
+.ar-wizard .btn{min-height:43px;border-radius:13px;font-size:12px}
+.ar-wizard .privacy,.ar-wizard .photo-check,.ar-wizard .marker-legend,.ar-wizard .result-peek,.ar-wizard .scan-complete{display:none!important}
+.ar-wizard .scan-notice{flex:0 0 auto;max-height:65px;overflow:auto;font-size:10px;margin-top:6px;padding:8px}
+.ar-wizard .ar-loading-card{display:none;position:relative;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ar-load-ring{width:112px;height:112px;border:8px solid #e9f2ff;border-top-color:#3287f6;border-right-color:#74b1ff;border-radius:50%;display:grid;place-items:center;animation:arSpin 1.2s linear infinite}
+.ar-load-face{width:58px;height:58px;border-radius:50%;background:#ffd55e;color:#15264b;display:grid;place-items:center;font-size:26px;animation:arCounterSpin 1.2s linear infinite}
+.ar-loading-card h3{margin:18px 0 5px;font-size:20px;color:#15264b}
+.ar-loading-card p{margin:0;color:#748198;font-size:12px}
+.ar-loading-list{display:grid;gap:7px;width:min(250px,100%);margin:18px auto 0;text-align:left;color:#68758a;font-size:11px}
+.ar-loading-list span:before{content:"✓";display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;margin-right:8px;background:#eef5ff;color:#3287f6;font-weight:900}
+@keyframes arSpin{to{transform:rotate(360deg)}}@keyframes arCounterSpin{to{transform:rotate(-360deg)}}
+.ar-wizard .results{display:none;padding:15px;border:1px solid #ece8e1;border-radius:22px;background:#fff;box-shadow:0 10px 28px rgba(62,53,40,.05)}
+.ar-wizard .results-head{margin-bottom:4px}
+.ar-wizard .results h3{font-size:18px}
+.ar-wizard .results-head span{font-size:9px}
+.ar-wizard .summary{font-size:11px;margin:0 0 7px}
+.ar-wizard .result-guide{display:none}
+.ar-wizard .point-list{gap:7px}
+.ar-wizard .point{padding:9px 11px;border-radius:15px;box-shadow:none}
+.ar-wizard .point-top{margin:0;gap:6px}
+.ar-wizard .point-num{width:28px;height:28px;border-radius:9px;font-size:11px}
+.ar-wizard .point-location{font-size:9px}
+.ar-wizard .time{padding:5px 7px;font-size:9px}
+.ar-wizard .point h4{font-size:13px;margin:5px 0 0}
+.ar-wizard .point .method-chips,.ar-wizard .point-action,.ar-wizard .point-evidence,.ar-wizard .point-reason,.ar-wizard .point-start{display:none}
+.ar-wizard .results:not(.show){display:none!important}
+.ar-wizard .focus-card{display:none;margin:0!important;padding:15px;border-radius:21px;box-shadow:none;overflow:hidden}
+.ar-wizard .focus-card.show{display:block}
+.ar-wizard .focus-card h4{font-size:18px;margin:2px 0 8px}
+.ar-wizard .focus-time,.ar-wizard .focus-number{font-size:10px}
+.ar-wizard .focus-meta,.ar-wizard .focus-evidence,.ar-wizard .focus-reason,#showAllBtn{display:none!important}
+.ar-wizard .focus-action{font-size:12px;padding:10px 12px}
+.ar-wizard .focus-actions{grid-template-columns:1fr;gap:6px;margin-top:9px}
+.ar-wizard .focus-start{min-height:43px;font-size:12px}
+.ar-wizard .ar-finish-btn{min-height:43px;margin-top:7px}
+.ar-wizard .ar-complete{display:none;min-height:0;flex:1 1 auto;justify-content:center;padding:15px;border-radius:22px;overflow:hidden}
+.ar-wizard .ar-complete-mark{width:60px;height:60px;font-size:28px;margin-bottom:10px}
+.ar-wizard .ar-complete h2{font-size:23px}
+.ar-wizard .ar-complete-copy{font-size:11px;margin:7px 0 12px}
+.ar-wizard .ar-complete-mission{padding:11px}
+.ar-wizard .ar-complete-mission strong{font-size:13px}
+.ar-wizard .ar-complete-mission span{font-size:10px}
+.ar-wizard .ar-complete-actions{gap:7px;margin-top:11px}
+.ar-wizard .ar-complete-actions a,.ar-wizard .ar-complete-actions button{min-height:42px;font-size:11px}
+.ar-wizard[data-ar-screen="1"] .ar-intro-card,.ar-wizard[data-ar-screen="2"] .ar-room-card,.ar-wizard[data-ar-screen="3"] .scan-card,.ar-wizard[data-ar-screen="4"] .ar-loading-card,.ar-wizard[data-ar-screen="5"] .results,.ar-wizard[data-ar-screen="7"] .ar-complete{display:flex!important}
+.ar-wizard[data-ar-screen="5"] .results{display:block!important}
+.ar-wizard[data-ar-screen="6"] .scan-card{display:flex!important}
+.ar-wizard[data-ar-screen="6"] .scan-card>*:not(.focus-card){display:none!important}
+.ar-wizard[data-ar-screen="6"] .focus-card{display:block!important}
+@media(max-height:720px){
+ .screen.ar-wizard{padding-top:4px;gap:4px}
+ .ar-wizard .hero{flex-basis:86px;height:86px;min-height:86px;padding:9px 14px}
+ .ar-wizard .hero h2{font-size:18px}
+ .ar-wizard .hero p{font-size:9px}
+ .ar-wizard .ar-flow{flex-basis:36px}
+ .ar-wizard .ar-intro-card,.ar-wizard .ar-room-card{padding:15px}
+ .ar-intro-card h3{font-size:22px}
+ .ar-wizard .point{padding:7px 9px}
+ .ar-wizard .focus-card{padding:11px}
+}
+@media(max-width:430px){
+ .screen.ar-wizard{padding-left:13px;padding-right:13px}
+}
+
 </style>
 </head>
 <body data-teum-shell="ai">
@@ -559,7 +658,8 @@ main.ar-complete-mode>.ar-complete{display:flex!important}
     <div class="result-guide"><b>전체 결과</b><span>사진의 번호와 같은 번호 카드가 연결돼 있어요. 카드를 누르면 사진 속 마커도 함께 강조됩니다.</span></div>
     <div class="point-list" id="pointList"></div>
   </section>
-</main>
+<button id="arRetryFromResults" class="ar-step-back" type="button">다른 사진으로 다시 분석하기</button>
+  </main>
 
 
 
@@ -810,14 +910,25 @@ window.addEventListener('pagehide',stopCamera);
  const completion=document.createElement('section');completion.className='ar-complete';completion.setAttribute('aria-live','polite');
  completion.innerHTML='<div class="ar-complete-mark" aria-hidden="true">✦</div><p class="ar-complete-kicker">TEUM SPACE · COMPLETE</p><h2>잘했어요!<br>하나의 공간이 더 가벼워졌어요.</h2><p class="ar-complete-copy">작은 비움을 해낸 오늘을 트임기록에 남겨보세요.</p><div class="ar-complete-mission"><small id="arCompleteSpace"></small><strong id="arCompleteTitle"></strong><span id="arCompleteAction"></span></div><div class="ar-complete-actions"><a class="ar-complete-record" href="challenge.html">트임기록 확인하기 →</a><button class="ar-complete-again" id="arAnother" type="button">다른 공간도 해볼까요?</button></div>';
  main.appendChild(completion);
+ main.classList.add('ar-wizard','ar-fullscreen');
+ const intro=document.createElement('section');intro.className='ar-intro-card';intro.innerHTML='<div class="ar-intro-icon">✦</div><p class="ar-complete-kicker">TEUM SPACE · AI SCAN</p><h3>사진 한 장으로<br>공간 비움을 시작해요.</h3><p>먼저 공간을 고르고, 사진 속에서 지금 정리할 곳을 찾아볼게요.</p><button class="ar-next-step" id="arStart" type="button">지금 시작하기 →</button>';
+ main.insertBefore(intro,room);
+ const roomNext=document.createElement('button');roomNext.type='button';roomNext.className='ar-next-step';roomNext.textContent='이 공간으로 계속하기 →';room.appendChild(roomNext);
+ const loading=document.createElement('section');loading.className='ar-loading-card';loading.innerHTML='<div class="ar-load-ring"><div class="ar-load-face">✦</div></div><h3>AI가 공간을 살펴보고 있어요.</h3><p>사진에서 실제로 보이는 정리 포인트를 찾고 있어요.</p><div class="ar-loading-list"><span>공간 구조 확인 중</span><span>물건 밀도 살펴보는 중</span><span>비울 수 있는 곳 찾는 중</span></div>';
+ main.appendChild(loading);
  const finish=document.createElement('button');finish.type='button';finish.id='arFinish';finish.className='ar-finish-btn';finish.textContent='비움을 완료하고 기록하기';
  document.getElementById('focusCard')?.appendChild(finish);
+ const missionBack=document.createElement('button');missionBack.type='button';missionBack.className='ar-step-back';missionBack.textContent='분석 결과로 돌아가기';document.getElementById('focusCard')?.appendChild(missionBack);
+ missionBack.addEventListener('click',()=>setStep(5));
  let current=1;
  function setStep(n){
    current=Math.max(1,Math.min(7,n));
+   main.dataset.arScreen=String(current);
    [...flow.children].forEach((el,i)=>{el.classList.toggle('active',i===current-1);el.classList.toggle('done',i<current-1)});
    flow.children[current-1]?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
  }
+ document.getElementById('arStart')?.addEventListener('click',()=>setStep(2));
+ roomNext.addEventListener('click',()=>setStep(3));
  room.querySelectorAll('.ar-room').forEach(btn=>btn.addEventListener('click',()=>{
    room.querySelectorAll('.ar-room').forEach(other=>other.setAttribute('aria-pressed',String(other===btn)));
    sessionStorage.setItem('teimArSpace',btn.textContent);
@@ -833,6 +944,7 @@ window.addEventListener('pagehide',stopCamera);
    if(stage?.classList.contains('scanning'))setStep(4);
    else if(stage?.classList.contains('has-result'))setStep(focus?.classList.contains('show')?6:5);
    else if(focus?.classList.contains('show'))setStep(6);
+   else if(current===4)setStep(3);
  });
  if(stage)observer.observe(stage,{attributes:true,attributeFilter:['class']});
  if(focus)observer.observe(focus,{attributes:true,attributeFilter:['class']});
@@ -861,6 +973,7 @@ window.addEventListener('pagehide',stopCamera);
    document.getElementById('retryBtn')?.click();
    setStep(1);window.scrollTo({top:0,behavior:'smooth'});
  });
+ document.getElementById('arRetryFromResults')?.addEventListener('click',()=>{document.getElementById('retryBtn')?.click();setStep(3)});
  const title=hero.querySelector('h2'),copy=hero.querySelector('p');
  if(title)title.innerHTML='지금, 내 공간을<br><em>한눈에 비워보세요.</em>';
  if(copy)copy.textContent='사진 한 장으로 먼저 손댈 곳을 찾고, 10분 안에 할 수 있는 비움을 추천해요.';
