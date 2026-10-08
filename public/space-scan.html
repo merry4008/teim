@@ -362,6 +362,50 @@ button{cursor:pointer}
 @media(max-width:390px){
   .menu-grid{grid-template-columns:repeat(3,1fr)}
 }
+
+/* teim-ar-flow-v1: reference-led AR flow */
+:root{--b:#3287f6;--n:#15264b;--y:#ffd55e;--bg:#fbf8f3;--pb:#eef5ff;--py:#fff5cc;--be:#f2e8d9;--cream:#fbf7f0}
+body{background:#fbf8f3}
+.topbar{background:rgba(251,248,243,.94)}
+.hero{background:linear-gradient(140deg,#f8f0e5 0%,#f1e3d2 60%,#fffaf2 100%);box-shadow:none;border:1px solid rgba(222,205,180,.4)}
+.hero h2{color:#17294b}
+.hero p{color:#69758a}
+.scan-orb{background:#ffd55e}
+.section-title h3{font-size:21px}
+.ar-flow{display:flex;gap:9px;overflow:auto;padding:3px 0 13px;margin:4px 0 5px;scrollbar-width:none}
+.ar-flow::-webkit-scrollbar{display:none}
+.ar-flow-item{flex:0 0 76px;display:flex;flex-direction:column;gap:7px;align-items:center;color:#97a0ad;font-size:10px;font-weight:800;white-space:nowrap}
+.ar-flow-item:before{content:attr(data-number);width:30px;height:30px;border-radius:50%;background:#fff;border:1px solid #e7e1d7;color:#8791a0;display:grid;place-items:center;font-size:11px;font-weight:900}
+.ar-flow-item.active{color:#1c3156}
+.ar-flow-item.active:before{background:#3287f6;border-color:#3287f6;color:white;box-shadow:0 5px 13px rgba(50,135,246,.22)}
+.ar-flow-item.done:before{content:"✓";background:#e8f2ff;border-color:#d7e8ff;color:#3287f6}
+.ar-room-card{background:#fff;border:1px solid #ece8e1;border-radius:23px;padding:16px;margin:13px 0 18px;box-shadow:0 8px 24px rgba(62,53,40,.045)}
+.ar-room-card h3{margin:0 0 5px;font-size:18px;letter-spacing:-.04em}
+.ar-room-card p{margin:0;color:#788397;font-size:12px;line-height:1.5}
+.ar-rooms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}
+.ar-room{min-height:48px;border:1px solid #e9edf3;border-radius:14px;background:#fbfcfe;color:#33435e;font-size:12px;font-weight:850}
+.ar-room[aria-pressed="true"]{border-color:#3287f6;background:#eef5ff;color:#236bd0;box-shadow:0 0 0 2px rgba(50,135,246,.08)}
+.scan-card{border-color:#ece8e1;box-shadow:0 10px 28px rgba(62,53,40,.05)}
+.camera-stage{background:#eee8df;border-color:#e9e1d6}
+.placeholder{color:#7e8795}
+.placeholder b{background:#fff;color:#3287f6}
+.btn.primary{background:#15264b}
+.btn.secondary{background:#eef5ff;color:#3287f6}
+.btn.primary:hover{background:#243e6e}
+.point.active .point-start,.focus-start{background:#15264b}
+.point.active{border-color:#3287f6}
+.point-num{background:#eef5ff;color:#3287f6}
+.point.active .point-num{background:#3287f6}
+@media(max-width:430px){
+ .screen{padding-left:16px;padding-right:16px}
+ .hero{padding:24px 19px;min-height:232px}
+ .hero h2{font-size:28px}
+ .ar-room-card{padding:15px}
+ .ar-rooms{gap:7px}
+ .ar-room{font-size:11px;min-height:46px}
+ .ar-flow-item{flex-basis:70px}
+}
+
 </style>
 </head>
 <body data-teum-shell="ai">
@@ -730,5 +774,49 @@ window.addEventListener('resize',()=>{if(points.length)positionTargets()});
 window.addEventListener('pagehide',stopCamera);
 </script>
 <script src="teum-bottom-nav.js?v=1" defer></script>
+
+<script id="teim-ar-flow-v1">
+(function(){
+ const main=document.querySelector('main.screen');
+ const back=main&&main.querySelector('.page-back');
+ const hero=main&&main.querySelector('.hero');
+ if(!main||!back||!hero)return;
+ const steps=[['01','시작'],['02','공간 선택'],['03','사진 촬영'],['04','AI 분석'],['05','분석 결과'],['06','추천 미션'],['07','완료']];
+ const flow=document.createElement('nav');flow.className='ar-flow';flow.setAttribute('aria-label','AR 공간 비움 진행 단계');
+ steps.forEach((s,i)=>{const el=document.createElement('div');el.className='ar-flow-item'+(i===0?' active':'');el.dataset.step=String(i+1);el.dataset.number=s[0];el.textContent=s[1];flow.appendChild(el)});
+ back.insertAdjacentElement('afterend',flow);
+ const room=document.createElement('section');room.className='ar-room-card';
+ room.innerHTML='<h3>어떤 공간을 비워볼까요?</h3><p>먼저 살펴볼 공간을 고르면 촬영할 때 기준으로 삼을 수 있어요.</p><div class="ar-rooms" role="group" aria-label="공간 선택"><button class="ar-room" type="button" aria-pressed="false">침실</button><button class="ar-room" type="button" aria-pressed="false">거실</button><button class="ar-room" type="button" aria-pressed="false">주방</button><button class="ar-room" type="button" aria-pressed="false">책상</button><button class="ar-room" type="button" aria-pressed="false">옷장</button><button class="ar-room" type="button" aria-pressed="false">기타</button></div>';
+ hero.insertAdjacentElement('afterend',room);
+ let current=1;
+ function setStep(n){
+   current=Math.max(1,Math.min(7,n));
+   [...flow.children].forEach((el,i)=>{el.classList.toggle('active',i===current-1);el.classList.toggle('done',i<current-1)});
+   flow.children[current-1]?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+ }
+ room.querySelectorAll('.ar-room').forEach(btn=>btn.addEventListener('click',()=>{
+   room.querySelectorAll('.ar-room').forEach(other=>other.setAttribute('aria-pressed',String(other===btn)));
+   sessionStorage.setItem('teimArSpace',btn.textContent);
+   setStep(2);
+ }));
+ const camera=document.getElementById('cameraBtn'),upload=document.getElementById('uploadBtn'),capture=document.getElementById('captureBtn'),file=document.getElementById('fileInput'),scan=document.getElementById('scanBtn'),stage=document.getElementById('stage'),focus=document.getElementById('focusCard');
+ camera?.addEventListener('click',()=>setStep(3));
+ capture?.addEventListener('click',()=>setTimeout(()=>{if(document.getElementById('photo')?.classList.contains('show'))setStep(3)},0));
+ upload?.addEventListener('click',()=>setStep(3));
+ file?.addEventListener('change',()=>setTimeout(()=>{if(document.getElementById('photo')?.classList.contains('show'))setStep(3)},80));
+ scan?.addEventListener('click',()=>setStep(4));
+ const observer=new MutationObserver(()=>{
+   if(stage?.classList.contains('scanning'))setStep(4);
+   else if(stage?.classList.contains('has-result'))setStep(focus?.classList.contains('show')?6:5);
+   else if(focus?.classList.contains('show'))setStep(6);
+ });
+ if(stage)observer.observe(stage,{attributes:true,attributeFilter:['class']});
+ if(focus)observer.observe(focus,{attributes:true,attributeFilter:['class']});
+ document.addEventListener('click',e=>{if(e.target.closest('#focusStart,.point-start'))setStep(7)});
+ const title=hero.querySelector('h2'),copy=hero.querySelector('p');
+ if(title)title.innerHTML='지금, 내 공간을<br><em>한눈에 비워보세요.</em>';
+ if(copy)copy.textContent='사진 한 장으로 먼저 손댈 곳을 찾고, 10분 안에 할 수 있는 비움을 추천해요.';
+})();
+</script>
 </body>
 </html>
