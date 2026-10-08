@@ -5,7 +5,6 @@ export default {
     if (["/api/cms/status", "/api/cms/auth", "/api/cms/callback"].includes(url.pathname)) return handleCmsAuth(request, env);
     if (url.pathname === "/admin") return Response.redirect(url.origin + "/admin/", 302);
     if (url.pathname.startsWith("/admin/")) {
-      if (url.pathname === "/admin/") url.pathname = "/admin/index.html";
       const asset = await env.ASSETS.fetch(new Request(url.toString(), request));
       const headers = new Headers(asset.headers);
       headers.set("cache-control", "no-store");
