@@ -5,11 +5,34 @@
 .ai-chat-input input{flex:1;height:52px;padding:0 18px;border:1px solid #E1E6EE;border-radius:18px;background:#F7F8FB;font-size:14px;color:#15264B;outline:none}
 .ai-chat-input input:focus{border-color:#2367E8}
 .ai-chat-input button{width:52px;height:52px;flex:none;border:0;border-radius:18px;background:#2367E8;color:#fff;font-size:21px;cursor:pointer}
+
+/* Keep the composer inside the visible viewport, above the shared navigation. */
+html:has(body[data-teum-shell="ai"]){height:100%;overflow:hidden}
+body[data-teum-shell="ai"]{height:100%;overflow:hidden;padding:0!important;overscroll-behavior:none}
+body[data-teum-shell="ai"] .app{position:fixed;top:var(--chat-viewport-top,0px);left:50%;transform:translateX(-50%);height:calc(var(--chat-viewport-height,100dvh) - 82px - env(safe-area-inset-bottom,0px));min-height:0;margin:0}
+body[data-teum-shell="ai"] .top{flex:0 0 68px}
+body[data-teum-shell="ai"] .chat{flex:1 1 0;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+body[data-teum-shell="ai"] .chat>*{flex-shrink:0}
+body[data-teum-shell="ai"] .ai-chat-input{flex:0 0 auto;padding:12px 16px}
+body[data-teum-shell="ai"] .ai-chat-input input{min-width:0;font-size:16px}
+body[data-teum-shell="ai"] #teumGlobalBottomNav{top:calc(var(--chat-viewport-top,0px) + var(--chat-viewport-height,100dvh) - 82px - env(safe-area-inset-bottom,0px))!important;bottom:auto!important}
 </style></head><body data-teum-shell="ai"><main class="app"><header class="top"><a href="index.html">‹</a><b>트임 AI 정리비서</b><span class="online">● 대화 중</span></header><section class="chat" id="chat"></section><form class="ai-chat-input" id="composer">
   <input id="input" type="text" autocomplete="off" placeholder="트임 AI에게 메시지를 남겨보세요">
   <button type="submit" aria-label="메시지 보내기">↑</button>
 </form></main><script>
 const chat=document.getElementById('chat'),form=document.getElementById('composer'),input=document.getElementById('input');
+// Follow the visible viewport when the mobile keyboard or browser bars change.
+function syncChatViewport(){
+ const viewport=window.visualViewport;
+ document.documentElement.style.setProperty('--chat-viewport-height',(viewport?viewport.height:window.innerHeight)+'px');
+ document.documentElement.style.setProperty('--chat-viewport-top',(viewport?viewport.offsetTop:0)+'px');
+}
+syncChatViewport();
+window.addEventListener('resize',syncChatViewport);
+if(window.visualViewport){
+ window.visualViewport.addEventListener('resize',syncChatViewport);
+ window.visualViewport.addEventListener('scroll',syncChatViewport);
+}
 const state={answers:[],space:'',problem:'',item:'',reason:'',effort:'',mission:null};let stage=0;
 const flows=[
  {q:'오늘은 뭐가 제일 신경 쓰여요?',c:['집이 전체적으로 어수선해요','특정 공간만 정리하고 싶어요','물건 하나 때문에 고민이에요','뭐부터 해야 할지 모르겠어요']},
@@ -22,7 +45,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
 function bot(text){chat.insertAdjacentHTML('beforeend','<div class="row"><div class="face">T</div><div class="bubble"><small>TEUM AI</small>'+esc(text)+'</div></div>')}
 function me(text){chat.insertAdjacentHTML('beforeend','<div class="row me"><div class="bubble">'+esc(text)+'</div></div>')}
 function choices(arr){if(!arr.length)return;const d=document.createElement('div');d.className='choices';arr.forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>answer(x);d.appendChild(b)});chat.appendChild(d)}
-function scroll(){setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),30)}
+function scroll(){setTimeout(()=>chat.scrollTo({top:chat.scrollHeight,behavior:'smooth'}),30)}
 function dynamic(){const p=state.problem;if(p.includes('어디에'))return ['옷','서류·책','화장품','전자기기·선','생활용품','잡동사니'];if(p.includes('버릴'))return ['언젠가 쓸 것 같아요','아직 멀쩡해요','추억이 있어요','비싸게 샀어요','어떻게 버리는지 몰라요'];if(p.includes('금방'))return ['제자리가 없어요','꺼내기 불편해요','물건이 너무 많아요','가족이 같이 사용해요','나도 잘 모르겠어요'];if(p.includes('너무 많'))return ['종류가 너무 섞여 있어요','수납할 곳이 부족해요','안 쓰는 것도 많아요','어디부터 손댈지 모르겠어요'];return ['시작할 힘이 없어요','끝까지 못 할 것 같아요','생각만 해도 피곤해요','그냥 막막해요']}
 function ask(){const f=flows[stage];bot(f.q);choices(stage===3?dynamic():f.c);scroll()}
 function answer(v){document.querySelectorAll('.choices').forEach(x=>x.remove());me(v);state.answers.push(v);if(stage===1)state.space=v;if(stage===2)state.problem=v;if(stage===3)state.reason=v;if(stage===4)state.effort=v;stage++;if(stage<flows.length)setTimeout(ask,220);else setTimeout(recommend,300);scroll()}
