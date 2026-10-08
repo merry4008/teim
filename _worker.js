@@ -57,7 +57,7 @@ function rewriteHtml(response, pathname) {
     }
 
     if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
-    pageHtml = injectTeumBottomNav(pageHtml);
+    if (active !== "test") pageHtml = injectTeumBottomNav(pageHtml);
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
     return new Response(pageHtml, { status: response.status, statusText: response.statusText, headers });
