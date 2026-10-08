@@ -103,6 +103,7 @@ async function handleSpaceScan(request, env) {
   try { body = await request.json(); } catch (_) { return privateJsonResponse({ ok:false, message:"요청 형식이 올바르지 않습니다." }, 400); }
 
   const image = String(body.image || "");
+  const selectedSpace = ["침실","거실","주방","책상","옷장","기타"].includes(String(body.space || "")) ? String(body.space) : "";
   if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(image)) {
     return privateJsonResponse({ ok:false, message:"공간 사진이 필요합니다." }, 400);
   }
@@ -233,7 +234,7 @@ async function handleSpaceScan(request, env) {
         role:"user",
         content:[
           {type:"image_url",image_url:{url:image}},
-          {type:"text",text:prompt}
+          {type:"text",text:prompt+(selectedSpace?"\nThe user selected "+selectedSpace+" as the room. Use it only as context and identify only objects visible in the image.":"")}
         ]
       }],
       reasoning_effort:"low",
