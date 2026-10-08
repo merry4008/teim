@@ -57,10 +57,9 @@ function rewriteHtml(response, pathname) {
     }
 
     if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
-    let rewritten = pageHtml.replace(/<script\\b[^>]*src=[\"'][^\"']*teum-bottom-nav\\.js[^\"']*[\"'][^>]*><\\/script>/gi, \"\");
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
-    return new Response(rewritten, { status: response.status, statusText: response.statusText, headers });
+    return new Response(pageHtml, { status: response.status, statusText: response.statusText, headers });
   });
 }
 
