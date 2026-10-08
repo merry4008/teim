@@ -8,7 +8,8 @@
       "title": "언젠간 쓰겠지 vs 버릴까",
       "description": "",
       "button_label": "",
-      "link": ""
+      "link": "",
+      "enabled": true
     },
     {
       "id": 2,
@@ -18,7 +19,8 @@
       "title": "",
       "description": "",
       "button_label": "",
-      "link": ""
+      "link": "",
+      "enabled": true
     },
     {
       "id": 3,
@@ -28,7 +30,8 @@
       "title": "",
       "description": "",
       "button_label": "",
-      "link": ""
+      "link": "",
+      "enabled": true
     },
     {
       "id": 4,
@@ -38,7 +41,8 @@
       "title": "",
       "description": "",
       "button_label": "",
-      "link": ""
+      "link": "",
+      "enabled": false
     },
     {
       "id": 5,
@@ -48,7 +52,8 @@
       "title": "",
       "description": "",
       "button_label": "",
-      "link": ""
+      "link": "",
+      "enabled": false
     },
     {
       "id": 6,
@@ -58,7 +63,8 @@
       "title": "",
       "description": "",
       "button_label": "",
-      "link": ""
+      "link": "",
+      "enabled": false
     }
   ],
   "cards": [
