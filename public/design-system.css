@@ -1,0 +1,6 @@
+/* Shared service banner sizes. Individual page artwork/content remains unchanged. */
+:root{--teum-banner-height-mobile:112px;--teum-banner-height-desktop:144px;--teum-banner-radius-mobile:23px;--teum-banner-radius-desktop:26px;--teum-banner-padding-mobile:20px;--teum-banner-padding-desktop:24px;--teum-title-mobile:22px;--teum-title-desktop:28px;--teum-description-mobile:11px;--teum-description-desktop:13px;--teum-blue:#2563EB;--teum-navy:#183B6B;--teum-yellow:#FFC928}
+.challenge-screen .challenge-hero{box-sizing:border-box;min-height:var(--teum-banner-height-desktop);border-radius:var(--teum-banner-radius-desktop);padding:var(--teum-banner-padding-desktop);display:flex;flex-direction:column;justify-content:center}
+.challenge-screen .challenge-hero h1{font-size:var(--teum-title-desktop)}
+.challenge-screen .challenge-hero p:last-child{font-size:var(--teum-description-desktop)}
+@media(max-width:640px){.challenge-screen .challenge-hero{min-height:var(--teum-banner-height-mobile);border-radius:var(--teum-banner-radius-mobile);padding:var(--teum-banner-padding-mobile)}.challenge-screen .challenge-hero h1{font-size:var(--teum-title-mobile)}.challenge-screen .challenge-hero p:last-child{font-size:var(--teum-description-mobile)}}
