@@ -30,6 +30,11 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}
 .hero-copy h1{margin:11px 0 9px;font-size:29px;line-height:1.16;letter-spacing:-.065em;color:#28334a}.hero-copy h1 em{font-style:normal;color:#2367e8}.hero-copy p{margin:0;color:#6f746f;font-size:12px;line-height:1.55;max-width:245px}
 .hero-cta{display:inline-flex;align-items:center;gap:7px;margin-top:17px;padding:11px 14px;border-radius:14px;background:#fff;color:#26324a;font-size:12px;font-weight:900;box-shadow:0 8px 22px rgba(78,67,50,.09)}
 .hero-cta.primary{background:#2367e8;color:#fff}
+/* Fixed hero CTA */
+.hero-slide .hero-cta{position:absolute;left:22px;bottom:26px;margin-top:0;z-index:5;white-space:nowrap}
+.hero-slide .hero-copy{position:static}
+.hero-slide .hero-kicker,.hero-slide .hero-copy h1,.hero-slide .hero-copy p{position:relative;z-index:3}
+
 .hero-art{position:absolute;z-index:2;right:12px;top:42px;width:43%;height:245px}
 .hero-count{position:absolute;z-index:8;right:14px;top:14px;padding:6px 9px;border-radius:999px;background:rgba(39,44,53,.68);color:#fff;font-size:10px;font-weight:850}
 .hero-dots{display:flex;justify-content:center;gap:6px;padding:11px 0 2px}.hero-dot{width:6px;height:6px;border:0;border-radius:50%;background:#d3c6b5;padding:0}.hero-dot.active{width:20px;border-radius:999px;background:#2367e8}
