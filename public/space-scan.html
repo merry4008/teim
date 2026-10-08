@@ -406,6 +406,25 @@ body{background:#fbf8f3}
  .ar-flow-item{flex-basis:70px}
 }
 
+
+/* teim-ar-steps-4-7 */
+.ar-finish-btn{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:15px;background:#3287f6;color:#fff;font-size:13px;font-weight:950}
+.ar-complete{display:none;min-height:68vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 22px;background:linear-gradient(180deg,#fbf8f3,#fff);border-radius:30px}
+.ar-complete-mark{width:86px;height:86px;border-radius:50%;display:grid;place-items:center;background:#ffe69a;color:#15264b;font-size:42px;margin-bottom:20px;box-shadow:0 12px 28px rgba(173,128,0,.12)}
+.ar-complete-kicker{margin:0 0 9px;color:#3287f6;font-size:11px;font-weight:950;letter-spacing:.12em}
+.ar-complete h2{margin:0;color:#15264b;font-size:30px;line-height:1.2;letter-spacing:-.06em}
+.ar-complete-copy{margin:10px 0 18px;color:#647087;font-size:14px;line-height:1.6}
+.ar-complete-mission{width:100%;max-width:380px;padding:16px;border:1px solid #ece8e1;border-radius:19px;background:#fff;text-align:left}
+.ar-complete-mission small{display:block;color:#8a94a3;font-size:10px;font-weight:850}
+.ar-complete-mission strong{display:block;margin-top:5px;color:#15264b;font-size:15px;line-height:1.45}
+.ar-complete-mission span{display:block;margin-top:6px;color:#68758a;font-size:12px;line-height:1.5}
+.ar-complete-actions{width:100%;max-width:380px;display:grid;gap:9px;margin-top:18px}
+.ar-complete-actions a,.ar-complete-actions button{min-height:49px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:950}
+.ar-complete-record{background:#15264b;color:#fff}
+.ar-complete-again{border:1px solid #dfe4eb;background:#fff;color:#263957}
+main.ar-complete-mode>:not(.ar-complete){display:none!important}
+main.ar-complete-mode>.ar-complete{display:flex!important}
+
 </style>
 </head>
 <body data-teum-shell="ai">
@@ -752,7 +771,7 @@ scanBtn.onclick=async()=>{
     stage.classList.add('has-result');
     photoCheck.classList.remove('show');
     document.querySelector('.scan-card')?.classList.add('has-scan-result');
-    results.classList.remove('show');
+    results.classList.add('show');
     focusCard.classList.remove('show');
     markers.forEach(m=>m.classList.remove('active'));
     boxes.forEach(b=>b.classList.remove('active'));
@@ -788,6 +807,11 @@ window.addEventListener('pagehide',stopCamera);
  const room=document.createElement('section');room.className='ar-room-card';
  room.innerHTML='<h3>어떤 공간을 비워볼까요?</h3><p>촬영할 공간을 골라주세요. AI는 실제 사진에서 확인되는 물건만 분석해요.</p><div class="ar-rooms" role="group" aria-label="공간 선택"><button class="ar-room" type="button" aria-pressed="false">침실</button><button class="ar-room" type="button" aria-pressed="false">거실</button><button class="ar-room" type="button" aria-pressed="false">주방</button><button class="ar-room" type="button" aria-pressed="false">책상</button><button class="ar-room" type="button" aria-pressed="false">옷장</button><button class="ar-room" type="button" aria-pressed="false">기타</button></div>';
  hero.insertAdjacentElement('afterend',room);
+ const completion=document.createElement('section');completion.className='ar-complete';completion.setAttribute('aria-live','polite');
+ completion.innerHTML='<div class="ar-complete-mark" aria-hidden="true">✦</div><p class="ar-complete-kicker">TEUM SPACE · COMPLETE</p><h2>잘했어요!<br>하나의 공간이 더 가벼워졌어요.</h2><p class="ar-complete-copy">작은 비움을 해낸 오늘을 트임기록에 남겨보세요.</p><div class="ar-complete-mission"><small id="arCompleteSpace"></small><strong id="arCompleteTitle"></strong><span id="arCompleteAction"></span></div><div class="ar-complete-actions"><a class="ar-complete-record" href="challenge.html">트임기록 확인하기 →</a><button class="ar-complete-again" id="arAnother" type="button">다른 공간도 해볼까요?</button></div>';
+ main.appendChild(completion);
+ const finish=document.createElement('button');finish.type='button';finish.id='arFinish';finish.className='ar-finish-btn';finish.textContent='비움을 완료하고 기록하기';
+ document.getElementById('focusCard')?.appendChild(finish);
  let current=1;
  function setStep(n){
    current=Math.max(1,Math.min(7,n));
@@ -812,7 +836,31 @@ window.addEventListener('pagehide',stopCamera);
  });
  if(stage)observer.observe(stage,{attributes:true,attributeFilter:['class']});
  if(focus)observer.observe(focus,{attributes:true,attributeFilter:['class']});
- document.addEventListener('click',e=>{if(e.target.closest('#focusStart,.point-start'))setStep(7)});
+ finish.addEventListener('click',()=>{
+   const title=document.getElementById('focusTitle')?.textContent||'오늘의 공간 비움';
+   const action=document.getElementById('focusAction')?.textContent||'';
+   const space=sessionStorage.getItem('teimArSpace')||'선택한 공간';
+   const record={title,action,space,completedAt:new Date().toISOString(),source:'ar-space-scan'};
+   try{
+     const old=JSON.parse(localStorage.getItem('teimArRecords')||'[]');
+     const records=Array.isArray(old)?old:[];
+     records.unshift(record);localStorage.setItem('teimArRecords',JSON.stringify(records.slice(0,50)));
+     localStorage.setItem('teimQuickCount',String((Number(localStorage.getItem('teimQuickCount'))||0)+1));
+   }catch(_){alert('브라우저 저장이 제한되어 기록을 저장하지 못했어요. 브라우저 설정을 확인해주세요.');return}
+   document.getElementById('arCompleteSpace').textContent=space+' · 오늘의 비움';
+   document.getElementById('arCompleteTitle').textContent=title;
+   document.getElementById('arCompleteAction').textContent=action;
+   document.dispatchEvent(new Event('teum:records-updated'));
+   main.classList.add('ar-complete-mode');setStep(7);
+   window.scrollTo({top:0,behavior:'smooth'});
+ });
+ document.getElementById('arAnother')?.addEventListener('click',()=>{
+   main.classList.remove('ar-complete-mode');
+   room.querySelectorAll('.ar-room').forEach(btn=>btn.setAttribute('aria-pressed','false'));
+   sessionStorage.removeItem('teimArSpace');
+   document.getElementById('retryBtn')?.click();
+   setStep(1);window.scrollTo({top:0,behavior:'smooth'});
+ });
  const title=hero.querySelector('h2'),copy=hero.querySelector('p');
  if(title)title.innerHTML='지금, 내 공간을<br><em>한눈에 비워보세요.</em>';
  if(copy)copy.textContent='사진 한 장으로 먼저 손댈 곳을 찾고, 10분 안에 할 수 있는 비움을 추천해요.';
