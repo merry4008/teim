@@ -4,3 +4,10 @@
 .challenge-screen .challenge-hero h1{font-size:var(--teum-title-desktop)}
 .challenge-screen .challenge-hero p:last-child{font-size:var(--teum-description-desktop)}
 @media(max-width:640px){.challenge-screen .challenge-hero{min-height:var(--teum-banner-height-mobile);border-radius:var(--teum-banner-radius-mobile);padding:var(--teum-banner-padding-mobile)}.challenge-screen .challenge-hero h1{font-size:var(--teum-title-mobile)}.challenge-screen .challenge-hero p:last-child{font-size:var(--teum-description-mobile)}}
+
+/* Page-level banners (homepage image carousel is intentionally excluded). */
+.ar-wizard .hero,.dispose-hero{box-sizing:border-box;min-height:var(--teum-banner-height-desktop);height:auto;border-radius:var(--teum-banner-radius-desktop);padding:var(--teum-banner-padding-desktop)}
+.ar-wizard .hero{flex:0 0 auto;height:var(--teum-banner-height-desktop);min-height:var(--teum-banner-height-desktop)}
+.ar-wizard .hero h2{font-size:var(--teum-title-desktop)}
+.ar-wizard .hero p{font-size:var(--teum-description-desktop)}
+@media(max-width:640px){.ar-wizard .hero,.dispose-hero{min-height:var(--teum-banner-height-mobile);border-radius:var(--teum-banner-radius-mobile);padding:var(--teum-banner-padding-mobile)}.ar-wizard .hero{height:var(--teum-banner-height-mobile);flex:0 0 auto}.ar-wizard .hero h2{font-size:var(--teum-title-mobile)}.ar-wizard .hero p{font-size:var(--teum-description-mobile)}}
