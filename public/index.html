@@ -70,12 +70,18 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}
 #teumAiNav a{border-radius:19px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8490a3;font-size:10px;font-weight:800}#teumAiNav a b{font-size:20px;line-height:1;font-weight:600}#teumAiNav a.active{background:var(--pb);color:var(--b)}
 @media(min-width:700px){.ai-home{padding-left:28px;padding-right:28px}.ai-hero{min-height:390px}.ai-hero h1{font-size:48px}.ai-search{right:180px}.ai-face{right:54px;bottom:53px;width:125px;height:125px}.ai-eye{top:45px}.ai-eye.l{left:31px}.ai-eye.r{right:31px}.ai-smile{top:81px;left:50px}.ai-duo{gap:16px}.ai-big-card{min-height:185px;padding:23px}.ai-big-card p{max-width:240px}}
 
-/* Full-bleed editable hero backgrounds */
-.hero-slide.has-banner-image{background-image:linear-gradient(90deg,rgba(255,249,239,.96) 0%,rgba(255,249,239,.87) 42%,rgba(255,249,239,.12) 100%),var(--banner-image);background-position:center,center;background-size:cover;background-repeat:no-repeat}
-.hero-slide.has-banner-image::before,.hero-slide.has-banner-image::after{display:none}
-.hero-slide.has-banner-image .hero-art{display:none}
-.hero-slide.has-banner-image .hero-copy{width:65%;max-width:360px}
-@media(max-width:420px){.hero-slide.has-banner-image{background-image:linear-gradient(90deg,rgba(255,249,239,.95) 0%,rgba(255,249,239,.83) 49%,rgba(255,249,239,.08) 100%),var(--banner-image)}.hero-slide.has-banner-image .hero-copy{width:70%}}
+/* Home banner shell: artwork comes only from home.json; text and CTA remain live HTML. */
+.hero-slide.has-banner-image,.hero-slide.hero-has-background{
+ background-image:var(--banner-image)!important;
+ background-size:cover!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+}
+.hero-slide.has-banner-image::before,.hero-slide.has-banner-image::after,
+.hero-slide.hero-has-background::before,.hero-slide.hero-has-background::after{display:none!important;content:none!important}
+.hero-slide .hero-art{display:none!important}
+.hero-slide.has-banner-image .hero-copy,.hero-slide.hero-has-background .hero-copy{width:65%;max-width:360px}
+@media(max-width:420px){.hero-slide.has-banner-image .hero-copy,.hero-slide.hero-has-background .hero-copy{width:70%}}
 </style>
 </head>
 <body data-teum-shell="ai">
