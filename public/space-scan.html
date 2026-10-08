@@ -850,7 +850,7 @@ window.addEventListener('pagehide',stopCamera);
    document.getElementById('arCompleteSpace').textContent=space+' · 오늘의 비움';
    document.getElementById('arCompleteTitle').textContent=title;
    document.getElementById('arCompleteAction').textContent=action;
-   document.dispatchEvent(new Event('teum:records-updated'));
+   window.dispatchEvent(new Event('teum:records-updated'));
    main.classList.add('ar-complete-mode');setStep(7);
    window.scrollTo({top:0,behavior:'smooth'});
  });
