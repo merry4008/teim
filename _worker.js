@@ -68,13 +68,8 @@ function rewriteHtml(response, pathname) {
       pageHtml = pageHtml.replace("</head>", `<style id="mission-record-link-style">.mission-record-link{background:#FFC928!important;color:#183B6B!important;text-decoration:none}.mission-record-link span{background:#fff!important;color:#183B6B!important}.mission-record-link strong{color:#183B6B!important}</style></head>`);
     }
 
-    if (!pageHtml.includes("teum2-nav-style")) pageHtml = pageHtml.replace("</head>", '<style id="teum2-nav-style">.bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}.bottom-nav .nav-label{white-space:normal!important;line-height:1.2}.bottom-nav a{font-size:12px!important}</style></head>');
-
     if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
-
-    // One canonical navigation script for every HTML response, including index and AI shell.
-    let rewritten = pageHtml.replace(/<script\\b[^>]*src=["'][^"']*teum-bottom-nav\\.js[^"']*["'][^>]*><\\/script>/gi, "");
-    rewritten = rewritten.replace(/<\\/body>/i, '<script src="/teum-bottom-nav.js?v=20261008-4" defer></script></body>');
+    let rewritten = pageHtml.replace(/<script\\b[^>]*src=[\"'][^\"']*teum-bottom-nav\\.js[^\"']*[\"'][^>]*><\\/script>/gi, \"\");
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
     return new Response(rewritten, { status: response.status, statusText: response.statusText, headers });
