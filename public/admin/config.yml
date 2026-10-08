@@ -1,0 +1,68 @@
+backend:
+  name: github
+  repo: merry4008/teim
+  branch: main
+  base_url: https://teim.merry4008.workers.dev
+  auth_endpoint: api/cms/auth
+publish_mode: editorial_workflow
+media_folder: public/uploads
+public_folder: /uploads
+site_url: https://teim.merry4008.workers.dev
+display_url: https://teim.merry4008.workers.dev
+logo_url: /tuim_logo.png
+locale: ko
+collections:
+  - name: homepage
+    label: 홈 배너·이미지
+    files:
+      - name: homepage
+        label: 홈페이지 이미지와 문구
+        file: public/content/home.json
+        fields:
+          - label: 빅배너
+            name: banners
+            widget: list
+            allow_add: false
+            summary: '{{fields.label}}'
+            fields:
+              - {label: 배너 번호, name: id, widget: hidden}
+              - {label: 관리용 이름, name: label, widget: string}
+              - {label: 이미지, name: image, widget: image, required: false, hint: '비워두면 기존 그림을 유지합니다. JPG·PNG·WebP·GIF를 사용해주세요.'}
+              - {label: 이미지 설명, name: alt, widget: string, required: false}
+              - {label: 제목, name: title, widget: text, required: false, hint: '비워두면 기존 제목을 유지합니다. 줄바꿈이 가능합니다.'}
+              - {label: 설명, name: description, widget: text, required: false}
+              - {label: 버튼 문구, name: button_label, widget: string, required: false}
+              - {label: 버튼 연결 주소, name: link, widget: string, required: false, hint: '예: /magazine.html 또는 https://로 시작하는 주소'}
+          - label: 하단 콘텐츠 카드 이미지
+            name: cards
+            widget: list
+            allow_add: false
+            summary: '{{fields.label}}'
+            fields:
+              - {label: 카드 번호, name: id, widget: hidden}
+              - {label: 관리용 이름, name: label, widget: string}
+              - {label: 이미지, name: image, widget: image, required: false}
+              - {label: 이미지 설명, name: alt, widget: string, required: false}
+  - name: magazine
+    label: 매거진 글 관리
+    files:
+      - name: magazine
+        label: 매거진 글 목록
+        file: public/content/magazine.json
+        fields:
+          - {label: 상단 추천 제목, name: featured_title, widget: text}
+          - {label: 상단 추천 설명, name: featured_description, widget: string}
+          - label: 글 목록
+            name: articles
+            widget: list
+            summary: '{{fields.title}}'
+            collapsed: true
+            fields:
+              - {label: 제목, name: title, widget: string}
+              - {label: 카테고리, name: cat, widget: select, options: [공간, 마음, 생활, 관계]}
+              - {label: 한 줄 소개, name: sub, widget: string}
+              - {label: 대표 이미지, name: image, widget: image, required: false}
+              - {label: 이미지 설명, name: alt, widget: string, required: false}
+              - {label: 이미지 없을 때 아이콘, name: icon, widget: string, default: '✦', required: false}
+              - {label: 본문, name: body, widget: text, hint: '문단은 줄바꿈으로 구분합니다.'}
+              - {label: 홈페이지 노출, name: published, widget: boolean, default: true, hint: '끄면 매거진 목록에서 숨깁니다. 저장소가 공개되어 있으므로 비밀글 보관용으로 사용하지 마세요.'}
