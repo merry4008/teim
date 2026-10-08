@@ -301,30 +301,8 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}
  form.addEventListener('submit',function(e){e.preventDefault();const q=input.value.trim();if(q)localStorage.setItem('teimInitialConcern',q);location.href='test.html'+(q?'?q='+encodeURIComponent(q):'');});
  function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 })();
-</script><script src="/cms-home.js?v=1" defer></script>
-<script>
-/* Banner images are managed in /content/home.json, while copy and CTAs stay in HTML. */
-(async function(){
-  try {
-    const response=await fetch('content/home.json',{cache:'no-store'});
-    if(!response.ok)return;
-    const data=await response.json();
-    const slides=document.querySelectorAll('#heroTrack .hero-slide');
-    (data.banners||[]).forEach((banner,index)=>{
-      if(!banner || !banner.image || !slides[index])return;
-      const file=String(banner.image).trim();
-      if(!file)return;
-      const url=file.startsWith('/')?file:'/'+file.replace(/^\\/+/, '');
-      const img=new Image();
-      img.onload=()=>{
-        slides[index].style.setProperty('--banner-image','url("'+url.replace(/"/g,'%22')+'")');
-        slides[index].classList.add('has-banner-image');
-      };
-      img.src=url;
-    });
-  }catch(error){console.warn('Banner image configuration unavailable',error)}
-})();
-</script>
+</script><script src="/cms-home.js?v=2" defer></script>
+
 </body>
 </html>
 
