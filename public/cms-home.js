@@ -1,7 +1,7 @@
 (async function(){
  'use strict';
  function safeUrl(value,image){try{if(typeof value!=='string'||!value.trim())return null;const u=new URL(value,location.origin);if(u.protocol!=='https:'&&u.origin!==location.origin)return null;if(image&&!/\.(png|jpe?g|webp|gif)$/i.test(u.pathname))return null;return u.href;}catch{return null;}}
- function setBannerBackground(slide,item){const src=safeUrl(item.image,true);if(!src||!slide)return;const img=new Image();img.onload=()=>{slide.style.backgroundImage='url('+JSON.stringify(src)+')';slide.classList.add('hero-has-background');};img.src=src;}
+ function setBannerBackground(slide,item){const src=safeUrl(item.image,true);if(!src||!slide)return;const img=new Image();img.onload=()=>{slide.style.setProperty('--banner-image','url('+JSON.stringify(src)+')');slide.classList.add('hero-has-background');};img.src=src;}
  function setBannerCopy(slide,item){
   if(!slide||!item)return;
   const copy=slide.querySelector('.hero-copy');if(!copy)return;
