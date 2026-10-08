@@ -12,6 +12,38 @@ display_url: https://teim.merry4008.workers.dev
 logo_url: /tuim_logo.png
 locale: ko
 collections:
+  - name: design
+    label: 공통 디자인 관리
+    files:
+      - name: settings
+        label: 서비스 페이지 배너 규격·컬러
+        file: public/content/design.json
+        fields:
+          - label: 배너 크기 및 여백 (px)
+            name: banner
+            widget: object
+            fields:
+              - {label: 모바일 높이, name: height_mobile, widget: number, min: 80, max: 400}
+              - {label: PC 높이, name: height_desktop, widget: number, min: 80, max: 500}
+              - {label: 모바일 모서리, name: radius_mobile, widget: number, min: 0, max: 80}
+              - {label: PC 모서리, name: radius_desktop, widget: number, min: 0, max: 80}
+              - {label: 모바일 안쪽 여백, name: padding_mobile, widget: number, min: 8, max: 70}
+              - {label: PC 안쪽 여백, name: padding_desktop, widget: number, min: 8, max: 70}
+          - label: 글자 크기 (px)
+            name: typography
+            widget: object
+            fields:
+              - {label: 모바일 제목, name: title_mobile, widget: number, min: 14, max: 56}
+              - {label: PC 제목, name: title_desktop, widget: number, min: 14, max: 72}
+              - {label: 모바일 설명, name: description_mobile, widget: number, min: 9, max: 26}
+              - {label: PC 설명, name: description_desktop, widget: number, min: 9, max: 30}
+          - label: 브랜드 컬러 (HEX)
+            name: colors
+            widget: object
+            fields:
+              - {label: 트임블루, name: blue, widget: string}
+              - {label: 네이비, name: navy, widget: string}
+              - {label: 선샤인옐로, name: yellow, widget: string}
   - name: homepage
     label: 홈 배너·이미지
     files:
