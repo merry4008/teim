@@ -427,6 +427,8 @@ main.ar-complete-mode>.ar-complete{display:flex!important}
 
 
 /* teim-ar-screen-layout-v3 */
+.ar-wizard #quickTeimExperience{display:none!important}
+
 body.ar-fullscreen{
   height:100svh!important;min-height:100svh!important;overflow:hidden!important;
   padding:0 0 calc(82px + env(safe-area-inset-bottom,0px))!important;background:#fbf8f3
@@ -1017,6 +1019,7 @@ window.addEventListener('pagehide',stopCamera);
  completion.innerHTML='<div class="ar-complete-mark" aria-hidden="true">✦</div><p class="ar-complete-kicker">TEUM SPACE · COMPLETE</p><h2>잘했어요!<br>하나의 공간이 더 가벼워졌어요.</h2><p class="ar-complete-copy">작은 비움을 해낸 오늘을 트임기록에 남겨보세요.</p><div class="ar-complete-mission"><small id="arCompleteSpace"></small><strong id="arCompleteTitle"></strong><span id="arCompleteAction"></span></div><div class="ar-complete-actions"><a class="ar-complete-record" href="challenge.html">트임기록 확인하기 →</a><button class="ar-complete-again" id="arAnother" type="button">다른 공간도 해볼까요?</button></div>';
  main.appendChild(completion);
  main.classList.add('ar-wizard','ar-fullscreen');
+ document.body.classList.add('ar-fullscreen');
  const intro=document.createElement('section');intro.className='ar-intro-card';intro.innerHTML='<div class="ar-intro-icon">✦</div><p class="ar-complete-kicker">TEUM SPACE · AI SCAN</p><h3>사진 한 장으로<br>공간 비움을 시작해요.</h3><p>먼저 공간을 고르고, 사진 속에서 지금 정리할 곳을 찾아볼게요.</p><button class="ar-next-step" id="arStart" type="button">지금 시작하기 →</button>';
  main.insertBefore(intro,room);
  const roomNext=document.createElement('button');roomNext.type='button';roomNext.className='ar-next-step';roomNext.textContent='이 공간으로 계속하기 →';room.appendChild(roomNext);
