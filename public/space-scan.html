@@ -694,7 +694,7 @@ scanBtn.onclick=async()=>{
   photoCheck.classList.remove('show');
   scanNotice.className='scan-notice';scanNotice.innerHTML='';
   try{
-    const r=await fetch('/api/space-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData})});
+    const r=await fetch('/api/space-scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:imageData,space:sessionStorage.getItem('teimArSpace')||''})});
     const data=await r.json();if(!data.ok)throw new Error(data.message||'분석 실패');
     points=data.result.points||[];summary.textContent=data.result.summary||'지금 바로 할 수 있는 작은 정리부터 시작해보세요.';
     pointList.innerHTML=points.map((p,i)=>
@@ -786,7 +786,7 @@ window.addEventListener('pagehide',stopCamera);
  steps.forEach((s,i)=>{const el=document.createElement('div');el.className='ar-flow-item'+(i===0?' active':'');el.dataset.step=String(i+1);el.dataset.number=s[0];el.textContent=s[1];flow.appendChild(el)});
  back.insertAdjacentElement('afterend',flow);
  const room=document.createElement('section');room.className='ar-room-card';
- room.innerHTML='<h3>어떤 공간을 비워볼까요?</h3><p>먼저 살펴볼 공간을 고르면 촬영할 때 기준으로 삼을 수 있어요.</p><div class="ar-rooms" role="group" aria-label="공간 선택"><button class="ar-room" type="button" aria-pressed="false">침실</button><button class="ar-room" type="button" aria-pressed="false">거실</button><button class="ar-room" type="button" aria-pressed="false">주방</button><button class="ar-room" type="button" aria-pressed="false">책상</button><button class="ar-room" type="button" aria-pressed="false">옷장</button><button class="ar-room" type="button" aria-pressed="false">기타</button></div>';
+ room.innerHTML='<h3>어떤 공간을 비워볼까요?</h3><p>촬영할 공간을 골라주세요. AI는 실제 사진에서 확인되는 물건만 분석해요.</p><div class="ar-rooms" role="group" aria-label="공간 선택"><button class="ar-room" type="button" aria-pressed="false">침실</button><button class="ar-room" type="button" aria-pressed="false">거실</button><button class="ar-room" type="button" aria-pressed="false">주방</button><button class="ar-room" type="button" aria-pressed="false">책상</button><button class="ar-room" type="button" aria-pressed="false">옷장</button><button class="ar-room" type="button" aria-pressed="false">기타</button></div>';
  hero.insertAdjacentElement('afterend',room);
  let current=1;
  function setStep(n){
