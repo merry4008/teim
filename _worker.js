@@ -1,6 +1,20 @@
+import { handleCmsAuth } from "./cms-auth.js";
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (["/api/cms/status", "/api/cms/auth", "/api/cms/callback"].includes(url.pathname)) return handleCmsAuth(request, env);
+    if (url.pathname === "/admin") return Response.redirect(url.origin + "/admin/", 302);
+    if (url.pathname.startsWith("/admin/")) {
+      if (url.pathname === "/admin/") url.pathname = "/admin/index.html";
+      const asset = await env.ASSETS.fetch(new Request(url.toString(), request));
+      const headers = new Headers(asset.headers);
+      headers.set("cache-control", "no-store");
+      headers.set("x-frame-options", "DENY");
+      headers.set("x-content-type-options", "nosniff");
+      headers.set("referrer-policy", "same-origin");
+      return new Response(asset.body, {status: asset.status, headers});
+    }
+
     if (url.pathname === "/api/weather-mission") return handleWeatherMission(request);
     if (url.pathname === "/api/teim-ai") return handleTeimAi(request, env);
     if (url.pathname === "/api/space-scan") return handleSpaceScan(request, env);
@@ -679,4 +693,5 @@ async function handleClothingBinsGeocode(request,env) {
     return teumBinsResponse({ok:true,lat,lng,label:item.address_name || item.place_name || query});
   } catch (_) { return teumBinsResponse({ok:false,code:"GEOCODE_ERROR",message:"주소를 확인하지 못했습니다. 지역명을 조금 더 구체적으로 입력해주세요."},502); }
 }
+
 

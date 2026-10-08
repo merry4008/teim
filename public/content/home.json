@@ -1,0 +1,84 @@
+{
+  "banners": [
+    {
+      "id": 1,
+      "label": "트임 AI",
+      "image": "",
+      "alt": "",
+      "title": "",
+      "description": "",
+      "button_label": "",
+      "link": ""
+    },
+    {
+      "id": 2,
+      "label": "트임체크",
+      "image": "",
+      "alt": "",
+      "title": "",
+      "description": "",
+      "button_label": "",
+      "link": ""
+    },
+    {
+      "id": 3,
+      "label": "트임미션",
+      "image": "",
+      "alt": "",
+      "title": "",
+      "description": "",
+      "button_label": "",
+      "link": ""
+    },
+    {
+      "id": 4,
+      "label": "트임공간",
+      "image": "",
+      "alt": "",
+      "title": "",
+      "description": "",
+      "button_label": "",
+      "link": ""
+    },
+    {
+      "id": 5,
+      "label": "공간 스캔",
+      "image": "",
+      "alt": "",
+      "title": "",
+      "description": "",
+      "button_label": "",
+      "link": ""
+    },
+    {
+      "id": 6,
+      "label": "트임기록",
+      "image": "",
+      "alt": "",
+      "title": "",
+      "description": "",
+      "button_label": "",
+      "link": ""
+    }
+  ],
+  "cards": [
+    {
+      "id": 1,
+      "label": "트임 매거진",
+      "image": "",
+      "alt": ""
+    },
+    {
+      "id": 2,
+      "label": "다른 사람들의 트임",
+      "image": "",
+      "alt": ""
+    },
+    {
+      "id": 3,
+      "label": "트임 셀렉트",
+      "image": "",
+      "alt": ""
+    }
+  ]
+}
