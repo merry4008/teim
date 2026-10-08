@@ -58,7 +58,8 @@
       "body{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))!important}",
       "#teumGlobalBottomNav{position:fixed!important;left:50%!important;right:auto!important;bottom:0!important;transform:translateX(-50%)!important;z-index:2147483000!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:stretch!important;width:min(100%,760px)!important;height:calc(82px + env(safe-area-inset-bottom,0px))!important;padding:0 0 env(safe-area-inset-bottom,0px)!important;box-sizing:border-box!important;background:#fff!important;border-top:1px solid #e3e6eb!important;box-shadow:none!important}",
       "#teumGlobalBottomNav a{display:flex!important;min-width:0!important;min-height:60px!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:6px 2px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#89919b!important;text-decoration:none!important;font:500 12px/1.2 system-ui,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;white-space:nowrap!important}",
-      "#teumGlobalBottomNav a[aria-current='page']{color:#2367e8!important;font-weight:750!important}",
+      "#teumGlobalBottomNav a[aria-current='page']{color:#2367e8!important;font-weight:750!important;background:#edf4ff!important}",
+      "#teumGlobalBottomNav a[aria-current='page'] svg{color:#2367e8!important;stroke-width:2.2!important}",
       "#teumGlobalBottomNav a:focus-visible{outline:2px solid #2367e8!important;outline-offset:-3px!important;border-radius:8px!important}",
       "#teumGlobalBottomNav svg{display:block!important;width:24px!important;height:24px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;flex:none!important}",
       "#teumGlobalBottomNav a[data-key='ai'] svg{fill:currentColor!important;stroke:none!important}",
@@ -72,7 +73,8 @@
     if (!document.body || !document.head) return;
     removeLegacyNavigation();
     addStyles();
-    if (document.getElementById(NAV_ID)) return;
+    const existing = document.getElementById(NAV_ID);
+    if (existing) existing.remove();
 
     const page = decodeURIComponent(location.pathname.split("/").pop() || "index.html");
     const active = routeMap[page] || "home";
@@ -85,6 +87,12 @@
         icons[item.key] + "<span>" + item.label + "</span></a>";
     }).join("");
     document.body.appendChild(nav);
+    nav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        nav.querySelectorAll("a").forEach(function (other) { other.removeAttribute("aria-current"); });
+        link.setAttribute("aria-current", "page");
+      });
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render, { once: true });
