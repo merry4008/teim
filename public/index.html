@@ -9,7 +9,7 @@
 <style>
 :root{--b:#2367e8;--n:#15264b;--y:#ffda52;--bg:#f7f8fb;--w:#fff;--m:#748198;--l:#e8edf5;--pb:#edf4ff;--py:#fff4bd;--r:26px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--n);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding-bottom:110px}
-a{text-decoration:none;color:inherit}button,input{font:inherit}.bottom-nav{display:none!important}
+a{text-decoration:none;color:inherit}button,input{font:inherit}
 .ai-home{max-width:760px;margin:auto;padding:0 18px 38px}.ai-head{height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,248,251,.9);backdrop-filter:blur(16px);position:sticky;top:0;z-index:20}
 .ai-brand{display:flex;align-items:center;gap:9px;font-size:24px;font-weight:950;letter-spacing:-.05em}.ai-brand i{width:29px;height:29px;border-radius:9px;background:var(--b);position:relative;display:block}.ai-brand i:before{content:"";position:absolute;width:15px;height:12px;border-radius:50%;background:#fff;left:7px;top:8px}.ai-brand i:after{content:"";position:absolute;width:5px;height:5px;border-radius:50%;background:var(--n);left:12px;top:11px}
 .ai-profile{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid var(--l);background:#fff;border-radius:999px;color:var(--n);font-size:13px;font-weight:850}.ai-profile span{width:24px;height:24px;border-radius:50%;background:var(--py);display:grid;place-items:center}
@@ -289,6 +289,5 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}.bottom-nav{displ
  form.addEventListener('submit',function(e){e.preventDefault();const q=input.value.trim();if(q)localStorage.setItem('teimInitialConcern',q);location.href='test.html'+(q?'?q='+encodeURIComponent(q):'');});
  function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 })();
-</script>
-<script src="teum-bottom-nav.js?v=1" defer></script>\n</body>
+</script></body>
 </html>
