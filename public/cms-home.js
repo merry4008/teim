@@ -20,6 +20,7 @@
  function setImage(container,item){const src=safeUrl(item.image,true);if(!src||!container)return;const img=document.createElement('img');img.src=src;img.alt=String(item.alt||'');img.style.cssText='width:100%;height:100%;object-fit:contain;border-radius:16px;display:block';img.onload=()=>{container.replaceChildren(img);if(img.alt)container.removeAttribute('aria-hidden');};}
  try{const r=await fetch('/content/home.json',{cache:'no-cache'});if(!r.ok)return;const data=await r.json();
  (data.banners||[]).forEach(item=>{if(!Number.isInteger(Number(item.id))||Number(item.id)<1)return;const slide=document.querySelectorAll('#heroTrack .hero-slide')[Number(item.id)-1];if(!slide)return;setBannerBackground(slide,item);setBannerCopy(slide,item);});
+ if(typeof window.teumSetActiveBanners==='function')window.teumSetActiveBanners((data.banners||[]));
  (data.cards||[]).forEach(item=>{const card=document.querySelectorAll('.ai-feed-card')[Number(item.id)-1];if(card)setImage(card.querySelector('.ai-feed-image'),item);});
  }catch{/* Keep the existing homepage when content is unavailable. */}
 })();
