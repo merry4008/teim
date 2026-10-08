@@ -473,6 +473,7 @@ body.ar-fullscreen{height:100svh!important;min-height:100svh!important;overflow:
 @keyframes arSpin{to{transform:rotate(360deg)}}@keyframes arCounterSpin{to{transform:rotate(-360deg)}}
 .ar-wizard .results{display:none;padding:15px;border:1px solid #ece8e1;border-radius:22px;background:#fff;box-shadow:0 10px 28px rgba(62,53,40,.05)}
 .ar-wizard .results-head{margin-bottom:4px}
+.ar-wizard .results>.ar-step-back{display:block;min-height:38px;margin-top:8px}
 .ar-wizard .results h3{font-size:18px}
 .ar-wizard .results-head span{font-size:9px}
 .ar-wizard .summary{font-size:11px;margin:0 0 7px}
@@ -490,7 +491,7 @@ body.ar-fullscreen{height:100svh!important;min-height:100svh!important;overflow:
 .ar-wizard .focus-card.show{display:block}
 .ar-wizard .focus-card h4{font-size:18px;margin:2px 0 8px}
 .ar-wizard .focus-time,.ar-wizard .focus-number{font-size:10px}
-.ar-wizard .focus-meta,.ar-wizard .focus-evidence,.ar-wizard .focus-reason,#showAllBtn{display:none!important}
+.ar-wizard #focusMeta,.ar-wizard .focus-evidence,.ar-wizard .focus-reason,#showAllBtn{display:none!important}
 .ar-wizard .focus-action{font-size:12px;padding:10px 12px}
 .ar-wizard .focus-actions{grid-template-columns:1fr;gap:6px;margin-top:9px}
 .ar-wizard .focus-start{min-height:43px;font-size:12px}
@@ -973,10 +974,15 @@ window.addEventListener('pagehide',stopCamera);
    document.getElementById('retryBtn')?.click();
    setStep(1);window.scrollTo({top:0,behavior:'smooth'});
  });
+ const retryFromResults=document.getElementById('arRetryFromResults');
+ const results=document.getElementById('results');
+ if(!retryFromResults||!results)throw new Error('AR 결과 카드 구성 오류');
+ results.appendChild(retryFromResults);
  document.getElementById('arRetryFromResults')?.addEventListener('click',()=>{document.getElementById('retryBtn')?.click();setStep(3)});
  const title=hero.querySelector('h2'),copy=hero.querySelector('p');
  if(title)title.innerHTML='지금, 내 공간을<br><em>한눈에 비워보세요.</em>';
  if(copy)copy.textContent='사진 한 장으로 먼저 손댈 곳을 찾고, 10분 안에 할 수 있는 비움을 추천해요.';
+ setStep(1);
 })();
 </script>
 </body>
