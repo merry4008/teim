@@ -20,7 +20,7 @@
       "description": "",
       "button_label": "",
       "link": "",
-      "enabled": true
+      "enabled": false
     },
     {
       "id": 3,
@@ -53,7 +53,7 @@
       "description": "",
       "button_label": "",
       "link": "",
-      "enabled": false
+      "enabled": true
     },
     {
       "id": 6,
