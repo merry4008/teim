@@ -52,7 +52,7 @@
     .record-lock{overflow:hidden}
     @media(max-width:640px){.challenge-hero{padding:23px 20px;border-radius:25px}.challenge-hero h1{font-size:29px}.challenge-calendar{grid-template-columns:repeat(2,1fr)}.tr-summary{padding:19px 15px}.tr-source span{font-size:10px}.tr-source b{font-size:18px}}
   </style>
-</head>
+<style id="teum-footer-nav-style">.teum-footer-nav{position:fixed;z-index:120;left:50%;transform:translateX(-50%);bottom:0;width:min(720px,100%);height:84px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #e7ebf2;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -8px 28px rgba(21,38,75,.06)}.teum-footer-nav a{text-decoration:none;color:#8b94a3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:10px;font-weight:750}.teum-footer-nav a b{font-size:21px;line-height:1;font-weight:500}.teum-footer-nav a.active{color:#2367e8;font-weight:900}.teum-footer-nav a.active b{color:#2367e8}.teum-footer-nav~*{}body{padding-bottom:84px!important}@media(min-width:721px){.teum-footer-nav{border-left:1px solid #e7ebf2;border-right:1px solid #e7ebf2}}</style></head>
 <body data-page="challenge">
   <aside class="record-menu" id="recordMenu" aria-hidden="true">
   <header class="record-menu-head"><button class="record-menu-close" id="recordMenuClose" type="button" aria-label="전체메뉴 닫기">‹</button><h2>전체메뉴</h2><span></span></header>
@@ -115,12 +115,7 @@
     <section id="challengeCalendar" class="challenge-calendar" aria-label="14일 정리 챌린지 달력"></section>
     <section class="reset-box"><p>체크는 사진을 올린 날짜만 완료 처리됩니다.</p><button id="resetChallenge" type="button">챌린지 초기화</button></section>
   </main>
-  <nav id="teumRecordNav" aria-label="트임 하단 메뉴">
-  <a href="index.html"><b>⌂</b><span>홈</span></a>
-  <a href="test.html"><b>✦</b><span>트임AI</span></a>
-  <a href="action.html"><b>↗</b><span>트임미션</span></a>
-  <a class="active" href="challenge.html"><b>✓</b><span>트임기록</span></a>
-</nav>
+  
   <script>
     (function(){
       const menu=document.getElementById('recordMenu'),open=document.getElementById('recordMenuOpen'),close=document.getElementById('recordMenuClose');
@@ -142,5 +137,11 @@
   </script>
   <script src="teum-rewards.js?v=1" defer></script>
 <script src="teum-bottom-nav.js?v=1" defer></script>
-</body>
+<nav class="teum-footer-nav" aria-label="트임 하단 메뉴">
+<a href="index.html" data-foot="home"><b>⌂</b><span>홈</span></a>
+<a href="test.html" data-foot="ai"><b>✦</b><span>트임AI</span></a>
+<a href="space-scan.html" data-foot="ar"><b>◎</b><span>트임AR</span></a>
+<a href="community.html" data-foot="feed"><b>▦</b><span>트임피드</span></a>
+<a href="challenge.html" class="active" data-foot="record"><b>◯</b><span>내 기록</span></a>
+</nav></body>
 </html>

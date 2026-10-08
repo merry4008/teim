@@ -24,7 +24,7 @@
     #teumActionNav{position:fixed;z-index:80;left:50%;transform:translateX(-50%);bottom:max(12px,env(safe-area-inset-bottom));width:min(430px,calc(100% - 24px));height:72px;border-radius:25px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);box-shadow:0 15px 40px rgba(21,38,75,.14);border:1px solid #e8edf5;display:grid;grid-template-columns:repeat(4,1fr);padding:6px}
     #teumActionNav a{border-radius:19px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8791a1;font-size:10px;font-weight:800;text-decoration:none}#teumActionNav a b{font-size:19px;line-height:1}#teumActionNav a.active{background:#edf4ff;color:#2367E8}
   </style>
-</head>
+<style id="teum-footer-nav-style">.teum-footer-nav{position:fixed;z-index:120;left:50%;transform:translateX(-50%);bottom:0;width:min(720px,100%);height:84px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #e7ebf2;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -8px 28px rgba(21,38,75,.06)}.teum-footer-nav a{text-decoration:none;color:#8b94a3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:10px;font-weight:750}.teum-footer-nav a b{font-size:21px;line-height:1;font-weight:500}.teum-footer-nav a.active{color:#2367e8;font-weight:900}.teum-footer-nav a.active b{color:#2367e8}.teum-footer-nav~*{}body{padding-bottom:84px!important}@media(min-width:721px){.teum-footer-nav{border-left:1px solid #e7ebf2;border-right:1px solid #e7ebf2}}</style></head>
 <body data-page="action" data-teum-shell="ai">
   <aside class="menu-overlay" id="menuOverlay" aria-hidden="true">
   <header class="menu-top">
@@ -79,17 +79,18 @@
     <section id="musicSection" class="music-player"><h2>정리할 때 듣는 음악</h2><p>기분에 따라 노동요 골라보자</p><div class="album-grid"><a class="album-card" href="https://www.youtube.com/results?search_query=%EC%8B%A0%EB%82%98%EB%8A%94+%EC%9A%B4%EB%8F%99+%EC%9D%8C%EC%95%85" target="_blank" rel="noopener"><div class="album-cover"><img src="/music_a_.png" alt="신나는 음악 앨범" /></div><b>신나는 음악</b><span>기분좋게 시작</span><em>재생</em></a><a class="album-card" href="https://www.youtube.com/results?search_query=%EB%AA%85%EC%83%81%EC%9D%8C%EC%95%85" target="_blank" rel="noopener"><div class="album-cover"><img src="/music_b_.png" alt="명상음악 앨범" /></div><b>명상음악</b><span>차분히 시작</span><em>재생</em></a><a class="album-card" href="https://www.youtube.com/results?search_query=%EC%A7%91%EC%A4%91%EC%97%90+%EC%A2%8B%EC%9D%80+%ED%81%B4%EB%9E%98%EC%8B%9D" target="_blank" rel="noopener"><div class="album-cover"><img src="/music_c_.png" alt="클래식음악 앨범" /></div><b>클래식음악</b><span>고요하게 시작</span><em>재생</em></a></div></section>
     <section id="stretchSection" class="stretch-card"><h2>정리 전 1분 스트레칭</h2><p>몸이 먼저 풀리면 정리도 조금 가볍게 시작할 수 있어요.</p><ul class="stretch-list"><li>어깨를 천천히 뒤로 5번 돌리기</li><li>손목과 손가락을 가볍게 털기</li><li>목을 좌우로 천천히 늘리기</li></ul></section>
   </main>
-  <nav id="teumActionNav" aria-label="트임 하단 메뉴">
-  <a href="index.html"><b>⌂</b><span>홈</span></a>
-  <a href="test.html"><b>✦</b><span>트임AI</span></a>
-  <a class="active" href="action.html"><b>↗</b><span>트임미션</span></a>
-  <a href="challenge.html"><b>✓</b><span>트임기록</span></a>
-</nav>
+  
   <script>
 const menu=document.getElementById('menuOverlay'),openMenu=document.getElementById('openMenu'),closeMenu=document.getElementById('closeMenu');
 function setMenu(open){menu.classList.toggle('open',open);menu.setAttribute('aria-hidden',String(!open));document.body.classList.toggle('menu-lock',open)}
 openMenu.addEventListener('click',()=>setMenu(true));closeMenu.addEventListener('click',()=>setMenu(false));document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
 const timerRing=document.getElementById('timerRing'),timerKnob=document.getElementById('timerKnob'),timerTime=document.getElementById('timerTime'),timerMode=document.getElementById('timerMode'),startBtn=document.getElementById('timerStart'),pauseBtn=document.getElementById('timerPause'),resetBtn=document.getElementById('timerReset'),timeOutput=document.getElementById('timeOutput');let mode='focus',focusMinutes=25,seconds=focusMinutes*60,timer=null,dragging=false;function minuteToAngle(min){return (min-1)/59*360}function setKnob(){timerRing.style.setProperty('--angle',minuteToAngle(focusMinutes)+'deg')}function render(){const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');timerTime.textContent=`${m}:${s}`;timerMode.textContent=mode==='focus'?'FOCUS':'BREAK';timeOutput.textContent=focusMinutes+'분';setKnob()}function setFocusMinutes(value){focusMinutes=Math.max(1,Math.min(60,Math.round(Number(value)||25)));if(!timer&&mode==='focus')seconds=focusMinutes*60;render()}function setByPointer(e){const rect=timerRing.getBoundingClientRect(),cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;let deg=Math.atan2(e.clientY-cy,e.clientX-cx)*180/Math.PI+90;if(deg<0)deg+=360;setFocusMinutes(Math.round(deg/360*59)+1)}timerKnob.addEventListener('pointerdown',e=>{dragging=true;timerKnob.setPointerCapture(e.pointerId);setByPointer(e)});timerKnob.addEventListener('pointermove',e=>{if(dragging)setByPointer(e)});timerKnob.addEventListener('pointerup',()=>dragging=false);timerKnob.addEventListener('pointercancel',()=>dragging=false);timerRing.addEventListener('pointerdown',e=>{if(e.target!==timerKnob)setByPointer(e)});function beep(){try{const ctx=new (window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=880;gain.gain.value=.07;osc.start();setTimeout(()=>{osc.stop();ctx.close()},220)}catch(e){}}function switchMode(){beep();mode=mode==='focus'?'break':'focus';seconds=mode==='focus'?focusMinutes*60:5*60;render();alert(mode==='break'?'좋아요. 설정한 시간을 해냈어요! 5분 쉬어가요.':'휴식 끝! 다시 시작해볼까요?')}startBtn.onclick=()=>{if(timer)return;timer=setInterval(()=>{seconds--;if(seconds<=0){clearInterval(timer);timer=null;switchMode()}else render()},1000)};pauseBtn.onclick=()=>{clearInterval(timer);timer=null};resetBtn.onclick=()=>{clearInterval(timer);timer=null;mode='focus';seconds=focusMinutes*60;render()};render();</script>
 <script src="teum-bottom-nav.js?v=1" defer></script>
-</body>
+<nav class="teum-footer-nav" aria-label="트임 하단 메뉴">
+<a href="index.html" data-foot="home"><b>⌂</b><span>홈</span></a>
+<a href="test.html" data-foot="ai"><b>✦</b><span>트임AI</span></a>
+<a href="space-scan.html" data-foot="ar"><b>◎</b><span>트임AR</span></a>
+<a href="community.html" data-foot="feed"><b>▦</b><span>트임피드</span></a>
+<a href="challenge.html" data-foot="record"><b>◯</b><span>내 기록</span></a>
+</nav></body>
 </html>
