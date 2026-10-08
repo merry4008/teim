@@ -259,14 +259,7 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}.bottom-nav{displ
  </div>
 </section>
 
-<section class="ai-section">
- <div class="ai-title-row"><h2>트임이 나를 아는 만큼<br>추천도 더 정확해져요</h2></div>
- <div class="ai-state-card">
-   <div class="ai-state-head"><div class="ai-state-avatar">✦</div><div><h3 id="stateTitle">아직 내 상태를 알려주지 않았어요</h3><p id="stateDesc">생활 방식과 자주 머무는 공간만 가볍게 체크해보세요.</p></div></div>
-   <div class="ai-tags" id="profileTags"><span>주거 형태</span><span>생활 유형</span><span>자주 쓰는 공간</span></div>
-   <a class="ai-state-btn" href="test.html#profile" id="stateButton">내 상태 설정하기 →</a>
- </div>
-</section>
+
 
 <section class="ai-section">
 <div class="ai-title-row"><h2>지금 많이 찾는 트임</h2><p>가볍게 읽고 둘러보세요</p></div>
@@ -300,14 +293,6 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}.bottom-nav{displ
  overlay.addEventListener('click',e=>{if(e.target===overlay)setMenu(false)});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
  form.addEventListener('submit',function(e){e.preventDefault();const q=input.value.trim();if(q)localStorage.setItem('teimInitialConcern',q);location.href='test.html'+(q?'?q='+encodeURIComponent(q):'');});
- let p=null;try{p=JSON.parse(localStorage.getItem('teimProfile')||'null')}catch(e){}
- if(p){
-   document.getElementById('stateTitle').textContent='내 생활에 맞춰 추천할 준비가 됐어요';
-   document.getElementById('stateDesc').textContent='바뀐 게 있다면 언제든 다시 수정할 수 있어요.';
-   const labels=[p.living,p.role,p.space].filter(Boolean);
-   if(labels.length)document.getElementById('profileTags').innerHTML=labels.map(x=>'<span>'+escapeHtml(x)+'</span>').join('');
-   document.getElementById('stateButton').textContent='내 상태 수정하기 →';
- }
  function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 })();
 </script>
