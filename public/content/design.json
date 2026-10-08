@@ -1,17 +1,17 @@
 {
   "banner": {
-    "height_mobile": 112,
-    "height_desktop": 144,
+    "height_mobile": 108,
+    "height_desktop": 108,
     "radius_mobile": 23,
-    "radius_desktop": 26,
-    "padding_mobile": 20,
-    "padding_desktop": 24
+    "radius_desktop": 23,
+    "padding_mobile": 19,
+    "padding_desktop": 19
   },
   "typography": {
-    "title_mobile": 22,
-    "title_desktop": 28,
+    "title_mobile": 23,
+    "title_desktop": 23,
     "description_mobile": 11,
-    "description_desktop": 13
+    "description_desktop": 11
   },
   "colors": {
     "blue": "#2563EB",
