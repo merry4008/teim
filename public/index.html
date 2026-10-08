@@ -21,6 +21,9 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}
 .hero-carousel{position:relative;overflow:hidden;border-radius:30px;box-shadow:0 14px 34px rgba(65,55,40,.09);background:#f3e7d5}
 .hero-track{display:flex;transition:transform .5s cubic-bezier(.22,.75,.2,1);will-change:transform}
 .hero-slide{flex:0 0 100%;min-height:300px;position:relative;overflow:hidden;background:linear-gradient(135deg,#f7efe3 0%,#efe0ca 58%,#f8f4ec 100%);padding:26px 22px}
+.hero-slide.hero-has-background{background-size:cover;background-position:center;background-repeat:no-repeat}
+.hero-slide.hero-has-background:before,.hero-slide.hero-has-background:after{display:none}
+.hero-slide.hero-has-background .hero-art{display:none}
 .hero-slide:before{content:"";position:absolute;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.42);right:-70px;top:-80px}
 .hero-slide:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,218,82,.14);left:-70px;bottom:-100px}
 .hero-copy{position:relative;z-index:3;width:58%;max-width:360px}.hero-kicker{font-size:10px;font-weight:950;letter-spacing:.11em;color:#2367e8}.hero-kicker b{color:#e3ad00}
