@@ -77,7 +77,7 @@ function rewriteHtml(response, pathname) {
 
     if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
 
-    const rewritten = pageHtml.includes('class="bottom-nav"') ? pageHtml.replace(/<nav class="bottom-nav"(?:\s[^>]*)?>[\s\S]*?<\/nav>/, nav) : pageHtml.replace("</body>", `${nav}</body>`);
+    const rewritten = pageHtml.includes('teum-bottom-nav.js') ? pageHtml : pageHtml.replace("</body>", '<script src="teum-bottom-nav.js?v=2" defer></script></body>');
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
     return new Response(rewritten, { status: response.status, statusText: response.statusText, headers });
