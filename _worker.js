@@ -33,11 +33,6 @@ function rewriteHtml(response, pathname) {
   const type = response.headers.get("content-type") || "";
   if (!type.includes("text/html")) return response;
   return response.text().then((html) => {
-    if (html.includes('data-teum-shell="ai"')) {
-      const headers = new Headers(response.headers);
-      headers.set("content-type", "text/html; charset=utf-8");
-      return new Response(html, { status: response.status, statusText: response.statusText, headers });
-    }
     let pageHtml = html
       .replace(/<title>트임 \| 지금해냄<\/title>/g, "<title>트임 | 공간비움</title>")
       .replace(/<title>트임 \| 바로시작<\/title>/g, "<title>트임 | 트임타임</title>")
@@ -77,7 +72,9 @@ function rewriteHtml(response, pathname) {
 
     if (!pageHtml.includes('teum-design.css')) pageHtml = pageHtml.replace('</head>', '<link rel="stylesheet" href="teum-design.css?v=20261004-1" /></head>');
 
-    const rewritten = pageHtml.includes('teum-bottom-nav.js') ? pageHtml : pageHtml.replace("</body>", '<script src="teum-bottom-nav.js?v=2" defer></script></body>');
+    // One canonical navigation script for every HTML response, including index and AI shell.
+    let rewritten = pageHtml.replace(/<script\\b[^>]*src=["'][^"']*teum-bottom-nav\\.js[^"']*["'][^>]*><\\/script>/gi, "");
+    rewritten = rewritten.replace(/<\\/body>/i, '<script src="/teum-bottom-nav.js?v=20261008-4" defer></script></body>');
     const headers = new Headers(response.headers);
     headers.set("content-type", "text/html; charset=utf-8");
     return new Response(rewritten, { status: response.status, statusText: response.statusText, headers });
