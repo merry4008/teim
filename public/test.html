@@ -33,4 +33,5 @@ function recommend(){bot('좋아요. 지금 상황에서 끝낼 수 있는 딱 �
 function showResult(){const m=state.mission;const d=document.createElement('div');d.className='result';d.innerHTML='<div class="result-head"><small>TEUM AI · 오늘의 1트</small><h2>'+esc(m.title)+'</h2></div><div class="result-body"><div class="result-meta"><span>'+esc(state.space||'지금 공간')+'</span><span>약 '+esc(m.duration||5)+'분</span></div><p>'+esc(m.action)+'</p><p class="why">'+esc(m.reason||'')+'</p><div class="actions"><a class="start" href="action.html">바로 시작하기 →</a><button class="subbtn" id="again">다른 추천</button>'+(state.problem.includes('어디에')?'<a class="subbtn" href="put-away.html">어디에 둘지 보기</a>':'')+(state.problem.includes('버릴')?'<a class="subbtn" href="discard.html">버리는 방법 보기</a>':'')+'</div></div>';chat.appendChild(d);document.getElementById('again').onclick=()=>{d.remove();state.mission=null;recommend()};scroll()}
 form.onsubmit=e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';answer(v)}
 bot('안녕하세요 :) 저는 트임 AI 정리비서예요. 정답을 고르는 설문보다 지금 상황을 같이 좁혀볼게요.');setTimeout(ask,250);
-</script></body></html>
+</script><script src="teum-bottom-nav.js?v=1" defer></script>
+</body></html>
