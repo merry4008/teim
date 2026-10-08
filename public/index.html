@@ -288,9 +288,23 @@ a{text-decoration:none;color:inherit}button,input{font:inherit}
 <script>
 (function(){
  const form=document.getElementById('aiSearchForm'),input=document.getElementById('aiSearchInput');
- const heroTrack=document.getElementById('heroTrack'),heroDots=document.getElementById('heroDots'),slides=[...heroTrack.children];let heroIndex=0,heroTimer,touchStart=0;
- function goHero(i){heroIndex=(i+slides.length)%slides.length;heroTrack.style.transform='translateX(-'+(heroIndex*100)+'%)';[...heroDots.children].forEach((d,n)=>d.classList.toggle('active',n===heroIndex));}
- slides.forEach((_,i)=>{const d=document.createElement('button');d.type='button';d.className='hero-dot'+(i===0?' active':'');d.setAttribute('aria-label',(i+1)+'번 배너');d.onclick=()=>{goHero(i);restartHero()};heroDots.appendChild(d)});
+ const heroTrack=document.getElementById('heroTrack'),heroDots=document.getElementById('heroDots'),slides=[...heroTrack.children];let activeSlides=slides;let heroIndex=0,heroTimer,touchStart=0;
+ function goHero(i){heroIndex=(i+activeSlides.length)%activeSlides.length;heroTrack.style.transform='translateX(-'+(heroIndex*100)+'%)';[...heroDots.children].forEach((d,n)=>d.classList.toggle('active',n===heroIndex));}
+
+ function setActiveBanners(items){
+   const enabled=slides.filter((slide,i)=>items[i]?.enabled!==false);
+   activeSlides=enabled.length?enabled:slides;
+   slides.forEach(slide=>{slide.style.display=activeSlides.includes(slide)?'':'none'});
+   heroDots.replaceChildren();
+   activeSlides.forEach((slide,i)=>{
+     const count=slide.querySelector('.hero-count');if(count)count.textContent=(i+1)+'/'+activeSlides.length;
+     const d=document.createElement('button');d.type='button';d.className='hero-dot';
+     d.setAttribute('aria-label',(i+1)+'번 배너');d.onclick=()=>{goHero(i);restartHero()};heroDots.appendChild(d);
+   });
+   goHero(0);
+ }
+ window.teumSetActiveBanners=setActiveBanners;
+ setActiveBanners(slides.map(()=>({enabled:true})));
  function restartHero(){clearInterval(heroTimer);heroTimer=setInterval(()=>goHero(heroIndex+1),5000)}restartHero();
  heroTrack.addEventListener('touchstart',e=>touchStart=e.touches[0].clientX,{passive:true});heroTrack.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-touchStart;if(Math.abs(dx)>42){goHero(heroIndex+(dx<0?1:-1));restartHero()}},{passive:true});
  const overlay=document.getElementById('menuOverlay'),openMenu=document.getElementById('openMenu'),closeMenu=document.getElementById('closeMenu');
