@@ -433,6 +433,19 @@ body{background:#fbf8f3}
 .ar-wizard .ar-result-thumb-sub{display:block;margin:0 1px 2px;color:#748198;font-size:9px}
 @media(max-height:700px){.ar-wizard .ar-result-photo{height:clamp(125px,25svh,200px)}.ar-wizard .ar-result-thumb-photo{height:60px}}
 
+
+/* AR step 04: progress is illustrative, never an invented server percentage */
+.ar-wizard .ar-loading-kicker{margin-top:18px;color:#3287f6;font-size:10px;font-weight:950;letter-spacing:.13em}
+.ar-wizard .ar-loading-card h3{margin-top:10px;font-size:21px}
+.ar-wizard .ar-loading-progress{width:min(270px,100%);height:7px;overflow:hidden;border-radius:99px;background:#edf2fa;margin:21px auto 2px}
+.ar-wizard .ar-loading-progress span{display:block;width:24%;height:100%;border-radius:99px;background:#3287f6;transition:width 1s ease}
+.ar-wizard .ar-loading-list{width:min(270px,100%);gap:11px;margin-top:19px}
+.ar-wizard .ar-loading-list span{color:#a0a9b8}
+.ar-wizard .ar-loading-list span.active{color:#15264b;font-weight:900}
+.ar-wizard .ar-loading-list span.done{color:#3287f6}
+.ar-wizard .ar-loading-hint{margin-top:22px!important;color:#8994a5!important;font-size:10px!important}
+@media(prefers-reduced-motion:reduce){.ar-load-ring,.ar-load-face{animation:none!important}.ar-loading-progress span{transition:none!important}}
+
 /* teim-ar-steps-4-7 */
 .ar-finish-btn{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:15px;background:#3287f6;color:#fff;font-size:13px;font-weight:950}
 .ar-complete{display:none;min-height:68vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 22px;background:linear-gradient(180deg,#fbf8f3,#fff);border-radius:30px}
@@ -1055,8 +1068,16 @@ window.addEventListener('pagehide',stopCamera);
  const intro=document.createElement('section');intro.className='ar-intro-card';intro.innerHTML='<div class="ar-intro-icon">✦</div><p class="ar-complete-kicker">TEUM SPACE · AI SCAN</p><h3>사진 한 장으로<br>공간 비움을 시작해요.</h3><p>먼저 공간을 고르고, 사진 속에서 지금 정리할 곳을 찾아볼게요.</p><button class="ar-next-step" id="arStart" type="button">지금 시작하기 →</button>';
  main.insertBefore(intro,room);
  const roomNext=document.createElement('button');roomNext.type='button';roomNext.className='ar-next-step';roomNext.textContent='이 공간으로 계속하기 →';room.appendChild(roomNext);
- const loading=document.createElement('section');loading.className='ar-loading-card';loading.innerHTML='<div class="ar-load-ring"><div class="ar-load-face">✦</div></div><h3>AI가 공간을 살펴보고 있어요.</h3><p>사진에서 실제로 보이는 정리 포인트를 찾고 있어요.</p><div class="ar-loading-list"><span>공간 구조 확인 중</span><span>물건 밀도 살펴보는 중</span><span>비울 수 있는 곳 찾는 중</span></div>';
+ const loading=document.createElement('section');loading.className='ar-loading-card';loading.setAttribute('role','status');loading.setAttribute('aria-live','polite');loading.innerHTML='<div class="ar-load-ring" aria-hidden="true"><div class="ar-load-face">✦</div></div><span class="ar-loading-kicker">TEUM SPACE · AI SCAN</span><h3 id="arLoadingTitle">사진을 분석하고 있어요</h3><p id="arLoadingDescription">사진 속 물건과 정리할 위치를 확인하고 있어요.</p><div class="ar-loading-progress" aria-hidden="true"><span id="arLoadingBar"></span></div><div class="ar-loading-list"><span class="active">공간 살펴보기</span><span>정리 포인트 찾기</span><span>추천 미션 준비하기</span></div><p class="ar-loading-hint">사진 분석이 끝나면 결과 화면으로 자동 이동합니다.</p>';
  main.appendChild(loading);
+ let loadingInterval=null;
+ function stopLoadingAnimation(){if(loadingInterval!==null){clearInterval(loadingInterval);loadingInterval=null}}
+ function startLoadingAnimation(){
+   stopLoadingAnimation();let phase=0;
+   const messages=[['사진을 분석하고 있어요','사진 속 공간과 물건을 확인하고 있어요.'],['정리 포인트를 찾고 있어요','눈에 보이는 정리 대상을 살펴보고 있어요.'],['추천 미션을 준비하고 있어요','바로 시작할 수 있는 작은 비움을 정리하고 있어요.']];
+   const update=()=>{loading.querySelector('#arLoadingTitle').textContent=messages[phase][0];loading.querySelector('#arLoadingDescription').textContent=messages[phase][1];loading.querySelector('#arLoadingBar').style.width=[24,58,88][phase]+'%';loading.querySelectorAll('.ar-loading-list span').forEach((el,i)=>{el.classList.toggle('active',i===phase);el.classList.toggle('done',i<phase)})};
+   update();loadingInterval=setInterval(()=>{phase=Math.min(2,phase+1);update()},1800);
+ }
  const finish=document.createElement('button');finish.type='button';finish.id='arFinish';finish.className='ar-finish-btn';finish.textContent='비움을 완료하고 기록하기';
  document.getElementById('focusCard')?.appendChild(finish);
  const missionBack=document.createElement('button');missionBack.type='button';missionBack.className='ar-step-back';missionBack.textContent='분석 결과로 돌아가기';document.getElementById('focusCard')?.appendChild(missionBack);
@@ -1117,8 +1138,11 @@ window.addEventListener('pagehide',stopCamera);
  new MutationObserver(syncResultPhoto).observe(sourcePhoto,{attributes:true,attributeFilter:['src','class']});
  let current=1;
  function setStep(n){
+   const previousStep=current;
    current=Math.max(1,Math.min(7,n));
    main.dataset.arScreen=String(current);
+   if(current===4&&previousStep!==4)startLoadingAnimation();
+   else if(current!==4)stopLoadingAnimation();
    if(current===5)requestAnimationFrame(syncResultPhoto);
    [...flow.children].forEach((el,i)=>{el.classList.toggle('active',i===current-1);el.classList.toggle('done',i<current-1)});
    flow.children[current-1]?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
