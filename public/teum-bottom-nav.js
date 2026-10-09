@@ -77,7 +77,7 @@
     if (existing) existing.remove();
 
     const page = decodeURIComponent(location.pathname.split("/").pop() || "index.html");
-    const active = routeMap[page] || "home";
+    const active = Object.prototype.hasOwnProperty.call(routeMap, page) ? routeMap[page] : null;
     const nav = document.createElement("nav");
     nav.id = NAV_ID;
     nav.setAttribute("aria-label", "트임 공통 하단 메뉴");
