@@ -407,6 +407,17 @@ body{background:#fbf8f3}
 }
 
 
+
+/* AR analysis result photo: preserve the uploaded image in step 05 */
+.ar-wizard .results{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain}
+.ar-wizard .ar-result-photo{position:relative;display:none;flex:0 0 auto;width:100%;height:clamp(145px,29svh,260px);margin:0 0 12px;overflow:hidden;border-radius:16px;background:#f2f4f7}
+.ar-wizard .ar-result-photo.is-ready{display:block}
+.ar-wizard .ar-result-photo img{display:block;width:100%;height:100%;object-fit:contain}
+.ar-wizard .ar-result-overlays{position:absolute;inset:0;pointer-events:none}
+.ar-wizard .ar-result-pin{position:absolute;display:grid;place-items:center;width:27px;height:27px;border:2px solid #fff;border-radius:50%;background:#3287f6;color:#fff;font-size:11px;font-weight:900;transform:translate(-50%,-50%);box-shadow:0 3px 10px #15264b55}
+.ar-wizard .results .point-list{flex:0 0 auto}
+@media(max-height:700px){.ar-wizard .ar-result-photo{height:clamp(110px,24svh,180px)}}
+
 /* teim-ar-steps-4-7 */
 .ar-finish-btn{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:15px;background:#3287f6;color:#fff;font-size:13px;font-weight:950}
 .ar-complete{display:none;min-height:68vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 22px;background:linear-gradient(180deg,#fbf8f3,#fff);border-radius:30px}
@@ -763,6 +774,7 @@ body.ar-fullscreen{
   </section>
 
   <section class="results" id="results">
+    <div class="ar-result-photo" id="arResultPhoto" aria-label="분석한 공간 사진"><img id="arResultImage" alt="AI가 분석한 공간 사진"/><div class="ar-result-overlays" id="arResultOverlays"></div></div>
     <div class="results-head"><h3>여기부터 비워볼까요?</h3><span id="resultCount">정리 포인트</span></div>
     <p class="summary" id="summary"></p>
     <div class="result-guide"><b>전체 결과</b><span>사진의 번호와 같은 번호 카드가 연결돼 있어요. 카드를 누르면 사진 속 마커도 함께 강조됩니다.</span></div>
@@ -1031,10 +1043,42 @@ window.addEventListener('pagehide',stopCamera);
  document.getElementById('focusCard')?.appendChild(finish);
  const missionBack=document.createElement('button');missionBack.type='button';missionBack.className='ar-step-back';missionBack.textContent='분석 결과로 돌아가기';document.getElementById('focusCard')?.appendChild(missionBack);
  missionBack.addEventListener('click',()=>setStep(5));
+
+ // Mirror the analyzed photo in the result screen, with matching numbered markers.
+ const resultPhoto=document.getElementById('arResultPhoto');
+ const resultImage=document.getElementById('arResultImage');
+ const resultOverlays=document.getElementById('arResultOverlays');
+ const sourcePhoto=document.getElementById('photo');
+ const sourceStage=document.getElementById('stage');
+ function syncResultPhoto(){
+   const src=sourcePhoto?.getAttribute('src');
+   const ready=!!src && sourcePhoto.classList.contains('show') && sourceStage?.classList.contains('has-result');
+   resultPhoto.classList.toggle('is-ready',ready);
+   if(!ready){resultImage.removeAttribute('src');resultOverlays.replaceChildren();return}
+   if(resultImage.getAttribute('src')!==src)resultImage.src=src;
+   const draw=()=>{
+     resultOverlays.replaceChildren();
+     const imageRect=resultImage.getBoundingClientRect();
+     const iw=resultImage.naturalWidth,ih=resultImage.naturalHeight;
+     if(!iw||!ih||!imageRect.width||!imageRect.height)return;
+     const scale=Math.min(imageRect.width/iw,imageRect.height/ih);
+     const w=iw*scale,h=ih*scale,ox=(imageRect.width-w)/2,oy=(imageRect.height-h)/2;
+     sourceStage.querySelectorAll('.marker.available').forEach(marker=>{
+       const x=parseFloat(marker.style.left),y=parseFloat(marker.style.top);
+       if(!Number.isFinite(x)||!Number.isFinite(y))return;
+       const pin=document.createElement('span');pin.className='ar-result-pin';pin.textContent=marker.textContent.trim();
+       pin.style.left=(ox+w*x/100)+'px';pin.style.top=(oy+h*y/100)+'px';resultOverlays.appendChild(pin);
+     });
+   };
+   if(resultImage.complete)requestAnimationFrame(draw);else resultImage.onload=draw;
+ }
+ new MutationObserver(syncResultPhoto).observe(sourceStage,{attributes:true,attributeFilter:['class']});
+ new MutationObserver(syncResultPhoto).observe(sourcePhoto,{attributes:true,attributeFilter:['src','class']});
  let current=1;
  function setStep(n){
    current=Math.max(1,Math.min(7,n));
    main.dataset.arScreen=String(current);
+   if(current===5)requestAnimationFrame(syncResultPhoto);
    [...flow.children].forEach((el,i)=>{el.classList.toggle('active',i===current-1);el.classList.toggle('done',i<current-1)});
    flow.children[current-1]?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
  }
