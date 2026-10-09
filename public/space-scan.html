@@ -418,6 +418,21 @@ body{background:#fbf8f3}
 .ar-wizard .results .point-list{flex:0 0 auto}
 @media(max-height:700px){.ar-wizard .ar-result-photo{height:clamp(110px,24svh,180px)}}
 
+
+/* Step 05: numbered AI targets and matching cropped previews */
+.ar-wizard .ar-result-photo{height:clamp(165px,32svh,300px)}
+.ar-wizard .ar-result-pin{pointer-events:auto;cursor:pointer;padding:0}
+.ar-wizard .ar-result-pin.active{background:#15264b;box-shadow:0 0 0 4px #ffd55e99}
+.ar-wizard .ar-result-thumbs{display:flex;gap:9px;flex:0 0 auto;overflow-x:auto;padding:0 0 10px;margin:0 0 6px;scrollbar-width:thin}
+.ar-wizard .ar-result-thumb{flex:0 0 112px;min-width:0;padding:6px;border:1px solid #e2e8f1;border-radius:13px;background:#fff;text-align:left;color:#15264b;cursor:pointer}
+.ar-wizard .ar-result-thumb.active{border-color:#3287f6;background:#f0f6ff}
+.ar-wizard .ar-result-thumb-photo{display:block;position:relative;width:100%;height:76px;border-radius:9px;overflow:hidden;background:#eef1f5}
+.ar-wizard .ar-result-thumb-photo img{width:100%;height:100%;object-fit:cover}
+.ar-wizard .ar-result-thumb-photo b{position:absolute;left:5px;top:5px;background:#3287f6;color:white;border:2px solid white;border-radius:9px;padding:4px 8px;font-size:11px}
+.ar-wizard .ar-result-thumb-label{display:block;margin:6px 1px 1px;font-size:11px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ar-wizard .ar-result-thumb-sub{display:block;margin:0 1px 2px;color:#748198;font-size:9px}
+@media(max-height:700px){.ar-wizard .ar-result-photo{height:clamp(125px,25svh,200px)}.ar-wizard .ar-result-thumb-photo{height:60px}}
+
 /* teim-ar-steps-4-7 */
 .ar-finish-btn{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:15px;background:#3287f6;color:#fff;font-size:13px;font-weight:950}
 .ar-complete{display:none;min-height:68vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px 22px;background:linear-gradient(180deg,#fbf8f3,#fff);border-radius:30px}
@@ -775,6 +790,7 @@ body.ar-fullscreen{
 
   <section class="results" id="results">
     <div class="ar-result-photo" id="arResultPhoto" aria-label="분석한 공간 사진"><img id="arResultImage" alt="AI가 분석한 공간 사진"/><div class="ar-result-overlays" id="arResultOverlays"></div></div>
+    <div class="ar-result-thumbs" id="arResultThumbs" aria-label="사진에서 찾은 정리 대상"></div>
     <div class="results-head"><h3>여기부터 비워볼까요?</h3><span id="resultCount">정리 포인트</span></div>
     <p class="summary" id="summary"></p>
     <div class="result-guide"><b>전체 결과</b><span>사진의 번호와 같은 번호 카드가 연결돼 있어요. 카드를 누르면 사진 속 마커도 함께 강조됩니다.</span></div>
@@ -1048,29 +1064,59 @@ window.addEventListener('pagehide',stopCamera);
  const resultPhoto=document.getElementById('arResultPhoto');
  const resultImage=document.getElementById('arResultImage');
  const resultOverlays=document.getElementById('arResultOverlays');
+ const resultThumbs=document.getElementById('arResultThumbs');
  const sourcePhoto=document.getElementById('photo');
  const sourceStage=document.getElementById('stage');
  function syncResultPhoto(){
    const src=sourcePhoto?.getAttribute('src');
    const ready=!!src && sourcePhoto.classList.contains('show') && sourceStage?.classList.contains('has-result');
    resultPhoto.classList.toggle('is-ready',ready);
-   if(!ready){resultImage.removeAttribute('src');resultOverlays.replaceChildren();return}
+   if(!ready){resultImage.removeAttribute('src');resultOverlays.replaceChildren();resultThumbs.replaceChildren();return}
    if(resultImage.getAttribute('src')!==src)resultImage.src=src;
    const draw=()=>{
-     resultOverlays.replaceChildren();
+     resultOverlays.replaceChildren();resultThumbs.replaceChildren();
      const imageRect=resultImage.getBoundingClientRect();
      const iw=resultImage.naturalWidth,ih=resultImage.naturalHeight;
      if(!iw||!ih||!imageRect.width||!imageRect.height)return;
      const scale=Math.min(imageRect.width/iw,imageRect.height/ih);
      const w=iw*scale,h=ih*scale,ox=(imageRect.width-w)/2,oy=(imageRect.height-h)/2;
-     sourceStage.querySelectorAll('.marker.available').forEach(marker=>{
+     const targets=[...sourceStage.querySelectorAll('.marker.available')];
+     targets.forEach((marker,i)=>{
+       // Existing marker coordinates are pixel values within the camera stage.
        const x=parseFloat(marker.style.left),y=parseFloat(marker.style.top);
        if(!Number.isFinite(x)||!Number.isFinite(y))return;
-       const pin=document.createElement('span');pin.className='ar-result-pin';pin.textContent=marker.textContent.trim();
-       pin.style.left=(ox+w*x/100)+'px';pin.style.top=(oy+h*y/100)+'px';resultOverlays.appendChild(pin);
+       const stageWidth=sourceStage.clientWidth,stageHeight=sourceStage.clientHeight;
+       if(!stageWidth||!stageHeight)return;
+       const photoScale=Math.min(stageWidth/iw,stageHeight/ih);
+       const photoWidth=iw*photoScale,photoHeight=ih*photoScale;
+       const nx=(x-(stageWidth-photoWidth)/2)/photoWidth;
+       const ny=(y-(stageHeight-photoHeight)/2)/photoHeight;
+       if(!Number.isFinite(nx)||!Number.isFinite(ny))return;
+       const pin=document.createElement('button');pin.type='button';pin.className='ar-result-pin';pin.textContent=marker.textContent.trim();
+       pin.setAttribute('aria-label',marker.getAttribute('aria-label')||((i+1)+'번 정리 대상'));
+       pin.style.left=(ox+w*Math.max(0,Math.min(1,nx)))+'px';pin.style.top=(oy+h*Math.max(0,Math.min(1,ny)))+'px';
+       pin.addEventListener('click',()=>activateTarget(i));resultOverlays.appendChild(pin);
      });
+     const sourceThumbs=[...document.querySelectorAll('#thumbStrip .thumb-card')];
+     sourceThumbs.forEach((source,i)=>{
+       const item=document.createElement('button');item.type='button';item.className='ar-result-thumb';
+       const pic=document.createElement('span');pic.className='ar-result-thumb-photo';
+       const img=source.querySelector('img');if(img){const copy=document.createElement('img');copy.src=img.src;copy.alt=img.alt;pic.appendChild(copy)}
+       const num=document.createElement('b');num.textContent=String(i+1);pic.appendChild(num);item.appendChild(pic);
+       const label=document.createElement('span');label.className='ar-result-thumb-label';label.textContent=source.querySelector('.thumb-label')?.textContent||'정리 대상';item.appendChild(label);
+       const sub=document.createElement('span');sub.className='ar-result-thumb-sub';sub.textContent=source.querySelector('.thumb-sub')?.textContent||'';item.appendChild(sub);
+       item.addEventListener('click',()=>activateTarget(i));resultThumbs.appendChild(item);
+     });
+     activateTarget(0,false);
    };
    if(resultImage.complete)requestAnimationFrame(draw);else resultImage.onload=draw;
+ }
+ function activateTarget(i,scroll=true){
+   resultOverlays.querySelectorAll('.ar-result-pin').forEach((el,n)=>el.classList.toggle('active',n===i));
+   resultThumbs.querySelectorAll('.ar-result-thumb').forEach((el,n)=>el.classList.toggle('active',n===i));
+   const cards=[...document.querySelectorAll('#pointList .point')];
+   cards.forEach((el,n)=>el.classList.toggle('active',n===i));
+   if(scroll)cards[i]?.scrollIntoView({behavior:'smooth',block:'nearest'});
  }
  new MutationObserver(syncResultPhoto).observe(sourceStage,{attributes:true,attributeFilter:['class']});
  new MutationObserver(syncResultPhoto).observe(sourcePhoto,{attributes:true,attributeFilter:['src','class']});
