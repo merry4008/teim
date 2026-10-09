@@ -995,6 +995,8 @@ scanBtn.onclick=async()=>{
     points.forEach((p,i)=>{
       if(markers[i]&&boxes[i]){
         markers[i].classList.add('available');
+        markers[i].dataset.resultX=String(Math.max(0,Math.min(100,Number(p.x)||50)));
+        markers[i].dataset.resultY=String(Math.max(0,Math.min(100,Number(p.y)||50)));
         boxes[i].classList.add('available');
         boxes[i].querySelector('span').textContent=(i+1)+' · '+(p.anchor||p.title);
         markers[i].title=(i+1)+'번 · '+(p.anchor||p.title);
@@ -1082,15 +1084,8 @@ window.addEventListener('pagehide',stopCamera);
      const w=iw*scale,h=ih*scale,ox=(imageRect.width-w)/2,oy=(imageRect.height-h)/2;
      const targets=[...sourceStage.querySelectorAll('.marker.available')];
      targets.forEach((marker,i)=>{
-       // Existing marker coordinates are pixel values within the camera stage.
-       const x=parseFloat(marker.style.left),y=parseFloat(marker.style.top);
-       if(!Number.isFinite(x)||!Number.isFinite(y))return;
-       const stageWidth=sourceStage.clientWidth,stageHeight=sourceStage.clientHeight;
-       if(!stageWidth||!stageHeight)return;
-       const photoScale=Math.min(stageWidth/iw,stageHeight/ih);
-       const photoWidth=iw*photoScale,photoHeight=ih*photoScale;
-       const nx=(x-(stageWidth-photoWidth)/2)/photoWidth;
-       const ny=(y-(stageHeight-photoHeight)/2)/photoHeight;
+       // AI coordinates are percentages of the original image, independent of hidden stage size.
+       const nx=Number(marker.dataset.resultX)/100,ny=Number(marker.dataset.resultY)/100;
        if(!Number.isFinite(nx)||!Number.isFinite(ny))return;
        const pin=document.createElement('button');pin.type='button';pin.className='ar-result-pin';pin.textContent=marker.textContent.trim();
        pin.setAttribute('aria-label',marker.getAttribute('aria-label')||((i+1)+'번 정리 대상'));
