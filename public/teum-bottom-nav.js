@@ -7,6 +7,7 @@
   const routeMap = {
     "index.html": "home",
     "test.html": "ai",
+    "quick.html": "ai",
     "mind.html": "ai",
     "program.html": "ai",
     "space-scan.html": "ar",
@@ -76,19 +77,29 @@
     const existing = document.getElementById(NAV_ID);
     if (existing) existing.remove();
 
-    const page = decodeURIComponent(location.pathname.split("/").pop() || "index.html");
-    const active = Object.prototype.hasOwnProperty.call(routeMap, page) ? routeMap[page] : null;
     const nav = document.createElement("nav");
     nav.id = NAV_ID;
     nav.setAttribute("aria-label", "트임 공통 하단 메뉴");
     nav.innerHTML = items.map(function (item) {
-      const current = item.key === active ? ' aria-current="page"' : "";
-      return '<a data-key="' + item.key + '" href="' + item.href + '"' + current + '>' +
+      return '<a data-key="' + item.key + '" href="' + item.href + '">' +
         icons[item.key] + "<span>" + item.label + "</span></a>";
     }).join("");
     document.body.appendChild(nav);
-    // The current URL is the source of truth, not the last tapped menu.
-    // This keeps the blue highlight stable while browsing a section.
+
+    function syncActive() {
+      const page = decodeURIComponent(location.pathname.split("/").pop() || "index.html").toLowerCase();
+      const active = Object.prototype.hasOwnProperty.call(routeMap, page) ? routeMap[page] : null;
+      nav.querySelectorAll("a").forEach(function (link) {
+        if (link.getAttribute("data-key") === active) {
+          link.setAttribute("aria-current", "page");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    }
+    syncActive();
+    window.addEventListener("pageshow", syncActive);
+    window.addEventListener("popstate", syncActive);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render, { once: true });
