@@ -87,7 +87,8 @@
     document.body.appendChild(nav);
 
     function syncActive() {
-      const page = decodeURIComponent(location.pathname.split("/").pop() || "index.html").toLowerCase();
+      const rawPage = decodeURIComponent(location.pathname.split("/").pop() || "index.html").toLowerCase();
+      const page = rawPage === "" ? "index.html" : (rawPage.endsWith(".html") ? rawPage : rawPage + ".html");
       const active = Object.prototype.hasOwnProperty.call(routeMap, page) ? routeMap[page] : null;
       nav.querySelectorAll("a").forEach(function (link) {
         if (link.getAttribute("data-key") === active) {
