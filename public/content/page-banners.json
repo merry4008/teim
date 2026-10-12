@@ -1,14 +1,14 @@
 {
   "space-scan": {
     "label": "TEUM SPACE · AI SCAN",
-    "title": "지금, 내 공간을\n한눈에 비워보세요.",
-    "description": "사진 한 장으로 먼저 손댈 곳을 찾고, 10분 안에 할 수 있는 비움을 추천해요.",
+    "title": "지금, 내 공간을\n사진 한장으로",
+    "description": "10분 안에 할 수 있는 비움을 추천해요.",
     "background_color": "#f4ecdf",
     "image": ""
   },
   "challenge": {
     "label": "MY TEUM · RECORD",
-    "title": "작은 비움이 쌓여,\n나만의 틈이 돼요.",
+    "title": "마음트임,\n숨쉴 틈",
     "description": "오늘 해낸 비움과 쌓여가는 변화를 트임기록에서 확인해보세요.",
     "background_color": "#f4ecdf",
     "image": ""
