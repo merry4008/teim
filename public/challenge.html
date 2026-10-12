@@ -70,6 +70,17 @@
 .challenge-screen .challenge-hero p:last-child{font-size:11px;line-height:1.45;margin-top:7px}
 @media(max-width:640px){.challenge-screen .challenge-hero{min-height:112px;padding:17px 20px;border-radius:23px}.challenge-screen .challenge-hero h1{font-size:22px}}
 
+/* Desktop banner matches the fixed mobile height. */
+@media (min-width:761px){
+  .challenge-screen .challenge-hero{
+    height:144px!important;
+    min-height:144px!important;
+    max-height:144px!important;
+    padding:17px 20px!important;
+    border-radius:24px!important;
+    overflow:hidden!important;
+  }
+}
 /* Shared fixed page-banner size: TEUM AR / My TEUM */
 @media (max-width:760px){
   .screen .hero,.challenge-screen .challenge-hero{height:144px!important;min-height:144px!important;max-height:144px!important;padding:17px 20px!important;border-radius:24px!important;box-sizing:border-box!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
