@@ -444,7 +444,9 @@ body{background:#fbf8f3}
 .ar-wizard .ar-loading-list span.active{color:#15264b;font-weight:900}
 .ar-wizard .ar-loading-list span.done{color:#3287f6}
 .ar-wizard .ar-loading-hint{margin-top:22px!important;color:#8994a5!important;font-size:10px!important}
-@media(prefers-reduced-motion:reduce){.ar-load-ring,.ar-load-face{animation:none!important}.ar-loading-progress span{transition:none!important}}
+/* Keep a visible, gentle loading indicator on iOS with Reduce Motion enabled. */
+@keyframes arReducedPulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media(prefers-reduced-motion:reduce){.ar-load-ring{animation:arReducedPulse 2.4s ease-in-out infinite!important}.ar-load-face{animation:none!important}.ar-loading-progress span{transition:none!important}}
 
 /* teim-ar-steps-4-7 */
 .ar-finish-btn{width:100%;min-height:48px;margin-top:10px;border:0;border-radius:15px;background:#3287f6;color:#fff;font-size:13px;font-weight:950}
@@ -568,7 +570,7 @@ body.ar-fullscreen{
 }
 .ar-load-ring{
   width:104px;height:104px;border:8px solid #e9f2ff;border-top-color:#3287f6;
-  border-right-color:#74b1ff;border-radius:50%;display:grid;place-items:center;animation:arSpin 1.2s linear infinite
+  border-right-color:#74b1ff;border-radius:50%;display:grid;place-items:center;animation:arSpin 1.2s linear infinite;will-change:transform;-webkit-transform:translateZ(0)
 }
 .ar-load-face{
   width:54px;height:54px;border-radius:50%;background:#ffd55e;color:#15264b;
