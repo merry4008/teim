@@ -408,6 +408,17 @@ body{background:#fbf8f3}
 
 
 
+
+/* Two-step analysis result */
+.ar-wizard[data-ar-screen="5"] .ar-result-thumbs,.ar-wizard[data-ar-screen="5"] .results-head,.ar-wizard[data-ar-screen="5"] .summary,.ar-wizard[data-ar-screen="5"] .point-list{display:none!important}
+.ar-wizard[data-ar-screen="5"] .ar-result-photo{height:min(55svh,490px)!important;flex:1 1 auto!important;min-height:190px}
+.ar-detail-next{display:none;min-height:48px;width:100%;border:0;border-radius:14px;background:#3287f6;color:#fff;font-weight:900;margin:12px 0}
+.ar-wizard[data-ar-screen="5"] .ar-detail-next{display:block}
+.ar-wizard[data-ar-screen="6"] .results{display:flex!important;overflow-y:auto;flex:1 1 auto;min-height:0}
+.ar-wizard[data-ar-screen="6"] .ar-result-photo{display:none!important}
+.ar-wizard[data-ar-screen="5"] .ar-result-pin{display:none!important}
+.ar-result-outline{position:absolute;box-sizing:border-box;border:3px dashed var(--mark);border-radius:12px;pointer-events:none}
+.ar-result-outline span{position:absolute;left:-12px;top:-14px;display:grid;place-items:center;width:31px;height:31px;border-radius:50%;border:2px solid white;background:var(--mark);color:white;font-weight:900}
 /* AR analysis result photo: preserve the uploaded image in step 05 */
 .ar-wizard .results{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain}
 .ar-wizard .ar-result-photo{position:relative;display:none;flex:0 0 auto;width:100%;height:clamp(145px,29svh,260px);margin:0 0 12px;overflow:hidden;border-radius:16px;background:#f2f4f7}
@@ -815,7 +826,7 @@ body.ar-fullscreen{
   <section class="results" id="results">
     <div class="ar-result-photo" id="arResultPhoto" aria-label="분석한 공간 사진"><img id="arResultImage" alt="AI가 분석한 공간 사진"/><div class="ar-result-overlays" id="arResultOverlays"></div></div>
     <div class="ar-result-thumbs" id="arResultThumbs" aria-label="사진에서 찾은 정리 대상"></div>
-    <div class="results-head"><h3>여기부터 비워볼까요?</h3><span id="resultCount">정리 포인트</span></div>
+    <button id="arDetailNext" class="ar-detail-next" type="button">1·2·3 상세 결과 보기 →</button><div class="results-head"><h3>여기부터 비워볼까요?</h3><span id="resultCount">정리 포인트</span></div>
     <p class="summary" id="summary"></p>
     <div class="result-guide"><b>전체 결과</b><span>사진의 번호와 같은 번호 카드가 연결돼 있어요. 카드를 누르면 사진 속 마커도 함께 강조됩니다.</span></div>
     <div class="point-list" id="pointList"></div>
@@ -1032,7 +1043,7 @@ scanBtn.onclick=async()=>{
     showAllBtn.textContent=points.length+'개 결과 전체보기';
     scanCompleteTitle.textContent='분석 완료 · 사진 속 '+points.length+'개 대상을 찾았어요';
     scanCompleteSub.textContent=(data.result.shotType==='closeup'?'가까이 찍은 사진도':'촬영한 사진에서')+' 실제 보이는 정리 대상에 번호를 연결했어요.';
-    stage.classList.add('has-result');
+    window.teumArDetectedPoints=points.map(p=>({x:p.x,y:p.y,w:p.w,h:p.h}));stage.classList.add('has-result');
     photoCheck.classList.remove('show');
     document.querySelector('.scan-card')?.classList.add('has-scan-result');
     results.classList.add('show');
@@ -1122,7 +1133,7 @@ window.addEventListener('pagehide',stopCamera);
        const pin=document.createElement('button');pin.type='button';pin.className='ar-result-pin';pin.textContent=marker.textContent.trim();
        pin.setAttribute('aria-label',marker.getAttribute('aria-label')||((i+1)+'번 정리 대상'));
        pin.style.left=(ox+w*Math.max(0,Math.min(1,nx)))+'px';pin.style.top=(oy+h*Math.max(0,Math.min(1,ny)))+'px';
-       pin.addEventListener('click',()=>activateTarget(i));resultOverlays.appendChild(pin);
+       pin.addEventListener('click',()=>activateTarget(i));resultOverlays.appendChild(pin);const p=window.teumArDetectedPoints?.[i];if(p){const pw=Number(p.w),ph=Number(p.h),px=Number(p.x),py=Number(p.y);if([pw,ph,px,py].every(Number.isFinite)&&pw>0&&ph>0){const bw=Math.min(w,w*pw/100),bh=Math.min(h,h*ph/100);const box=document.createElement('div');box.className='ar-result-outline';box.style.setProperty('--mark',['#3287f6','#f0b800','#ef6171'][i%3]);box.style.width=bw+'px';box.style.height=bh+'px';box.style.left=Math.max(ox,Math.min(ox+w-bw,ox+w*px/100-bw/2))+'px';box.style.top=Math.max(oy,Math.min(oy+h-bh,oy+h*py/100-bh/2))+'px';const number=document.createElement('span');number.textContent=String(i+1);box.appendChild(number);resultOverlays.appendChild(box)}}
      });
      const sourceThumbs=[...document.querySelectorAll('#thumbStrip .thumb-card')];
      sourceThumbs.forEach((source,i)=>{
@@ -1158,7 +1169,7 @@ window.addEventListener('pagehide',stopCamera);
    [...flow.children].forEach((el,i)=>{el.classList.toggle('active',i===current-1);el.classList.toggle('done',i<current-1)});
    flow.children[current-1]?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
  }
- document.getElementById('arStart')?.addEventListener('click',()=>setStep(2));
+ document.getElementById('arDetailNext')?.addEventListener('click',()=>setStep(6));document.getElementById('arStart')?.addEventListener('click',()=>setStep(2));
  roomNext.addEventListener('click',()=>setStep(3));
  room.querySelectorAll('.ar-room').forEach(btn=>btn.addEventListener('click',()=>{
    room.querySelectorAll('.ar-room').forEach(other=>other.setAttribute('aria-pressed',String(other===btn)));
@@ -1173,7 +1184,7 @@ window.addEventListener('pagehide',stopCamera);
  scan?.addEventListener('click',()=>setStep(4));
  const observer=new MutationObserver(()=>{
    if(stage?.classList.contains('scanning'))setStep(4);
-   else if(stage?.classList.contains('has-result'))setStep(focus?.classList.contains('show')?6:5);
+   else if(stage?.classList.contains('has-result'))setStep(current===6||focus?.classList.contains('show')?6:5);
    else if(focus?.classList.contains('show'))setStep(6);
    else if(current===4)setStep(3);
  });
