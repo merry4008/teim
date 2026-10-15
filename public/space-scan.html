@@ -418,7 +418,7 @@ body{background:#fbf8f3}
 .ar-wizard[data-ar-screen="6"] .ar-result-photo{display:none!important}
 .ar-wizard[data-ar-screen="5"] .ar-result-pin{display:none!important}
 .ar-result-outline{position:absolute;box-sizing:border-box;border:3px dashed var(--mark);border-radius:12px;pointer-events:none}
-.ar-result-outline span{position:absolute;left:-12px;top:-14px;display:grid;place-items:center;width:31px;height:31px;border-radius:50%;border:2px solid white;background:var(--mark);color:white;font-weight:900}
+.ar-result-outline span{position:absolute;left:var(--badge-left,8px);top:var(--badge-top,8px);display:grid;place-items:center;width:31px;height:31px;border-radius:50%;border:2px solid white;background:var(--mark);color:white;font-weight:900;box-sizing:border-box}
 /* AR analysis result photo: preserve the uploaded image in step 05 */
 .ar-wizard .results{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain}
 .ar-wizard .ar-result-photo{position:relative;display:none;flex:0 0 auto;width:100%;height:clamp(145px,29svh,260px);margin:0 0 12px;overflow:hidden;border-radius:16px;background:#f2f4f7}
@@ -1133,7 +1133,7 @@ window.addEventListener('pagehide',stopCamera);
        const pin=document.createElement('button');pin.type='button';pin.className='ar-result-pin';pin.textContent=marker.textContent.trim();
        pin.setAttribute('aria-label',marker.getAttribute('aria-label')||((i+1)+'번 정리 대상'));
        pin.style.left=(ox+w*Math.max(0,Math.min(1,nx)))+'px';pin.style.top=(oy+h*Math.max(0,Math.min(1,ny)))+'px';
-       pin.addEventListener('click',()=>activateTarget(i));resultOverlays.appendChild(pin);const p=window.teumArDetectedPoints?.[i];if(p){const pw=Number(p.w),ph=Number(p.h),px=Number(p.x),py=Number(p.y);if([pw,ph,px,py].every(Number.isFinite)&&pw>0&&ph>0){const bw=Math.min(w,w*pw/100),bh=Math.min(h,h*ph/100);const box=document.createElement('div');box.className='ar-result-outline';box.style.setProperty('--mark',['#3287f6','#f0b800','#ef6171'][i%3]);box.style.width=bw+'px';box.style.height=bh+'px';box.style.left=Math.max(ox,Math.min(ox+w-bw,ox+w*px/100-bw/2))+'px';box.style.top=Math.max(oy,Math.min(oy+h-bh,oy+h*py/100-bh/2))+'px';const number=document.createElement('span');number.textContent=String(i+1);box.appendChild(number);resultOverlays.appendChild(box)}}
+       pin.addEventListener('click',()=>activateTarget(i));resultOverlays.appendChild(pin);const p=window.teumArDetectedPoints?.[i];if(p){const pw=Number(p.w),ph=Number(p.h),px=Number(p.x),py=Number(p.y);if([pw,ph,px,py].every(Number.isFinite)&&pw>0&&ph>0){const bw=Math.min(w,w*pw/100),bh=Math.min(h,h*ph/100);const box=document.createElement('div');box.className='ar-result-outline';box.style.setProperty('--mark',['#3287f6','#f0b800','#ef6171'][i%3]);box.style.width=bw+'px';box.style.height=bh+'px';box.style.left=Math.max(ox,Math.min(ox+w-bw,ox+w*px/100-bw/2))+'px';box.style.top=Math.max(oy,Math.min(oy+h-bh,oy+h*py/100-bh/2))+'px';box.style.setProperty('--badge-left',Math.max(0,Math.min(Math.max(0,bw-31),8))+'px');box.style.setProperty('--badge-top',Math.max(0,Math.min(Math.max(0,bh-31),8))+'px');const number=document.createElement('span');number.textContent=String(i+1);box.appendChild(number);resultOverlays.appendChild(box)}}
      });
      const sourceThumbs=[...document.querySelectorAll('#thumbStrip .thumb-card')];
      sourceThumbs.forEach((source,i)=>{
