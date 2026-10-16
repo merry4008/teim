@@ -48,10 +48,16 @@ def main():
     with open(os.environ.get("POST_MANIFEST", "instagram_automation/post.json"), encoding="utf-8") as f:
         post = json.load(f)
     images, caption = post.get("images", []), post.get("caption", "")
-    if not 2 <= len(images) <= 10 or not caption.strip():
-        raise SystemExit("Carousel requires 2-10 images and nonempty caption")
+    if not 1 <= len(images) <= 10 or not caption.strip():
+        raise SystemExit("Post requires 1-10 images and nonempty caption")
     if any(not isinstance(u, str) or not u.startswith("https://") for u in images):
         raise SystemExit("Each image must have a publicly accessible HTTPS URL")
+    if len(images) == 1:
+        media = request(f"{IG_ID}/media", {"image_url": images[0], "caption": caption})
+        wait(media["id"])
+        published = request(f"{IG_ID}/media_publish", {"creation_id": media["id"]})
+        print("Published Instagram media ID:", published.get("id"))
+        return
     children = []
     for url in images:
         child = request(f"{IG_ID}/media", {"image_url": url, "is_carousel_item": "true"})
