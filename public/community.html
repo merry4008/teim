@@ -32,13 +32,38 @@
 .teum-community-card{min-height:140px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:17px 15px;border:0;border-radius:17px;background:#f5f7fa;color:#20252c;text-align:left}
 .teum-community-card span{font-size:25px}.teum-community-card strong{font-size:16px}.teum-community-card small{font-size:11px;color:#777f89}.teum-community-card b{align-self:flex-end;margin-top:auto}
 #officialInstagram .rec-link{display:block;text-align:center;margin-top:8px}
+</style><style id="teum-feed-compact-cards">
+/* 모바일 원스크린: 인스타그램 5장 스와이프 + 컴팩트 참여 카드 */
+@media(max-width:699px){
+ .feed-page-banner{margin-bottom:12px!important}
+ .tabs{margin-top:0!important;margin-bottom:12px!important}
+ .tabs button{font-size:13px!important;padding:10px 5px!important}
+ .rec-section{margin-bottom:12px!important;padding-bottom:0!important}
+ #officialInstagram .rec-kicker{font-size:10px!important}
+ #officialInstagram .rec-heading{margin-bottom:8px!important}
+ #officialInstagram .rec-heading h2{font-size:19px!important}
+ #officialInstagram .rec-sub{display:none!important}
+ .ig-feed-grid{gap:9px!important;padding-bottom:5px!important}
+ .ig-feed-card{flex:0 0 clamp(105px,32%,145px)!important}
+ .ig-feed-card img{height:145px!important;aspect-ratio:4/5!important;object-fit:cover!important;border-radius:11px!important}
+ .ig-feed-card p{font-size:11px!important;line-height:1.35!important;display:-webkit-box!important;-webkit-line-clamp:1!important;-webkit-box-orient:vertical!important;overflow:hidden!important;margin:5px 0 0!important}
+ .ig-feed-card small{display:none!important}
+ #officialInstagram .rec-link{font-size:12px!important;margin:4px 0 0!important;padding:9px!important}
+ .teum-community-cards{gap:9px!important}
+ .teum-community-card{min-height:94px!important;padding:12px!important;gap:5px!important;border-radius:14px!important;position:relative}
+ .teum-community-card span{font-size:19px!important}
+ .teum-community-card strong{font-size:14px!important}
+ .teum-community-card small{font-size:10px!important}
+ .teum-community-card b{position:absolute;right:12px;top:13px}
+ .fab{display:none!important}
+}
 </style></head><body>
 <div class="wrap"><header class="head"><a class="brand" href="index.html" aria-label="트임 홈"><img src="/tuim_logo.png" alt="TEUM" /></a><div class="head-actions"><button class="icon-btn" id="searchBtn" aria-label="검색">⌕</button><a class="icon-btn" href="index.html" aria-label="홈" style="display:grid;place-items:center">⌂</a></div></header>
 <section class="feed-page-banner" aria-label="트임피드 페이지 배너"><div><small>TEUM FEED</small><h1>다른 사람들의 트임</h1><p>누군가는 오늘 무엇을 비웠을까요?<br>작은 변화부터 나만의 비움 이야기까지 모아봐요.</p></div></section>
-<div class="tabs" id="tabs"><button class="active" data-tab="전체">트임 매거진</button><button data-tab="비움후기">비움 인증</button><button data-tab="마음비움">공감 이야기</button></div>
+<div class="tabs" id="tabs"><button class="active" data-tab="전체">추천</button><button data-tab="비움후기">공간비움</button><button data-tab="마음비움">마음비움</button></div>
 <main class="recommend" id="recommendArea" aria-label="트임 매거진 미리보기">
 <section class="rec-section" id="officialInstagram"><div class="rec-heading"><div><div class="rec-kicker">OFFICIAL INSTAGRAM</div><h2>트임 매거진</h2><p class="rec-sub">인스타그램에서 만나는 작은 비움의 이야기</p></div><a class="rec-more" href="magazine.html">전체보기 ↗</a></div><div class="ig-feed-grid" id="igFeedGrid" aria-live="polite"><p class="ig-empty">공식 인스타그램 콘텐츠를 불러오는 중이에요.</p></div><a class="rec-link" href="magazine.html">트임 매거진에서 더 보기 →</a></section>
-<section class="rec-section"><div class="rec-heading"><div><div class="rec-kicker">JOIN TEUM</div><h2>함께하는 트임</h2><p class="rec-sub">오늘의 비움과 마음을 나눠보세요.</p></div></div><div class="teum-community-cards"><button type="button" data-show-reviews class="teum-community-card"><span>📷</span><strong>비움 인증</strong><small>오늘 비운 것을 기록해요</small><b>↗</b></button><button type="button" data-show-empathy class="teum-community-card"><span>♡</span><strong>공감 이야기</strong><small>마음속 생각을 나눠요</small><b>↗</b></button></div></section>
+<section class="rec-section"><div class="rec-heading"><div><div class="rec-kicker">JOIN TEUM</div><h2>함께하는 트임</h2><p class="rec-sub">오늘의 비움과 마음을 나눠보세요.</p></div></div><div class="teum-community-cards"><button type="button" data-show-reviews class="teum-community-card"><span>📷</span><strong>공간비움</strong><small>오늘 비운 공간을 기록해요</small><b>↗</b></button><button type="button" data-show-empathy class="teum-community-card"><span>♡</span><strong>마음비움</strong><small>마음속 생각을 나눠요</small><b>↗</b></button></div></section>
 <div id="recReviews" hidden></div><button id="recWriteBtn" type="button" hidden>기록하기</button>
 </main>
 <div id="reviewArea" hidden><div class="section-title"><h2>어떤 공간을 비웠나요?</h2><small>원하는 주제로 골라보기</small></div><div class="chips" id="chips"></div>
@@ -66,7 +91,7 @@ function render(){drawChips();const list=filtered();$('count').textContent=list.
    if(!/^https:\/\/www\.instagram\.com\//.test(post.permalink||'')||!/^https:\/\//.test(post.image||''))continue;
    const a=document.createElement('a');a.className='ig-feed-card';a.href=post.permalink;a.target='_blank';a.rel='noopener noreferrer';
    const img=document.createElement('img');img.src=post.image;img.loading='lazy';img.alt='트임 인스타그램 게시물';a.appendChild(img);
-   const caption=document.createElement('p');caption.textContent=post.caption||'트임 공식 인스타그램';a.appendChild(caption);
+   const caption=document.createElement('p');caption.textContent=(post.caption||'트임 공식 인스타그램').split('\n')[0].slice(0,38);a.appendChild(caption);
    const label=document.createElement('small');label.textContent=post.media_type==='CAROUSEL_ALBUM'?'캐러셀 보기 ↗':post.media_type==='VIDEO'?'영상 보기 ↗':'게시물 보기 ↗';a.appendChild(label);target.appendChild(a);
   }
  }catch(error){target.replaceChildren();const p=document.createElement('p');p.className='ig-empty';p.textContent='인스타그램 콘텐츠를 잠시 불러올 수 없어요.';target.appendChild(p);}
