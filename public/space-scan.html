@@ -703,6 +703,19 @@ body.ar-fullscreen{
 </style>
 <link rel="stylesheet" href="/design-system.css?v=2" />
 <script defer src="/design-system.js?v=1"></script>
+<style id="teum-unified-mobile-page-banner">
+@media(max-width:699px){
+  .screen .hero,.ar-wizard .hero{
+    box-sizing:border-box!important;
+    height:80px!important;min-height:80px!important;max-height:80px!important;
+    flex:0 0 80px!important;padding:9px 16px!important;
+    border-radius:16px!important;overflow:hidden!important;
+    display:flex!important;align-items:center!important;
+  }
+  .screen .hero h2,.ar-wizard .hero h2{font-size:19px!important;line-height:1.2!important;margin:2px 0!important}
+  .screen .hero p,.screen .hero-art{display:none!important}
+}
+</style>
 </head>
 <body data-teum-shell="ai">
 <aside class="menu" id="menu" aria-hidden="true">
