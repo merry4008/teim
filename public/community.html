@@ -8,9 +8,17 @@
 .brand img{display:block;height:34px;width:auto;max-width:180px;object-fit:contain}
 /* Official Instagram feed */
 .ig-feed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ig-feed-card{display:block;min-width:0}.ig-feed-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px;background:#f2f4f6}.ig-feed-card p{font-size:12px;line-height:1.5;color:#424951;margin:8px 2px 3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ig-feed-card small{color:#7c838d;font-size:11px}.ig-empty{font-size:13px;color:#7c838d;line-height:1.6;background:#f6f8fc;padding:20px;border-radius:16px}@media(min-width:600px){.ig-feed-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* TEUM FEED shared-style page banner */
+.feed-page-banner{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;min-height:220px;margin:12px 0 24px;padding:30px 32px;border-radius:22px;background:linear-gradient(115deg,#2367e8 0%,#3d7cf0 66%,#8bb4ff 100%);color:#fff}
+.feed-page-banner:after{content:'';position:absolute;z-index:-1;right:-48px;top:-95px;width:290px;height:290px;border-radius:50%;border:46px solid rgba(255,255,255,.13)}
+.feed-page-banner small{display:block;font-size:11px;font-weight:850;letter-spacing:.13em;color:#ffdf6a}
+.feed-page-banner h1{font-size:clamp(27px,4vw,38px);line-height:1.22;letter-spacing:-.05em;margin:12px 0 10px}
+.feed-page-banner p{font-size:13px;line-height:1.65;margin:0;color:#f2f6ff}
+@media(max-width:600px){.feed-page-banner{min-height:190px;margin:10px 0 21px;padding:25px 22px;border-radius:18px}.feed-page-banner:after{right:-92px;top:-65px;width:230px;height:230px;border-width:35px}.feed-page-banner h1{font-size:29px}.feed-page-banner p{font-size:12px}}
 </style></head><body>
 <div class="wrap"><header class="head"><a class="brand" href="index.html" aria-label="트임 홈"><img src="/tuim_logo.png" alt="TEUM" /></a><div class="head-actions"><button class="icon-btn" id="searchBtn" aria-label="검색">⌕</button><a class="icon-btn" href="index.html" aria-label="홈" style="display:grid;place-items:center">⌂</a></div></header>
-<section class="intro"><small>TEUM FEED</small><h1>다른 사람들의 트임</h1><p>누군가는 오늘 무엇을 비웠을까요?<br>작은 변화부터 나만의 비움 이야기까지 모아봐요.</p></section>
+<section class="feed-page-banner" aria-label="트임피드 페이지 배너"><div><small>TEUM FEED</small><h1>다른 사람들의 트임</h1><p>누군가는 오늘 무엇을 비웠을까요?<br>작은 변화부터 나만의 비움 이야기까지 모아봐요.</p></div></section>
 <div class="tabs" id="tabs"><button class="active" data-tab="전체">추천</button><button type="button" onclick="location.href='space-feed.html'">공간비움</button><button type="button" onclick="location.href='mind-feed.html'">마음비움</button><button data-tab="비움후기">비움후기</button><button type="button" onclick="location.href='magazine.html'">매거진</button></div>
 <main class="recommend" id="recommendArea" aria-label="추천 콘텐츠">
 <section class="rec-section" id="officialInstagram"><div class="rec-kicker">OFFICIAL INSTAGRAM</div><div class="rec-heading"><h2>트임 인스타그램에서 만나요</h2><a class="rec-more" href="https://www.instagram.com/t___euim/" target="_blank" rel="noopener noreferrer">인스타그램 ↗</a></div><div class="ig-feed-grid" id="igFeedGrid" aria-live="polite"><p class="ig-empty">공식 인스타그램 콘텐츠를 불러오는 중이에요.</p></div></section>
