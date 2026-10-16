@@ -15,6 +15,6 @@ jobs:
       - name: Publish approved carousel
         env:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
-          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_USER_ID: "17841400657894281"
           CONFIRM_PUBLISH: ${{ inputs.confirm }}
         run: python3 instagram_automation/publish.py
