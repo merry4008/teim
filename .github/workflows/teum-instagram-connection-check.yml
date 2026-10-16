@@ -1,0 +1,31 @@
+name: TEUM Instagram API Connection Check
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify secret presence and Meta token validity
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.parse, urllib.error
+          token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "")
+          if not token:
+              raise SystemExit("INSTAGRAM_ACCESS_TOKEN secret missing or empty")
+          url = "https://graph.facebook.com/v23.0/me?" + urllib.parse.urlencode({"fields":"id,name","access_token":token})
+          try:
+              with urllib.request.urlopen(url, timeout=25) as resp:
+                  data = json.load(resp)
+              if not data.get("id"):
+                  raise SystemExit("Meta response has no account ID")
+              print("Meta Graph API token accepted; account ID received (not printed).")
+          except urllib.error.HTTPError as e:
+              try:
+                  error = json.loads(e.read()).get("error", {})
+                  print("Meta error code:", error.get("code"), "subcode:", error.get("error_subcode"))
+              except Exception:
+                  print("Meta HTTP error:", e.code)
+              raise SystemExit(1)
+          PY
