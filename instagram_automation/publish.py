@@ -45,7 +45,10 @@ def main():
         raise SystemExit("Required GitHub secrets: INSTAGRAM_ACCESS_TOKEN, INSTAGRAM_USER_ID")
     if os.environ.get("CONFIRM_PUBLISH") != "PUBLISH":
         raise SystemExit("Publishing disabled: explicit CONFIRM_PUBLISH=PUBLISH required")
-    with open(os.environ.get("POST_MANIFEST", "instagram_automation/post.json"), encoding="utf-8") as f:
+    manifest_path = os.environ.get("POST_MANIFEST", "instagram_automation/post.json")
+    if not os.path.isfile(manifest_path):
+        raise SystemExit("No approved post manifest found. Add instagram_automation/post.json with a verified public image URL before publishing.")
+    with open(manifest_path, encoding="utf-8") as f:
         post = json.load(f)
     images, caption = post.get("images", []), post.get("caption", "")
     if not 1 <= len(images) <= 10 or not caption.strip():
