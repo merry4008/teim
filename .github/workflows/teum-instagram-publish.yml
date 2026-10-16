@@ -1,0 +1,20 @@
+name: TEUM Instagram Manual Publish
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type PUBLISH to post to Instagram"
+        required: true
+        type: string
+jobs:
+  publish:
+    if: ${{ inputs.confirm == 'PUBLISH' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish approved post
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_USER_ID: "17841400657894281"
+          CONFIRM_PUBLISH: ${{ inputs.confirm }}
+        run: python3 instagram_automation/publish.py
