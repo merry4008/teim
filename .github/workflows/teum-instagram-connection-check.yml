@@ -5,27 +5,38 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify secret presence and Meta token validity
+      - name: Verify Instagram Login API token and account
         env:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_USER_ID: "17841400657894281"
         run: |
           python3 - <<'PY'
           import os, json, urllib.request, urllib.parse, urllib.error
           token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "")
+          expected_id = os.environ.get("INSTAGRAM_USER_ID", "")
           if not token:
               raise SystemExit("INSTAGRAM_ACCESS_TOKEN secret missing or empty")
-          url = "https://graph.facebook.com/v23.0/me?" + urllib.parse.urlencode({"fields":"id,name","access_token":token})
+          if not expected_id:
+              raise SystemExit("INSTAGRAM_USER_ID is missing")
+          params = urllib.parse.urlencode({
+              "fields": "user_id,username,account_type",
+              "access_token": token,
+          })
+          url = "https://graph.instagram.com/v23.0/me?" + params
           try:
               with urllib.request.urlopen(url, timeout=25) as resp:
                   data = json.load(resp)
-              if not data.get("id"):
-                  raise SystemExit("Meta response has no account ID")
-              print("Meta Graph API token accepted; account ID received (not printed).")
+              actual_id = str(data.get("user_id", ""))
+              if not actual_id:
+                  raise SystemExit("Instagram Login API returned no user_id")
+              if actual_id != expected_id:
+                  raise SystemExit("Token account does not match the configured Instagram account ID")
+              print("Instagram Login API token is valid and matches the configured account.")
           except urllib.error.HTTPError as e:
               try:
                   error = json.loads(e.read()).get("error", {})
-                  print("Meta error code:", error.get("code"), "subcode:", error.get("error_subcode"))
+                  print("Instagram API error code:", error.get("code"), "subcode:", error.get("error_subcode"))
               except Exception:
-                  print("Meta HTTP error:", e.code)
+                  print("Instagram API HTTP error:", e.code)
               raise SystemExit(1)
           PY
