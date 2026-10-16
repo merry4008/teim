@@ -5,7 +5,7 @@ import json, os, sys, time, urllib.parse, urllib.request, urllib.error
 API = os.environ.get("META_GRAPH_API_VERSION", "v23.0")
 TOKEN = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "")
 IG_ID = os.environ.get("INSTAGRAM_USER_ID", "")
-BASE = f"https://graph.facebook.com/{API}"
+BASE = f"https://graph.instagram.com/{API}"
 
 def request(path, fields):
     url = f"{BASE}/{path}"
