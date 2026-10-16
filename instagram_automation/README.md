@@ -1,19 +1,23 @@
-# TEUM Instagram publishing setup
+# TEUM Instagram publishing
 
-Status: Manual publishing only. Daily unattended publishing is NOT enabled.
+Status: Manual publishing only. Scheduled or unattended publishing is disabled.
 
-1. Existing GitHub secret INSTAGRAM_ACCESS_TOKEN is reused.
-2. Add INSTAGRAM_USER_ID as a GitHub Actions repository secret (the numeric Instagram professional account ID, not username).
-3. Provide instagram_automation/post.json with 2-10 public HTTPS image URLs and a caption.
-4. Workflow TEUM Instagram Manual Publish requires typing PUBLISH.
-5. Publish requires appropriate Meta permissions and valid token. Test on a safe post first.
-6. The workflow must be available on the default branch before GitHub Actions manual dispatch can be used.
+## Connection check
 
-Manifest example:
-```json
-{"images":["https://example.com/slide1.jpg","https://example.com/slide2.jpg"],"caption":"TEUM test caption"}
-```
+The repository uses the existing GitHub Actions secret `INSTAGRAM_ACCESS_TOKEN`.
+The connection workflow checks the token through Instagram Login API and verifies
+that the returned account ID matches the configured TEUM Instagram account ID.
+Run this check before attempting a post.
 
-Do not commit tokens or private data. GitHub repository files are not an image host. Google Drive share links are generally unsuitable as Instagram image_url; use publicly reachable direct HTTPS image assets.
+## Manual publishing
 
-Next stages: account ID discovery, asset hosting, approval, Drive integration, scheduled generation and posting. Never enable unattended publishing before a successful end-to-end test.
+1. Add `instagram_automation/post.json` with 1–10 publicly reachable HTTPS image URLs and the approved caption.
+2. Confirm every image URL opens directly without login and serves the image itself.
+3. Run **TEUM Instagram Manual Publish** on the default branch and enter `PUBLISH`.
+4. Check the workflow result and Instagram post URL.
+
+Do not commit access tokens or private data. Google Drive share pages are not direct
+image URLs. Instagram must be able to fetch each image from its URL.
+
+The publisher deliberately stops if the post manifest is missing or malformed.
+Do not run the publishing workflow until the image asset and caption are approved.
