@@ -5,6 +5,7 @@ import os
 import pathlib
 import urllib.parse
 import urllib.request
+import urllib.error
 
 OUT = pathlib.Path("public/data/instagram-feed.json")
 TOKEN = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "").strip()
@@ -18,8 +19,23 @@ params = urllib.parse.urlencode({
 })
 url = "https://graph.instagram.com/v26.0/me/media?" + params
 req = urllib.request.Request(url, headers={"User-Agent": "TEUM-Instagram-Feed/1.0"})
-with urllib.request.urlopen(req, timeout=30) as response:
-    payload = json.load(response)
+try:
+    with urllib.request.urlopen(req, timeout=30) as response:
+        payload = json.load(response)
+except urllib.error.HTTPError as exc:
+    raw = exc.read().decode("utf-8", errors="replace")
+    try:
+        detail = json.loads(raw).get("error", {})
+    except (ValueError, AttributeError):
+        detail = {}
+    code = detail.get("code", "unknown")
+    subcode = detail.get("error_subcode", "unknown")
+    error_type = str(detail.get("type", "unknown"))[:100]
+    message = str(detail.get("message", "No API error message returned"))
+    if TOKEN:
+        message = message.replace(TOKEN, "[REDACTED]")
+    print(f"Instagram API failed: HTTP {exc.code}, code={code}, subcode={subcode}, type={error_type}")
+    raise SystemExit(f"Meta API message: {message[:500]}") from None
 if "data" not in payload or not isinstance(payload["data"], list):
     raise RuntimeError("Instagram API returned no media data")
 items = []
