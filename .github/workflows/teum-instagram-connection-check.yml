@@ -5,29 +5,47 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify Instagram Login token (no publishing)
+      - name: Verify Instagram Login token and account
         env:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
         run: |
           python3 - <<'PY'
-          import os, json, urllib.request, urllib.parse, urllib.error
+          import json
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
           token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "").strip()
+          expected_id = os.environ.get("INSTAGRAM_USER_ID", "").strip()
           if not token:
               raise SystemExit("INSTAGRAM_ACCESS_TOKEN secret missing or empty")
-          url = "https://graph.instagram.com/v23.0/me?" + urllib.parse.urlencode({"fields":"id,username,account_type","access_token":token})
+
+          url = "https://graph.instagram.com/v23.0/me?" + urllib.parse.urlencode({
+              "fields": "user_id,username",
+              "access_token": token,
+          })
           try:
-              with urllib.request.urlopen(url, timeout=25) as resp:
-                  data = json.load(resp)
-              if not data.get("id"):
-                  raise SystemExit("Instagram Login response missing account ID")
-              print("Instagram Login API token accepted; account ID received (not printed).")
-              print("Account type:", data.get("account_type", "not returned"))
-          except urllib.error.HTTPError as e:
+              with urllib.request.urlopen(url, timeout=25) as response:
+                  data = json.load(response)
+              account_id = str(data.get("user_id", ""))
+              if not account_id:
+                  raise SystemExit("Instagram Login response has no user_id; check token type and API permissions.")
+              print("Instagram Login API token accepted.")
+              print("Instagram username:", data.get("username", "not returned"))
+              if expected_id and account_id != expected_id:
+                  raise SystemExit("INSTAGRAM_USER_ID does not match the account returned by this token.")
+              print("Configured Instagram account ID matches.")
+          except urllib.error.HTTPError as exc:
               try:
-                  error = json.loads(e.read()).get("error", {})
-                  print("Instagram Login error code:", error.get("code"), "subcode:", error.get("error_subcode"))
-                  print("Error type:", error.get("type", "not returned"))
+                  error = json.loads(exc.read()).get("error", {})
+                  print("Instagram API error code:", error.get("code"))
+                  print("Instagram API error subcode:", error.get("error_subcode"))
+                  print("Instagram API error type:", error.get("type", "not returned"))
+                  print("Instagram API message:", error.get("message", "not returned"))
+                  print("Meta trace ID:", error.get("fbtrace_id", "not returned"))
               except Exception:
-                  print("Instagram Login HTTP error:", e.code)
+                  print("Instagram Login HTTP error:", exc.code)
               raise SystemExit(1)
           PY
