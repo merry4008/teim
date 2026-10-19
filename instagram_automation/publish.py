@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""TEUM manual Instagram publisher. Posting requires an explicit workflow confirmation."""
+"""TEUM manual Instagram publisher. Posting requires explicit confirmation and verified assets."""
 import json
 import os
 import sys
@@ -28,13 +28,11 @@ def api_request(path, fields, *, get=False):
     except urllib.error.HTTPError as exc:
         try:
             detail = json.loads(exc.read()).get("error", {})
-            print(
-                "Instagram API error:",
-                detail.get("code"),
-                detail.get("error_subcode"),
-                detail.get("message"),
-                file=sys.stderr,
-            )
+            print("Instagram API error code:", detail.get("code"), file=sys.stderr)
+            print("Instagram API error subcode:", detail.get("error_subcode"), file=sys.stderr)
+            print("Instagram API error type:", detail.get("type", "not returned"), file=sys.stderr)
+            print("Instagram API message:", detail.get("message", "not returned"), file=sys.stderr)
+            print("Meta trace ID:", detail.get("fbtrace_id", "not returned"), file=sys.stderr)
         except Exception:
             print("Instagram API HTTP error:", exc.code, file=sys.stderr)
         raise SystemExit(1)
@@ -62,11 +60,17 @@ def main():
     if not os.path.isfile(manifest_path):
         raise SystemExit(
             "No approved post manifest found. Add instagram_automation/post.json "
-            "with a verified public image URL and approved caption."
+            "with verified public image URLs and an approved caption."
         )
 
     with open(manifest_path, encoding="utf-8") as manifest_file:
         post = json.load(manifest_file)
+
+    if post.get("verification") != "verified":
+        raise SystemExit(
+            "Post assets are not marked verified. Confirm every image URL is public and "
+            "serves the image directly, then set verification to 'verified'."
+        )
 
     images = post.get("images")
     caption = post.get("caption")
